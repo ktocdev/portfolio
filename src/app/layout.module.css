@@ -1,0 +1,39 @@
+/* Shell: header / main / footer, one viewport tall by design.
+   min-height (not height) plus overflow:auto is the escape hatch — very short
+   viewports scroll rather than clip. */
+.root {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: auto minmax(min-content, 1fr) auto;
+  padding: var(--space-page-y) var(--space-page-x);
+  gap: var(--space-section-gap);
+  overflow: auto;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* min-height:0 lets the grid child shrink below its content height, which is
+   what keeps the page inside one viewport. */
+.main {
+  min-height: 0;
+  display: grid;
+}
+
+/* First focusable element in the DOM. */
+.skipLink {
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--inverse-bg);
+  color: var(--inverse-text);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  text-decoration: none;
+  transform: translateY(-300%);
+  z-index: var(--z-skip);
+}
+
+.skipLink:focus {
+  transform: none;
+}

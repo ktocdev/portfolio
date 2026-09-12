@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&amp;family=Atkinson+Hyperlegible+Next:wght@400;500;700&amp;family=Atkinson+Hyperlegible+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+:root{--bg:#F7F6FB;--surface:#EFEDF7;--surface-strong:#D9D6EE;--text:#1F2333;--muted:#555B70;--text-faint:#9A9FB2;--accent:#3E43B8;--accent-hover:#2F3396;--accent-selected:#C9C6F2;--hero-em:#686BAA;--border:#CDCBDD;--border-subtle:#E3E1EE;--selection:#C9C6F2;--media-bg:#1F2333;--img-tint:rgba(62,67,184,.22);--img-tint-0:rgba(62,67,184,0);--img-shade:rgba(31,35,51,.18);--img-shade-0:rgba(31,35,51,0);color-scheme:light}
+html[data-theme="dark"]{--bg:#151824;--surface:#1D2030;--surface-strong:#2A2D45;--text:#E8E7F2;--muted:#A7A9C0;--text-faint:#7C819A;--accent:#A5A8F5;--accent-hover:#C0C2FA;--accent-selected:#3A3F7A;--hero-em:#A5A8F5;--border:#363A52;--border-subtle:#262A3E;--selection:#3A3F7A;--media-bg:#0F111A;--img-tint:rgba(165,168,245,.20);--img-tint-0:rgba(165,168,245,0);--img-shade:rgba(0,0,0,.30);--img-shade-0:rgba(0,0,0,0);color-scheme:dark}
+@media (prefers-color-scheme:dark){html:not([data-theme="light"]){--bg:#151824;--surface:#1D2030;--surface-strong:#2A2D45;--text:#E8E7F2;--muted:#A7A9C0;--text-faint:#7C819A;--accent:#A5A8F5;--accent-selected:#3A3F7A;--accent-hover:#C0C2FA;--hero-em:#A5A8F5;--border:#363A52;--border-subtle:#262A3E;--selection:#3A3F7A;--media-bg:#0F111A;--img-tint:rgba(165,168,245,.20);--img-tint-0:rgba(165,168,245,0);--img-shade:rgba(0,0,0,.30);--img-shade-0:rgba(0,0,0,0);color-scheme:dark}}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+html{scrollbar-gutter:stable}
+@supports not (scrollbar-gutter:stable){html{overflow-y:scroll}}
+.tt-wrap{position:relative;display:inline-flex}
+.tt-wrap .tt-tip{position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%) translateY(6px); white-space:nowrap; padding:.3rem .55rem; background:var(--surface-strong); color:var(--text); border:1px solid var(--border); font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.6875rem; letter-spacing:.02em; text-transform:none; border-radius:2px; opacity:0; pointer-events:none; z-index:5}
+.tt-wrap .tt-tip::after{content:""; position:absolute; top:100%; left:50%; width:8px; height:8px; background:var(--surface-strong); border-right:1px solid var(--border); border-bottom:1px solid var(--border); transform:translate(-50%, -50%) rotate(45deg)}
+.tt-wrap:hover .tt-tip, .tt-wrap:focus-within .tt-tip{opacity:1; transform:translateX(-50%) translateY(0)}
+body{font-family:"Atkinson Hyperlegible Next","Atkinson Hyperlegible",system-ui,sans-serif;line-height:1.5}
+*{box-sizing:border-box}
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:.18em}
+a:hover{color:var(--accent-hover)}
+::selection{background:var(--selection);color:var(--text)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+@media (prefers-reduced-motion:no-preference){a,button{transition:color .15s cubic-bezier(.2,.6,.2,1),background-color .15s cubic-bezier(.2,.6,.2,1),border-color .15s cubic-bezier(.2,.6,.2,1),text-decoration-color .15s cubic-bezier(.2,.6,.2,1)}
+.tt-wrap .tt-tip{transition:opacity .25s cubic-bezier(.2,.6,.2,1) 60ms, transform .25s cubic-bezier(.2,.6,.2,1) 60ms}}
+</style>
+</helmet>
+<div data-screen-label="Site" style="min-height: {{ rootHeight }}; display:grid; grid-template-rows:auto minmax(min-content, 1fr) auto; padding:clamp(1.25rem, 2.4vw, 3rem) clamp(1.25rem, 3.4vw, 4.5rem); gap:clamp(1rem, 2.4vh, 2.25rem); overflow:auto; background:var(--bg); color:var(--text)">
+  <a href="#main" style="position:absolute; left:1rem; top:1rem; padding:.5rem .75rem; background:var(--text); color:var(--bg); font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.875rem; transform:translateY(-300%); text-decoration:none; z-index:10" style-focus="transform:none">Skip to content</a>
+
+  <header style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:.75rem 2rem; padding-bottom:clamp(.75rem, 1.4vh, 1.25rem); border-bottom:1px solid var(--border)">
+    <a href="#/home" style="font-family:'Young Serif',Georgia,serif; font-size:clamp(1.125rem, 1rem + .5vw, 1.5rem); color:var(--text); text-decoration:none; letter-spacing:-.005em">Katie O'Connor</a>
+    <nav aria-label="Primary" style="display:flex; flex-wrap:wrap; gap:clamp(1rem, 2.2vw, 2.5rem)">
+      <sc-for list="{{ navItems }}" as="item" hint-placeholder-count="5">
+        <a href="{{ item.href }}" aria-current="{{ item.current }}" style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:clamp(.8125rem, .72rem + .28vw, .9375rem); letter-spacing:.06em; text-transform:uppercase; color:var(--text); text-decoration:underline; text-decoration-thickness:1.5px; text-underline-offset:.45em; text-decoration-color: {{ item.deco }}" style-hover="text-decoration-color:var(--accent); color:var(--accent)">{{ item.label }}</a>
+      </sc-for>
+    </nav>
+  </header>
+
+  <main id="main" style="min-height:0; display:grid">
+
+    <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+      <section data-screen-label="Home" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 27rem), 1fr)); gap:clamp(1.5rem, 3.5vw, 5rem); min-height:0">
+        <div style="display:flex; flex-direction:column; justify-content:space-between; gap:clamp(1.25rem, 3vh, 2.5rem); min-width:0">
+          <div style="display:flex; flex-direction:column; gap:clamp(1rem, 2.4vh, 2rem)">
+            <div style="display:flex; flex-direction:column; gap:.45rem; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; letter-spacing:.04em">
+            <p style="margin:0; font-size:clamp(.875rem, .76rem + .32vw, 1.0625rem); color:var(--text)">Senior Software Engineer</p>
+            <ul aria-label="Specialties" style="list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:.35rem 1.25rem; font-size:clamp(.8125rem, .72rem + .28vw, .9375rem); color:var(--muted)">
+              <li>Design Engineer</li>
+              <li aria-hidden="true" style="color:var(--border)">/</li>
+              <li>Full-Stack Engineer</li>
+              <li aria-hidden="true" style="color:var(--border)">/</li>
+              <li>Design System Architect</li>
+            </ul>
+            </div>
+            <h1 style="margin:0; font-family:'Young Serif',Georgia,serif; font-weight:400; font-size:clamp(2.5rem, 1.6vw + 2.4vh + .9rem, 5.25rem); line-height:1.04; letter-spacing:-.012em; text-wrap:balance; color:var(--text)">Systems that work end to end, designed&nbsp;<em style="font-style: italic; color: var(--hero-em);">with love</em>.</h1>
+            <p style="margin:0; max-width:34ch; font-size:clamp(1.0625rem, .82rem + .42vw + .2vh, 1.375rem); line-height:1.5; text-wrap:pretty; color:var(--text)">I architect design systems and build AI-native applications. Eleven years at Discovery Education, across three generations of a component library serving products that reach 45M students in 100 countries, most recently as architect and technical lead of nebula-nuxt.</p>
+            <div style="display:flex; flex-wrap:wrap; gap:1rem 1.75rem; align-items:baseline">
+              <a href="#/projects" style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:clamp(.875rem, .78rem + .3vw, 1rem); letter-spacing:.04em; color:var(--accent)">See selected projects&nbsp;→</a>
+              
+            </div>
+          </div>
+          <dl aria-label="Technical skills" style="margin:0; display:grid; grid-template-columns:max-content 1fr; column-gap:clamp(1rem, 2vw, 2rem); row-gap:0; border-top:1px solid var(--border); font-size:clamp(.9375rem, .8rem + .3vw, 1.125rem)">
+            <sc-for list="{{ skills }}" as="row" hint-placeholder-count="4">
+              <dt style="padding:clamp(.45rem, 1vh, .75rem) 0; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:clamp(.75rem, .68rem + .22vw, .875rem); letter-spacing:.06em; text-transform:uppercase; color:var(--muted); border-bottom:1px solid var(--border-subtle)">{{ row.label }}</dt>
+              <dd style="margin:0; padding:clamp(.45rem, 1vh, .75rem) 0; color:var(--text); border-bottom:1px solid var(--border-subtle); text-wrap:pretty">{{ row.items }}</dd>
+            </sc-for>
+          </dl>
+        </div>
+        <figure style="margin:0; position:relative; min-height:min(46vh, 22rem); background:var(--surface-strong); border-radius:4px; overflow:hidden; isolation:isolate">
+          <image-slot id="botanical-home" shape="rect" placeholder="Botanical / painterly stock image — blends into lavender" style="position:absolute; inset:0; width:100%; height:100%; mix-blend-mode: {{ blendModeHome }}; filter:grayscale(1) contrast(1.08) brightness(1.04)"></image-slot>
+          <div aria-hidden="true" style="position:absolute; inset:0; pointer-events:none; background:linear-gradient(165deg, var(--img-tint) 0%, var(--img-tint-0) 55%), linear-gradient(15deg, var(--img-shade) 0%, var(--img-shade-0) 45%); mix-blend-mode:{{ heroOverlayBlend }}"></div>
+        </figure>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ isProjects }}" hint-placeholder-val="{{ false }}">
+      <section data-screen-label="Projects" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); grid-auto-rows:min-content; gap:clamp(1.5rem, 3.5vw, 5rem); align-content:start; min-height:0">
+        <div style="display:flex; flex-direction:column; gap:clamp(1rem, 2.4vh, 2rem); min-width:0">
+          <h1 style="margin:0; font-family:'Young Serif',Georgia,serif; font-weight:400; font-size:clamp(2rem, 1.2vw + 1.8vh + .8rem, 3.75rem); line-height:1.08; letter-spacing:-.01em">Projects</h1>
+          <p style="margin:0; max-width:36ch; color:var(--muted); font-size:clamp(.9375rem, .8rem + .3vw, 1.125rem); text-wrap:pretty">Personal work on GitHub plus one design-system case study. Select a project for screens, notes, and links.</p>
+          <ol aria-label="Project list" style="list-style:none; margin:0; padding:0; border-top:1px solid var(--border)">
+            <sc-for list="{{ projectList }}" as="p" hint-placeholder-count="4">
+              <li style="border-bottom:1px solid var(--border-subtle)">
+                <button type="button" onClick="{{ p.select }}" aria-pressed="{{ p.pressed }}" style="appearance:none; -webkit-appearance:none; background:none; border:0; margin:0; padding:0; font:inherit; color:inherit; text-align:inherit; cursor:pointer; display:grid; grid-template-columns:2.5rem 1fr; align-items:baseline; width:100%; padding:clamp(.6rem, 1.3vh, 1rem) .25rem; cursor:pointer; color:var(--text); background: {{ p.bg }}; border-left:2px solid {{ p.rule }}; padding-left:.85rem" style-hover="color:var(--accent)">
+                  <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:clamp(.75rem, .68rem + .22vw, .875rem); color:var(--muted)">{{ p.num }}</span>
+                  <span style="display:flex; flex-direction:column; gap:.1rem">
+                    <span style="font-family:'Young Serif',Georgia,serif; font-size:clamp(1.0625rem, .9rem + .4vw, 1.375rem)">{{ p.name }}</span>
+                    <span style="font-size:clamp(.875rem, .78rem + .25vw, 1rem); color:var(--muted)">{{ p.tagline }}<sc-if value="{{ p.caseStudy }}"><span style="margin-left:.6em; color:var(--text-faint)">Case Study</span></sc-if></span>
+                  </span>
+                </button>
+              </li>
+            </sc-for>
+          </ol>
+        </div>
+        <article aria-live="polite" style="display:flex; flex-direction:column; gap:clamp(.9rem, 2vh, 1.5rem); min-width:0">
+          <sc-if value="{{ hasMedia }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex; flex-direction:column; gap:.6rem; min-width:0">
+            <div style="position:relative; height:clamp(14rem, 40vh, 28rem); background:var(--media-bg); border-radius:4px; overflow:hidden; isolation:isolate">
+              <sc-for list="{{ slides }}" as="s" hint-placeholder-count="1">
+                <sc-if value="{{ s.video }}" hint-placeholder-val="{{ false }}">
+                  <video id="{{ s.id }}" src="{{ s.video }}" controls="{{ true }}" playsinline="{{ true }}" muted="{{ true }}" preload="metadata" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:var(--media-bg); display: {{ s.display }}"></video>
+                </sc-if>
+                <sc-if value="{{ s.isImage }}" hint-placeholder-val="{{ true }}">
+                  <image-slot id="{{ s.id }}" shape="rect" fit="contain" src="{{ s.src }}" placeholder="{{ s.placeholder }}" style="position:absolute; inset:0; width:100%; height:100%; display: {{ s.display }}"></image-slot>
+                </sc-if>
+              </sc-for>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap">
+              <div role="group" aria-label="Carousel controls" style="display:flex; gap:.35rem">
+                <button type="button" onClick="{{ prevSlide }}" aria-label="Previous slide" style="appearance:none; -webkit-appearance:none; background:none; border:0; margin:0; padding:0; font:inherit; color:inherit; text-align:inherit; cursor:pointer; cursor:pointer; min-width:2.75rem; min-height:2.75rem; display:grid; place-items:center; background:var(--bg); color:var(--text); border:1px solid var(--border); border-radius:2px; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:1rem" style-hover="border-color:var(--accent); color:var(--accent)">←</button>
+                <button type="button" onClick="{{ nextSlide }}" aria-label="Next slide" style="appearance:none; -webkit-appearance:none; background:none; border:0; margin:0; padding:0; font:inherit; color:inherit; text-align:inherit; cursor:pointer; cursor:pointer; min-width:2.75rem; min-height:2.75rem; display:grid; place-items:center; background:var(--bg); color:var(--text); border:1px solid var(--border); border-radius:2px; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:1rem" style-hover="border-color:var(--accent); color:var(--accent)">→</button>
+              </div>
+              <div style="display:flex; align-items:center; gap:.75rem; min-width:0">
+                <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.8125rem; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap">{{ slideLabel }}</span>
+                <span style="padding:.35rem .6rem; background:var(--bg); border:1px solid var(--border); border-radius:2px; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.8125rem; letter-spacing:.06em; color:var(--text); white-space:nowrap">{{ slideCounter }}</span>
+              </div>
+            </div>
+          </div>
+          </sc-if>
+          <sc-if value="{{ projectStatus }}" hint-placeholder-val="{{ false }}">
+            <p style="margin:0; padding:.5rem .75rem; border-left:2px solid var(--accent); background:var(--surface); font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:clamp(.8125rem, .74rem + .22vw, .9375rem); line-height:1.45; color:var(--text); text-wrap:pretty">{{ projectStatus }}</p>
+          </sc-if>
+          <div style="display:flex; flex-direction:column; gap:.7rem; max-width:62ch; font-size:clamp(.9375rem, .8rem + .3vw, 1.0625rem); line-height:1.55; text-wrap:pretty; color:var(--text)">
+            <sc-for list="{{ projectParas }}" as="p" hint-placeholder-count="1">
+              <p style="margin:0">{{ p }}</p>
+            </sc-for>
+          </div>
+          <sc-if value="{{ isCaseStudy }}" hint-placeholder-val="{{ false }}">
+          <div ref="{{ factsGridRef }}" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:4px; overflow:hidden">
+            <sc-for list="{{ project.facts }}" as="f" hint-placeholder-count="4">
+              <div style="display:flex; flex-direction:column; gap:.3rem; padding:clamp(.85rem, 1.8vh, 1.25rem) 1rem; background:var(--surface)">
+                <span style="font-family:'Young Serif',Georgia,serif; font-size:clamp(1.375rem, 1rem + 1vw + .5vh, 2.25rem); line-height:1.05; color:var(--hero-em)">{{ f.value }}</span>
+                <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:clamp(.75rem, .68rem + .22vw, .875rem); letter-spacing:.04em; color:var(--muted); text-wrap:pretty">{{ f.label }}</span>
+              </div>
+            </sc-for>
+            <sc-if value="{{ showFactsPhoto }}" hint-placeholder-val="{{ false }}">
+              <figure style="margin:0; position:relative; min-height:7rem; background:var(--surface-strong); overflow:hidden; isolation:isolate; grid-column: span {{ factsPhotoSpan }}">
+                <img src="./media/zinnias-monarch.jpg" alt="A monarch butterfly resting on magenta zinnias" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 58%; mix-blend-mode: {{ blendModeProjects }}; filter:grayscale(1) contrast(1.08) brightness(1.04)">
+                <div aria-hidden="true" style="position:absolute; inset:0; pointer-events:none; background:linear-gradient(200deg, var(--img-tint) 0%, var(--img-tint-0) 55%); mix-blend-mode:soft-light"></div>
+              </figure>
+            </sc-if>
+          </div>
+          <ul aria-label="Case study notes" style="margin:0; padding:0 0 0 1.1rem; display:flex; flex-direction:column; gap:.45rem; max-width:60ch; font-size:clamp(.9375rem, .8rem + .3vw, 1.0625rem); line-height:1.5; text-wrap:pretty">
+            <sc-for list="{{ project.notes }}" as="n" hint-placeholder-count="4">
+              <sc-if value="{{ n.heading }}" hint-placeholder-val="{{ false }}">
+                <li style="list-style:none; margin-left:-1.1rem; margin-top:.4rem; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.8125rem; letter-spacing:.06em; text-transform:uppercase; color:var(--accent)">{{ n.heading }}</li>
+              </sc-if>
+              <sc-if value="{{ n.disclosure }}" hint-placeholder-val="{{ false }}">
+                <li style="list-style:none; margin-left:-1.1rem; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:clamp(.75rem, .68rem + .22vw, .875rem); letter-spacing:.04em; color:var(--muted)">{{ n.disclosure }}</li>
+              </sc-if>
+              <sc-if value="{{ n.subheading }}" hint-placeholder-val="{{ false }}">
+                <li style="list-style:none; margin-left:-1.1rem; margin-top:.3rem; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; letter-spacing:.05em; text-transform:capitalize; color:var(--muted)">{{ n.subheading }}</li>
+              </sc-if>
+              <sc-if value="{{ n.text }}" hint-placeholder-val="{{ true }}">
+                <li>{{ n.text }} <sc-if value="{{ n.link }}" hint-placeholder-val="{{ false }}"><a href="{{ n.link.href }}" target="_blank" rel="noopener" style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.875rem; letter-spacing:.04em; color:var(--accent)">{{ n.link.label }}&nbsp;↗</a></sc-if>
+                  <sc-if value="{{ n.subs }}" hint-placeholder-val="{{ false }}">
+                    <ul style="margin:.3rem 0 0; padding:0 0 0 1.1rem; display:flex; flex-direction:column; gap:.3rem">
+                      <sc-for list="{{ n.subs }}" as="s" hint-placeholder-count="1"><li>{{ s }}</li></sc-for>
+                    </ul>
+                  </sc-if>
+                </li>
+              </sc-if>
+            </sc-for>
+          </ul>
+          </sc-if>
+          <div style="display:flex; flex-direction:column; gap:.6rem">
+            <div style="display:flex; flex-wrap:wrap; gap:.5rem 1.5rem; padding-top:.25rem">
+              <sc-for list="{{ project.links }}" as="l" hint-placeholder-count="2">
+                <a href="{{ l.href }}" target="_blank" rel="noopener" style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:clamp(.875rem, .78rem + .3vw, 1rem); letter-spacing:.04em; color:var(--accent)">{{ l.label }}&nbsp;↗</a>
+              </sc-for>
+            </div>
+          </div>
+        </article>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ isResume }}" hint-placeholder-val="{{ false }}">
+      <section data-screen-label="Resume" style="display:grid; grid-template-columns:minmax(min(100%, 22rem), 1fr) minmax(min(100%, 26rem), 1.4fr); gap:clamp(1.5rem, 3.5vw, 5rem); align-content:start; min-height:0">
+        <div style="display:flex; flex-direction:column; gap:clamp(1rem, 2.4vh, 2rem)">
+          <h1 style="margin:0; font-family:'Young Serif',Georgia,serif; font-weight:400; font-size:clamp(2rem, 1.2vw + 1.8vh + .8rem, 3.75rem); line-height:1.08; letter-spacing:-.01em">Resume</h1>
+          <p style="margin:0; max-width:36ch; font-size:clamp(1rem, .82rem + .38vw, 1.25rem); line-height:1.5; text-wrap:pretty">Senior software engineer and design-systems architect with 11+ years at Discovery Education, on products reaching 45M students and 4.5M educators across 100 countries. Architected three successive generations of the company's component library, alongside AI-native applications built end to end.</p>
+          <div style="display:flex; flex-wrap:wrap; gap:.75rem 1rem; align-items:center">
+            <a href="#" download="Katie-OConnor-Resume.pdf" style="display:inline-flex; align-items:center; gap:.6rem; min-height:2.75rem; padding:.65rem 1.1rem; background:var(--accent); color:var(--bg); text-decoration:none; border-radius:2px; font-weight:500; font-size:clamp(.9375rem, .82rem + .3vw, 1.0625rem)" style-hover="background:var(--accent-hover); color:var(--bg)">Download PDF <span aria-hidden="true" style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace">↓</span></a>
+          </div>
+        </div>
+        <ol aria-label="Experience" style="list-style:none; margin:0; padding:0; border-top:1px solid var(--border); align-self:start">
+          <sc-for list="{{ experience }}" as="e" hint-placeholder-count="4">
+            <li style="display:grid; grid-template-columns:minmax(6.5rem, max-content) 1fr; gap:.25rem clamp(1rem, 2vw, 2rem); padding:clamp(.7rem, 1.6vh, 1.1rem) 0; border-bottom: {{ e.border }}">
+              <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:clamp(.75rem, .68rem + .22vw, .875rem); letter-spacing:.04em; color:var(--muted); padding-top:.25em">{{ e.years }}</span>
+              <div style="display:flex; flex-direction:column; gap:.2rem; min-width:0">
+                <span style="font-family:'Young Serif',Georgia,serif; font-size:clamp(1.0625rem, .9rem + .4vw, 1.375rem); line-height:1.2">{{ e.role }}</span>
+                <span style="font-size:clamp(.875rem, .78rem + .25vw, 1rem); color:var(--muted)">{{ e.org }}</span>
+                <sc-if value="{{ e.hasNote }}" hint-placeholder-val="{{ true }}">
+                  <span style="font-size:clamp(.9375rem, .8rem + .3vw, 1.0625rem); text-wrap:pretty; padding-top:.15rem">{{ e.note }}</span>
+                </sc-if>
+                <sc-if value="{{ e.hasGroups }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex; flex-direction:column; gap:clamp(.7rem, 1.6vh, 1.15rem); padding-top:.5rem">
+                    <sc-for list="{{ e.groups }}" as="g" hint-placeholder-count="3">
+                      <div style="display:flex; flex-direction:column; gap:.4rem">
+                        <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:clamp(.75rem, .68rem + .22vw, .875rem); letter-spacing:.06em; text-transform:uppercase; color:var(--accent); text-wrap:pretty">{{ g.label }}</span>
+                        <ul style="margin:0; padding:0 0 0 1.1rem; display:flex; flex-direction:column; gap:.4rem; font-size:clamp(.9375rem, .8rem + .3vw, 1.0625rem); line-height:1.5; text-wrap:pretty">
+                          <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="4"><li>{{ it }}</li></sc-for>
+                        </ul>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
+            </li>
+          </sc-for>
+        </ol>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ isContact }}" hint-placeholder-val="{{ false }}">
+      <section data-screen-label="Contact" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 27rem), 1fr)); gap:clamp(1.5rem, 3.5vw, 5rem); min-height:0">
+        <div style="display:flex; flex-direction:column; justify-content:space-between; gap:clamp(1.25rem, 3vh, 2.5rem)">
+          <div style="display:flex; flex-direction:column; gap:clamp(1rem, 2.4vh, 2rem)">
+            <h1 style="margin:0; font-family:'Young Serif',Georgia,serif; font-weight:400; font-size:clamp(2rem, 1.2vw + 1.8vh + .8rem, 3.75rem); line-height:1.08; letter-spacing:-.01em; text-wrap:balance">Say hello.</h1>
+            <p style="margin:0; max-width:34ch; font-size:clamp(1.0625rem, .82rem + .42vw + .2vh, 1.375rem); line-height:1.5; text-wrap:pretty">Based in Chicago. Open to senior and staff roles, design-system architecture, and conversations about AI-augmented engineering.</p>
+          </div>
+          <ul aria-label="Contact methods" style="list-style:none; margin:0; padding:0; border-top:1px solid var(--border)">
+            <sc-for list="{{ contacts }}" as="c" hint-placeholder-count="3">
+              <li style="display:grid; grid-template-columns:minmax(5.5rem, max-content) 1fr; gap:.25rem clamp(1rem, 2vw, 2rem); align-items:baseline; padding:clamp(.7rem, 1.6vh, 1.1rem) 0; border-bottom:1px solid var(--border-subtle)">
+                <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:clamp(.75rem, .68rem + .22vw, .875rem); letter-spacing:.06em; text-transform:uppercase; color:var(--muted)">{{ c.label }}</span>
+                <a href="{{ c.href }}" style="font-size:clamp(1rem, .85rem + .4vw, 1.3125rem); color:var(--accent); overflow-wrap:anywhere">{{ c.text }}</a>
+              </li>
+            </sc-for>
+          </ul>
+        </div>
+        <figure style="margin:0; position:relative; min-height:min(46vh, 22rem); background:var(--surface-strong); border-radius:4px; overflow:hidden; isolation:isolate">
+          <image-slot id="botanical-contact" shape="rect" placeholder="Second botanical / painterly image — blends into lavender" style="position:absolute; inset:0; width:100%; height:100%; mix-blend-mode: {{ blendModeContact }}; filter:grayscale(1) contrast(1.08) brightness(1.04)"></image-slot>
+          <div aria-hidden="true" style="position:absolute; inset:0; pointer-events:none; background:linear-gradient(200deg, var(--img-tint) 0%, var(--img-tint-0) 55%); mix-blend-mode:soft-light"></div>
+        </figure>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ isAbout }}" hint-placeholder-val="{{ false }}">
+      <section data-screen-label="About" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap:clamp(1.5rem, 3.5vw, 5rem); min-height:0; align-items:start">
+        <figure style="margin:0; position:relative; width:min(100%, 34rem); aspect-ratio:4 / 5; max-height:min(64vh, 40rem); background:var(--surface-strong); border-radius:4px; overflow:hidden; isolation:isolate">
+          <image-slot id="headshot" shape="rect" placeholder="Headshot — FPO" style="position:absolute; inset:0; width:100%; height:100%"></image-slot>
+          <div aria-hidden="true" style="position:absolute; inset:0; pointer-events:none; background:linear-gradient(180deg, var(--img-tint-0) 60%, var(--img-tint) 100%); mix-blend-mode:multiply"></div>
+        </figure>
+        <div style="display:flex; flex-direction:column; gap:clamp(1rem, 2.4vh, 2rem); max-width:56ch">
+          <h1 style="margin:0; font-family:'Young Serif',Georgia,serif; font-weight:400; font-size:clamp(2rem, 1.2vw + 1.8vh + .8rem, 3.75rem); line-height:1.08; letter-spacing:-.01em">About</h1>
+          <p style="margin:0; font-size:clamp(1rem, .82rem + .38vw + .15vh, 1.3125rem); line-height:1.55; text-wrap:pretty">I'm Katie. I live in eclectic Avondale, a lively neighborhood on Chicago's northwest side, with my two cats (Mitty and Ralphie) and guinea pig (Betty Boop), muse for GPS3. Outside of code, you can find me singing karaoke, at trivia night with friends, or hanging out with my many plants (including a voracious Venus flytrap!)</p>
+          
+          <p style="margin:0; font-size:clamp(.8125rem, .74rem + .13vw, .9375rem); color:var(--muted)">Photos throughout this site are my own.</p>
+          <dl style="margin:0; display:grid; grid-template-columns:max-content 1fr; gap:.4rem clamp(1rem, 2vw, 2rem); border-top:1px solid var(--border); padding-top:.9rem; font-size:clamp(.9375rem, .8rem + .3vw, 1.125rem)">
+            <dt style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:clamp(.75rem, .68rem + .22vw, .875rem); letter-spacing:.06em; text-transform:uppercase; color:var(--muted); padding-top:.2em">Now</dt>
+            <dd style="margin:0">Building AI-native side projects; open to new roles</dd>
+            <dt style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:clamp(.75rem, .68rem + .22vw, .875rem); letter-spacing:.06em; text-transform:uppercase; color:var(--muted); padding-top:.2em">Education</dt>
+            <dd style="margin:0">Columbia College Chicago, BA in Interactive Art and Media, 2009</dd>
+          </dl>
+        </div>
+      </section>
+    </sc-if>
+
+  </main>
+
+  <footer style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:.5rem 2rem; padding-top:clamp(.75rem, 1.4vh, 1.25rem); border-top:1px solid var(--border); font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:clamp(.75rem, .68rem + .22vw, .875rem); letter-spacing:.04em; color:var(--muted)">
+    <span>© 2026 Katie O'Connor</span>
+    <div style="display:flex; align-items:center; gap:clamp(.75rem, 2vw, 1.5rem); flex-wrap:wrap">
+      <a href="mailto:katie.oconnor13@gmail.com" style="color:var(--muted)">katie.oconnor13@gmail.com</a>
+      <div role="group" aria-label="Color scheme" style="display:flex; gap:1px; background:var(--border); border:1px solid var(--border); border-radius:2px">
+        <span class="tt-wrap"><button type="button" onClick="{{ themeSystem.select }}" aria-pressed="{{ themeSystem.pressed }}" aria-label="Follow system setting" style="appearance:none; -webkit-appearance:none; background:none; border:0; margin:0; padding:0; font:inherit; color:inherit; text-align:inherit; cursor:pointer; cursor: pointer; padding: .25rem .6rem; min-height: 1.8rem; display: grid; place-items: center; font-family: 'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size: 0.7rem; letter-spacing: .06em; text-transform: uppercase; background: {{ themeSystem.bg }}; color: {{ themeSystem.fg }}; border-radius:1px 0 0 1px" style-hover="color:{{ themeSystem.hoverFg }}">Auto</button><span class="tt-tip" role="tooltip">Follow system setting</span>
+        </span>
+        <span class="tt-wrap"><button type="button" onClick="{{ themeLight.select }}" aria-pressed="{{ themeLight.pressed }}" aria-label="Light mode" style="appearance:none; -webkit-appearance:none; background:none; border:0; margin:0; padding:0; font:inherit; color:inherit; text-align:inherit; cursor:pointer; cursor:pointer; padding:.25rem .6rem; min-height:1.8rem; display:grid; place-items:center; background:{{ themeLight.bg }}; color:{{ themeLight.fg }}" style-hover="color:{{ themeLight.hoverFg }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false" style="width: 17px; height: 17px"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 12a5 5 0 1 1-10 0a5 5 0 0 1 10 0Z"></path><path stroke-linecap="round" d="M12 2c-.377.333-.905 1.2 0 2m0 16c.377.333.906 1.2 0 2m7.5-17.497c-.532-.033-1.575.22-1.496 1.495M5.496 17.5c.033.532-.22 1.575-1.496 1.496M5.003 4.5c-.033.532.22 1.576 1.497 1.497M18 17.503c.532-.032 1.575.208 1.496 1.414M22 12c-.333-.377-1.2-.905-2 0m-16-.5c-.333.377-1.2.906-2 0"></path></g></svg>
+          </button><span class="tt-tip" role="tooltip">Light mode</span>
+        </span>
+        <span class="tt-wrap"><button type="button" onClick="{{ themeDark.select }}" aria-pressed="{{ themeDark.pressed }}" aria-label="Dark mode" style="appearance:none; -webkit-appearance:none; background:none; border:0; margin:0; padding:0; font:inherit; color:inherit; text-align:inherit; cursor:pointer; cursor:pointer; padding:.25rem .6rem; min-height:1.8rem; display:grid; place-items:center; background:{{ themeDark.bg }}; color:{{ themeDark.fg }}; border-radius:0 1px 1px 0" style-hover="color:{{ themeDark.hoverFg }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false" style="width: 15px; height: 15px"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21.5 14.078A8.557 8.557 0 0 1 9.922 2.5C5.668 3.497 2.5 7.315 2.5 11.873a9.627 9.627 0 0 0 9.627 9.627c4.558 0 8.376-3.168 9.373-7.422"></path></svg>
+          </button><span class="tt-tip" role="tooltip">Dark mode</span>
+        </span>
+      </div>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;startPage&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;home&quot;,&quot;options&quot;:[&quot;home&quot;,&quot;projects&quot;,&quot;resume&quot;,&quot;contact&quot;,&quot;about&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Preview&quot;},&quot;blendModeHome&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;luminosity&quot;,&quot;options&quot;:[&quot;multiply&quot;,&quot;luminosity&quot;,&quot;soft-light&quot;,&quot;color&quot;,&quot;normal&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Imagery&quot;},&quot;blendModeContact&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;luminosity&quot;,&quot;options&quot;:[&quot;multiply&quot;,&quot;luminosity&quot;,&quot;soft-light&quot;,&quot;color&quot;,&quot;normal&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Imagery&quot;},&quot;blendModeProjects&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;luminosity&quot;,&quot;options&quot;:[&quot;multiply&quot;,&quot;luminosity&quot;,&quot;soft-light&quot;,&quot;color&quot;,&quot;normal&quot;,&quot;lighten&quot;,&quot;screen&quot;,&quot;overlay&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Imagery&quot;},&quot;heroOverlayBlend&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;soft-light&quot;,&quot;options&quot;:[&quot;soft-light&quot;,&quot;lighten&quot;,&quot;screen&quot;,&quot;overlay&quot;,&quot;color&quot;,&quot;multiply&quot;,&quot;normal&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Imagery&quot;},&quot;viewportFit&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Layout&quot;}}">
+const PAGES = ['home', 'projects', 'resume', 'contact', 'about'];
+const PROJECTS = [
+  { name: 'Discovery Education Design Systems', tagline: 'Comet · Nebula · nebula-nuxt', meta: 'Vue · Nuxt · 2016–2026 · Case study', caseStudy: true,
+    description: 'Three generations of one company\'s design system: founding team for Comet (2016), builder of its successor Nebula (2020), and sole architect of nebula-nuxt (2026), a themed component layer that lets twelve product teams replace legacy UI incrementally while migrating to Nuxt.',
+    facts: [{ value: '45M', label: 'students and 4.5M educators reached across 100 countries and territories' }, { value: '6', label: 'dimensions of UI rigor: visual polish, i18n/l10n, tracking, responsiveness, a11y, API flexibility' }, { value: '3', label: 'generations of the library: Comet (2016), Nebula (2020), nebula-nuxt (2026)' }, { value: '124', label: 'components and utilities managed across Nebula and nebula-nuxt' }, { value: '12', label: 'product teams consuming the systems' }, { value: '$3.05', label: 'cost to create a component, doc page, and release end to end' }],
+    notes: [
+      { heading: 'nebula-nuxt' },
+      { subheading: 'Proposal Stage' },
+      { text: 'Built nebula-nuxt: Nuxt UI + custom components, themed to match legacy Nebula brand. Purpose: apps migrate to new Nuxt components/pages without visual mismatch vs. unmigrated legacy pages. Deliberately transitional, not end state. Payoff: post-migration, org can shift visual language via theme change alone, no component rebuild needed.' },
+      { text: 'Led migration audit and stakeholder roadmap: analyzed legacy Nebula components, flagged highest-priority candidates, determined Nuxt UI equivalent vs. custom rebuild per component, assigned points per component, compiled into timeline.' },
+      { text: 'nebula-nuxt was officially accepted as the quarter\'s Planning Interval (PI) deliverable, the company\'s formal engineering planning process; legacy Nebula support was separately recognized as its own PI item.' },
+      { subheading: 'Product Integration' },
+      { text: 'Migrated 25 of 46 legacy components to nebula-nuxt by myself; the rest had not yet been started when I moved on.' },
+      { text: 'Teammates also contributed to nebula-nuxt, adding updates and new components alongside my work.' },
+      { text: 'Integrated nebula-nuxt into the platform layer: implemented new Page Shell and Global Nav for production use, and built a live theme switcher and component-comparison playground (legacy Nebula vs. nebula-nuxt side by side) to demonstrate theming support.' },
+      { subheading: 'Doc Site Designer' },
+      { text: 'Built the new playground doc site for nebula-nuxt with searchable documentation via Nuxt Content; designed and implemented the entire layout and UI, and added robust scaffold, theming, and localization documentation displayed through Nuxt Content.' },
+      { text: 'Extended Nuxt UI with custom components: Tabs with responsive nav+panel variants, and Breadcrumbs with dropdowns that convert into a searchable command palette past 7 options, powered by a custom rowCollapse composable not provided by Nuxt UI/Reka out of the box.' },
+      { text: 'Created a live Theme Editor in the nebula-nuxt doc site that switches between the default Nuxt UI theme, legacy Nebula, and another unique theme, with editing granular down to color scale, spacing, font, and border radii and other theme tokens; the theme persists across all component pages until changed or reset.' },
+      { disclosure: 'Note: nebula-nuxt is internal; not publicly viewable.' },
+      { heading: 'Nebula Components' },
+      { text: 'Builder and maintainer of Nebula Components, predecessor to nebula-nuxt. Managed both design systems simultaneously.', link: { label: 'Nebula docs', href: 'https://nebula.discoveryeducation.com/' } },
+      { text: 'Built MegaMenu for high-stakes Back-to-School (BTS) product deliverable. Core technical feature: smart-detects when to responsively collapse into a linked drill-down list view, rather than relying on fixed breakpoint. Component adapts own layout based on available space and content, rather than hiding items past hardcoded width.', link: { label: 'MegaMenu demo', href: 'https://nebula.discoveryeducation.com/mega-menu-sink' }, subs: ['Designed the responsive collapsed view myself: a linked drill-down list, not an accordion, that lets users tap into a category and navigate back out.', 'Initial build: 3 days. Product then underwent significant redesign; updated MegaMenu delivered in 3 more days, matching new design.'] },
+      { text: 'Built NebulaContainerTable, an enhanced NebulaTable that uses container queries instead of media queries, so the table adapts to its own container size rather than the viewport — more flexible across layouts.', link: { label: 'ContainerTable demo', href: 'https://nebula.discoveryeducation.com/container-table-sink' } },
+      { heading: 'AI Tooling' },
+      { subheading: 'Claude Skills' },
+      { text: 'Wrote a Claude planning skill that picks the build approach per component: themed primitive, wrapped primitive, or custom, running at about $1.75 per run.' },
+      { text: 'Wrote a Claude release-automation skill for the migration, running at about $0.02 per run.' },
+      { text: 'Wrote a Claude skill to port existing component doc-page examples from Nebula Components to nebula-nuxt, ensuring new components stayed backward compatible, running at about $1.30 per run.' },
+      { text: 'Wrote Claude Skill to audit and fix localization across the platform, refined against 9 company repos and used successfully in production.' },
+      { subheading: 'Extensions' },
+      { text: 'Built prompt-cache timer extension for VS Code because company experienced runaway Claude spend and began limiting monthly allowance per engineer. No such extension existed for VS Code at the time. Built one to fill the gap, tracking and surfacing prompt-cache timing directly in-editor. Shared with team to help others manage spend under new budget constraints.' },
+      { subheading: 'Slash Commands' },
+      { text: 'Built plan-create/plan-update slash commands for Claude Code: structured markdown plan docs (executive summary, phases, success criteria, known issues) generated conversationally, with approval-gated drafts and diff-style updates. Enforces consistent status markers and preserves historical context across iterations, turning ad hoc dev notes into a living, reviewable spec.' },
+    ],
+    disclosure: '',
+    links: [] },
+  { name: 'Main Character', tagline: 'AI personal knowledge & retrieval system', meta: 'Python · FastAPI · ChromaDB · Claude API',
+    description: 'An AI-powered journal that uses local embeddings, an entity graph, multi-level summaries, and semantic retrieval over personal entries. The retrieval pipeline grounds LLM responses in the user\'s actual journal history rather than generic model knowledge.',
+    status: 'Work in progress. Full demo journal will be available online soon.',
+    paras: [
+      'Main Character is a journal app with an AI companion who responds to your entries. The companion is supportive, never sycophantic, and always roots for you like you are the main character. When you make mistakes and show flaws, it gives a helpful perspective and gets you on with your day.',
+      'I had the vision for this app after having conversations with Claude about life stuff. I found that it didn\'t have very good memory. I came up with a workflow where I would have Claude make a summary of our conversation, then upload that as context for the next chat. This worked for a while, but I wanted more control.',
+      'I created Main Character, which is based on the same workflow, in a web interface with many features, including entities (people, places, projects), entry and weekly summaries, overarching patterns, and more.',
+      'A lot of new AI apps can rob you of something you created, because AI makes it too quick and easy. This app relies fully on your own ability to write and document what happened, and the more detail you put in, the more robust the system becomes. I know some people worry that an AI journal\'s reflections can end up changing their own. I think this one might hold up better because it uses a RAG memory system, grounded in what you\'ve actually written, and the companion\'s responses are short, observational, and supportive rather than generic advice. But if every AI journal claims that, this one is no better than the rest, so you\'ll have to judge for yourself.',
+      'It is very therapeutic for me to write out my feelings and read them back. It is like giving myself a second perspective on what I recount. The companion\'s response is almost like a comment left by someone on a blog. Because the companion has memory from the context summaries, semantic search, and vector database, it can give you personalized responses that can help you remember things you might have forgotten.',
+      'Memory kicks in when you manually close and summarize a chat, recommended after about a week. You can edit the seed summary before it\'s saved, and the next entry starts fresh with that summary leading it. Everything blends into the existing files: summaries update, entities get extracted, categories form.',
+      'Your companion can also retrieve information in a separate Chat screen. Consider it your journal Chatbot.',
+      'Main Character is intended to be local only and you need a Claude API key.',
+      'This might be good for people who want to find patterns in their life, remember things better, gain perspective through reflection, work toward a goal, or just enjoy feeling like the main character in their own story.',
+    ],
+    links: [{ label: 'GitHub', href: 'https://github.com/ktocdev/main-character' }],
+    slides: ['Write', 'Search', 'Entities', 'History', 'Categories', 'Patterns', 'Dreams', 'Triage', 'Settings'],
+    slideVideos: { 0: './uploads/1-%20Write.mp4', 2: './uploads/3%20-%20Entities.mp4', 3: './uploads/5%20-%20Categories.mp4', 4: './uploads/6%20-%20Patterns.mp4', 8: './uploads/9%20-%20Settings.mp4' },
+    slideImages: { 1: './uploads/2%20-%20Search-213deab5.png', 5: './uploads/7%20-%20Dreams.png', 6: './uploads/4%20-%20History.png', 7: './uploads/8%20-%20Triage.png' } },
+  { name: 'GPS3', tagline: 'Guinea Pig Simulator 3', meta: 'Vue 3 · TypeScript · Pinia · THREE.js · Vite',
+    description: 'A solo-developed virtual pet care simulator managing ten interconnected wellness needs across a 2D game view and an interactive 3D habitat. Its visual language was designed in Claude Design, converted into a standalone token-based design system, and ported back as the single source of styling truth.',
+    paras: [
+      'I began building the concept of a Guinea Pig Simulator (GPS) last year via vibe coding. It was a 2D game using emojis only. Through the trials of disorganized development, I started to organically understand the benefits of planning and specification-driven workflows for better quality outputs.',
+      'I loved the concept and wanted to start over, and began to plan a 3D version (GPS2). I spent weeks planning the phases, six total, with 29 sub-phases. The initial UI was a simple debug interface wrapping the 3D canvas. I was focusing on the core of the game experience: a reliable game controller, object pathfinding, debugging tools, needs and personality systems, resource consumption and economy, habitat degradation and upkeep, AI autonomy, and user to pig and pig to pig interactions.',
+      'My process was to have Claude execute each sub-phase one at a time, then I\'d manually test what I could and run code audits on the output. This helped keep the game vision on track and the code sound and extensible.',
+      'Early on, the debug interface was key to simulating different scenarios, like feedback messaging when guinea pig needs were low. Today, the debug panel still exists in the game to help with testing and to illustrate the telemetry behind the scenes.',
+      'When I hit my MVP, the guinea pigs were alive. They sought food in their dish. They drank when thirsty and sheltered in the igloo when tired. Their personalities drove their motivations into unique patterns.',
+      'I created the 3D meshes with Claude. Because a guinea pig is a cute potato shape, it wasn\'t a big challenge to iterate on the simple model. It was more difficult to build the igloo, wooden archway, and water bottle, but we got there.',
+      'When Claude Design came out, I wanted to try to build a better UI chrome around the game. I envisioned something playful, tactile, and perhaps a bit nostalgic. I recreated the game screens along with documentation on tokens and design elements. Once complete, I was able to backfill the designs into GPS2, and it became GPS3.',
+      'The next steps for GPS3 are ironing out gameplay bugs and finishing up the planned 3D meshes (incomplete items from the store render as cubes).',
+      'I would love to collaborate with 3D designers on creating assets! I have lettuce and blueberries to pay with.',
+    ],
+    links: [{ label: 'GitHub', href: 'https://github.com/ktocdev/gps3' }, { label: 'Play', href: 'https://ktocdev.github.io/gps3/' }, { label: 'Design System', href: 'https://ktocdev.github.io/gps2-design/' }],
+    slides: ['Title', 'Adoption', 'Feeding', 'Poop', 'Shelter', 'Interacting', 'Shopping', 'Inventory', 'Tokens', 'Design Elements'],
+    slideVideos: { 1: './uploads/1%20-%20Adoption-7264b281.mp4', 2: './uploads/2 - Feeding.mp4', 3: './uploads/3 - Poop.mp4', 4: './uploads/4 - Shelter.mp4', 5: './uploads/5 - Interacting.mp4', 6: './uploads/6 - Shopping.mp4', 7: './uploads/7 - Inventory.mp4' },
+    slideImages: { 0: './uploads/0 - Title-2cdd6b9c.png', 8: './uploads/8 - Tokens.png', 9: './uploads/9 - Design Elements.png' } },
+];
+class Component extends DCLogic {
+  state = { page: null, project: 0, slide: 0, theme: 'system' };
+  readPage() { const h = (location.hash || '').replace(/^#\/?/, ''); return PAGES.includes(h) ? h : null; }
+  componentDidMount() {
+    this._onHash = () => this.setState({ page: this.readPage(), slide: 0 });
+    window.addEventListener('hashchange', this._onHash);
+    let saved = 'system';
+    try { saved = localStorage.getItem('portfolio-theme') || 'system'; } catch (e) {}
+    this.applyTheme(saved);
+    this.setState({ page: this.readPage(), theme: saved });
+  }
+  applyTheme(t) {
+    const el = document.documentElement;
+    if (t === 'system') el.removeAttribute('data-theme'); else el.setAttribute('data-theme', t);
+  }
+  setTheme = (t) => {
+    this.applyTheme(t);
+    try { localStorage.setItem('portfolio-theme', t); } catch (e) {}
+    this.setState({ theme: t });
+  };
+  componentWillUnmount() { window.removeEventListener('hashchange', this._onHash); if (this._ro) this._ro.disconnect(); }
+  factsGridRef = (el) => {
+    if (this._ro) { this._ro.disconnect(); this._ro = null; }
+    if (!el) return;
+    const measure = () => {
+      const cols = getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length || 1;
+      if (cols !== this.state.factCols) this.setState({ factCols: cols });
+    };
+    this._ro = new ResizeObserver(measure);
+    this._ro.observe(el);
+    measure();
+  };
+  pauseVideos() {
+    document.querySelectorAll('video').forEach(v => { try { v.pause(); } catch (e) {} });
+  }
+  renderVals() {
+    const page = this.state.page ?? (this.props.startPage ?? 'home');
+    const blendModeHome = this.props.blendModeHome ?? 'multiply';
+    const blendModeContact = this.props.blendModeContact ?? 'luminosity';
+    const blendModeProjects = this.props.blendModeProjects ?? 'luminosity';
+    const fit = this.props.viewportFit ?? true;
+    const heroOverlayBlend = this.props.heroOverlayBlend ?? 'soft-light';
+    const theme = this.state.theme;
+    const isDark = theme === 'dark' || (theme === 'system' && typeof matchMedia === 'function' && matchMedia('(prefers-color-scheme: dark)').matches);
+    const forDark = (m) => (isDark && m === 'multiply' ? 'screen' : m);
+    const themeBtn = (id) => ({
+      pressed: theme === id,
+      bg: theme === id ? 'var(--accent-selected)' : 'var(--bg)',
+      fg: theme === id ? 'var(--text)' : 'var(--muted)',
+      hoverFg: theme === id ? 'var(--text)' : 'var(--accent)',
+      select: () => this.setTheme(id),
+    });
+    const proj = PROJECTS[this.state.project];
+    const slidesArr = proj.slides || [];
+    const n = slidesArr.length, cur = this.state.slide;
+    const labels = { home: 'Home', projects: 'Projects', resume: 'Resume', contact: 'Contact', about: 'About' };
+    const factCols = this.state.factCols || 1;
+    const factRem = (proj.facts || []).length % factCols;
+    const factsPhotoSpan = factRem ? factCols - factRem : 0;
+    return {
+      rootHeight: fit ? '100dvh' : '0',
+      blendModeHome: forDark(blendModeHome), blendModeContact: forDark(blendModeContact), blendModeProjects: forDark(blendModeProjects), heroOverlayBlend,
+      themeSystem: themeBtn('system'), themeLight: themeBtn('light'), themeDark: themeBtn('dark'),
+      factsGridRef: this.factsGridRef, showFactsPhoto: factsPhotoSpan > 0, factsPhotoSpan,
+      isHome: page === 'home', isProjects: page === 'projects', isResume: page === 'resume', isContact: page === 'contact', isAbout: page === 'about',
+      navItems: PAGES.map(p => ({ label: labels[p], href: '#/' + p, current: page === p ? 'page' : undefined, deco: page === p ? 'var(--accent)' : 'transparent' })),
+      skills: [
+        { label: 'AI engineering', items: 'Prompt engineering, spec-driven development, Prompt Caching, Model Routing, AI orchestration, LLM cost & model strategy, RAG, vector databases, Anthropic Claude API, Claude Design' },
+        { label: 'Front-end', items: 'Vue 3, Vite, Nuxt, TypeScript, design systems, component & theming architecture, Playwright MCP, Tailwind CSS, Vite, accessibility' },
+        { label: 'Back-end', items: 'Python, FastAPI, ChromaDB, Node.js, Docker' },
+        { label: 'Other', items: 'THREE.js, Pinia, UX patterns, cross-team technical leadership' },
+      ],
+      projectList: PROJECTS.map((p, i) => ({
+        num: String(i + 1).padStart(2, '0'), name: p.name, tagline: p.tagline, caseStudy: !!p.caseStudy,
+        pressed: i === this.state.project, bg: i === this.state.project ? 'var(--surface)' : 'transparent',
+        rule: i === this.state.project ? 'var(--accent)' : 'transparent',
+        select: () => this.setState({ project: i, slide: 0 }),
+      })),
+      project: proj,
+      hasMedia: n > 0, isCaseStudy: !!proj.caseStudy,
+      projectStatus: proj.status || '',
+      projectParas: proj.paras || (proj.description ? [proj.description] : []),
+      slides: slidesArr.map((s, i) => {
+        const video = (proj.slideVideos || {})[i] || null;
+        const src = (proj.slideImages || {})[i] || '';
+        return { id: `proj-${this.state.project}-${i}`, placeholder: `${proj.name} — ${s} (screenshot or video)`, display: i === cur ? 'block' : 'none', video, isImage: !video, src };
+      }),
+      slideCounter: `${cur + 1} / ${n}`,
+      slideLabel: slidesArr[cur] || '',
+      prevSlide: () => { this.pauseVideos(); n && this.setState({ slide: (cur - 1 + n) % n }); },
+      nextSlide: () => { this.pauseVideos(); n && this.setState({ slide: (cur + 1) % n }); },
+      experience: [
+        { years: '2015 — 2026', role: 'Senior Software Engineer', org: 'Discovery Education · Chicago, IL', groups: [
+          { label: 'Design Systems Architecture & Leadership', items: [
+            "Contributed across three generations of Discovery Education's component library: founding team for Comet (2016), build team for successor Nebula (2020), owner and primary contributor for current successor nebula-nuxt (2026). Managed 124 components and utilities across Nebula and nebula-nuxt simultaneously.",
+            "Architected nebula-nuxt, a themed component system letting teams replace legacy UI incrementally while migrating to Nuxt, separating visual-language changes from component rebuilds; ratified as the quarter's formal Planning Interval deliverable following a contested internal architecture debate.",
+            'Led the migration audit and stakeholder roadmap for 46 legacy component replacements; personally built 25 of the 26 components delivered in the new system and released nebula-nuxt for platform-layer consumption. Also built a new playground doc site with searchable documentation (Nuxt Content) and a live theme editor.',
+            'Architected and shipped MegaMenu for a high-stakes Back-to-School (BTS) product deliverable in 3 days, then delivered a refactored production version in another 3; smart-detects when to responsively collapse into a linked drill-down list rather than relying on fixed breakpoints.',
+            'Developed custom Claude skills to support migration: a planning skill that determines the right build approach (themed primitive, wrapped primitive, or fully custom component) for each legacy component, and a release-automation skill running at about $0.02 per use.',
+          ] },
+          { label: 'AI-Augmented Engineering & Prompt Strategy', items: [
+            'Uses Claude daily for spec-driven development, producing in-depth, well-researched implementation plans before executing.',
+            'Drove the end-to-end cost of shipping a component—build, doc page, and release—to $3.05 through skill-based automation.',
+            'Developed model-selection and prompt-caching strategies that reduced daily AI spend by approximately 50%, from $40–$50 to $10–$20, while preserving output quality; shared the cost-efficiency approach across the team.',
+            'Built a dashboard for human-in-the-loop review and approval of AI-generated metadata, designing the API around the review workflow.',
+            "Co-hosts company's AI Office Hours, and designed and presented a cost-efficient stacked-PR strategy there, structuring PRs in advance to reduce rebasing.",
+          ] },
+          { label: 'Cross-Team Product Engineering & Adaptability', items: [
+            'Integrated nebula-nuxt into the platform layer with production implementations of Product Bar, Global Nav, Page Shell, Button, Badge, Card, Switch, Row, Modal, and Tooltip; built a live theme switcher and component-comparison playground (legacy Nebula vs. nebula-nuxt side by side) to demonstrate the migration.',
+            'Systems consumed by 12 product teams; partnered directly with teams including Techbook, Search, Assessments, Admin tools, and User Onboarding to architect layouts, interfaces, and components across varied product domains.',
+            'Designed production-ready interfaces directly in code with Claude and existing design-system components when designs were incomplete or unavailable, bridging design and engineering to keep product work moving.',
+            'Advised engineers on theming architecture, component placement, and accessibility best practices; redirected in-progress work into the shared library with proper structure.',
+            'Served as accessibility subject matter expert, performing audits, bug fixes, and code review to enforce accessible implementation across products and shared components.',
+          ] },
+        ] },
+        { years: '2008 — 2015', role: 'Front-end & Production Roles', org: 'Chicago, IL', note: 'Sears Holdings, Razorfish, AlphaZeta Interactive, Elevation, Hewitt Associates, Bankers Life and Casualty, iPort Media, WGN-TV.' },
+        { years: '2009', role: 'BA, Interactive Art and Media', org: 'Columbia College Chicago', note: '' },
+      ].map((e, i, arr) => ({ ...e, hasGroups: !!e.groups, hasNote: !!e.note, border: i === arr.length - 1 ? 'none' : '1px solid var(--border-subtle)' })),
+      contacts: [
+        { label: 'Email', text: 'katie.oconnor13@gmail.com', href: 'mailto:katie.oconnor13@gmail.com' },
+        { label: 'LinkedIn', text: 'linkedin.com/in/katieoconnor13', href: 'https://www.linkedin.com/in/katieoconnor13/' },
+        { label: 'GitHub', text: 'github.com/ktocdev', href: 'https://github.com/ktocdev' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

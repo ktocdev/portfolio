@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&amp;family=Atkinson+Hyperlegible+Next:wght@400;500;700&amp;family=Atkinson+Hyperlegible+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F7F6FB;--surface:#EFEDF7;--surface-strong:#D9D6EE;--text:#1F2333;--muted:#555B70;--accent:#3E43B8;--accent-hover:#2F3396;--accent-selected:#C9C6F2;--hero-em:#686BAA;--border:#CDCBDD;--border-subtle:#E3E1EE;--selection:#C9C6F2;--img-tint:rgba(62,67,184,.22);--img-tint-0:rgba(62,67,184,0);--img-shade:rgba(31,35,51,.18);--img-shade-0:rgba(31,35,51,0);--img-blend-hero:multiply;--media-bg:#1F2333;--img-blend:luminosity;color-scheme:light}
+html[data-theme="dark"]{--bg:#151824;--surface:#1D2030;--surface-strong:#2A2D45;--text:#E8E7F2;--muted:#A7A9C0;--accent:#A5A8F5;--accent-hover:#C0C2FA;--accent-selected:#3A3F7A;--hero-em:#A5A8F5;--border:#363A52;--border-subtle:#262A3E;--selection:#3A3F7A;--img-tint:rgba(165,168,245,.20);--img-tint-0:rgba(165,168,245,0);--img-shade:rgba(0,0,0,.30);--img-shade-0:rgba(0,0,0,0);--img-blend-hero:screen;--media-bg:#0F111A;--img-blend:screen;color-scheme:dark}
+@media (prefers-color-scheme:dark){html:not([data-theme="light"]){--bg:#151824;--surface:#1D2030;--surface-strong:#2A2D45;--text:#E8E7F2;--muted:#A7A9C0;--accent:#A5A8F5;--accent-selected:#3A3F7A;--accent-hover:#C0C2FA;--hero-em:#A5A8F5;--border:#363A52;--border-subtle:#262A3E;--selection:#3A3F7A;--img-tint:rgba(165,168,245,.20);--img-tint-0:rgba(165,168,245,0);--img-shade:rgba(0,0,0,.30);--img-shade-0:rgba(0,0,0,0);--img-blend-hero:screen;--media-bg:#0F111A;--img-blend:screen;color-scheme:dark}}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+body{font-family:"Atkinson Hyperlegible Next","Atkinson Hyperlegible",system-ui,sans-serif;line-height:1.5}
+*{box-sizing:border-box}
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:.18em}
+a:hover{color:var(--accent-hover)}
+.tt-wrap{position:relative; display:inline-flex}
+.tt-wrap .tt-tip{position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%) translateY(6px); white-space:nowrap; padding:.3rem .55rem; background:var(--surface-strong); color:var(--text); border:1px solid var(--border); font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.6875rem; letter-spacing:.02em; border-radius:2px; opacity:0; pointer-events:none; z-index:5}
+.tt-wrap .tt-tip::after{content:""; position:absolute; top:100%; left:50%; width:8px; height:8px; background:var(--surface-strong); border-right:1px solid var(--border); border-bottom:1px solid var(--border); transform:translate(-50%, -50%) rotate(45deg)}
+.tt-wrap:hover .tt-tip, .tt-wrap:focus-within .tt-tip{opacity:1; transform:translateX(-50%) translateY(0)}
+::selection{background:var(--selection);color:var(--text)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+@media (prefers-reduced-motion:no-preference){a,button{transition:color .15s cubic-bezier(.2,.6,.2,1),background-color .15s cubic-bezier(.2,.6,.2,1),border-color .15s cubic-bezier(.2,.6,.2,1)}
+.tt-wrap .tt-tip{transition:opacity .25s cubic-bezier(.2,.6,.2,1) 60ms, transform .25s cubic-bezier(.2,.6,.2,1) 60ms}}
+</style>
+</helmet>
+<div data-screen-label="Specimen" style="min-height:100dvh; background:var(--bg); color:var(--text); padding:clamp(1.25rem, 2.4vw, 3rem) clamp(1.25rem, 3.4vw, 4.5rem); display:flex; flex-direction:column; gap:clamp(1.75rem, 4vh, 3.25rem)">
+
+  <header style="display:flex; flex-direction:column; gap:.9rem; padding-bottom:clamp(.75rem, 1.4vh, 1.25rem); border-bottom:1px solid var(--border)">
+    <p style="margin:0; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:clamp(.75rem, .68rem + .22vw, .875rem); letter-spacing:.06em; text-transform:uppercase; color:var(--muted)">Katie O'Connor · Handoff reference</p>
+    <h1 style="margin:0; font-family:'Young Serif',Georgia,serif; font-weight:400; font-size:clamp(2rem, 1.2vw + 1.8vh + .8rem, 3.75rem); line-height:1.08; letter-spacing:-.01em">Theme Specimen</h1>
+    <p style="margin:0; max-width:62ch; font-size:clamp(1rem, .82rem + .38vw, 1.25rem); line-height:1.5; text-wrap:pretty">Every token in <a href="./theme-tokens.md">theme-tokens.md</a> rendered at real size. Light mode is the designed source of truth; dark values are listed for derivation. Contrast ratios are against the surrounding background unless noted.</p>
+  </header>
+
+  <section style="display:flex; flex-direction:column; gap:clamp(.9rem, 2vh, 1.4rem)">
+    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.75rem 1.5rem">
+      <h2 style="margin:0; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:clamp(.75rem, .68rem + .22vw, .875rem); letter-spacing:.06em; text-transform:uppercase; color:var(--accent)">01 · Color — Light</h2>
+      <div role="group" aria-label="Color arrangement" style="display:flex; align-items:center; gap:.6rem">
+        <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)">Arrange</span>
+        <div style="display:flex; gap:1px; background:var(--border); border:1px solid var(--border); border-radius:2px; overflow:hidden">
+          <button type="button" onClick="{{ viewRole.select }}" aria-pressed="{{ viewRole.pressed }}" style="appearance:none; -webkit-appearance:none; background:none; border:0; margin:0; padding:0; font:inherit; color:inherit; text-align:inherit; cursor:pointer; cursor:pointer; padding:.3rem .7rem; min-height:1.9rem; display:grid; place-items:center; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; letter-spacing:.06em; text-transform:uppercase; background:{{ viewRole.bg }}; color:{{ viewRole.fg }}" style-hover="color:var(--accent)">By role</button>
+          <button type="button" onClick="{{ viewScale.select }}" aria-pressed="{{ viewScale.pressed }}" style="appearance:none; -webkit-appearance:none; background:none; border:0; margin:0; padding:0; font:inherit; color:inherit; text-align:inherit; cursor:pointer; cursor:pointer; padding:.3rem .7rem; min-height:1.9rem; display:grid; place-items:center; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; letter-spacing:.06em; text-transform:uppercase; background:{{ viewScale.bg }}; color:{{ viewScale.fg }}" style-hover="color:var(--accent)">By scale</button>
+        </div>
+      </div>
+    </div>
+    <sc-if value="{{ isRoleView }}" hint-placeholder-val="{{ true }}">
+      <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:4px; overflow:hidden">
+        <sc-for list="{{ lightColors }}" as="c" hint-placeholder-count="12">
+          <div style="display:flex; flex-direction:column; background:var(--bg)">
+            <div style="height:4.5rem; background:{{ c.swatchBg }}; border-bottom:1px solid var(--border-subtle)"></div>
+            <div style="display:flex; flex-direction:column; gap:.25rem; padding:.7rem .85rem 1rem">
+              <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.8125rem; letter-spacing:.03em; color:var(--text)">{{ c.token }}</span>
+              <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; letter-spacing:.04em; text-transform:uppercase; color:var(--muted)">{{ c.value }}</span>
+              <span style="font-size:.875rem; line-height:1.4; color:var(--muted); text-wrap:pretty">{{ c.role }}</span>
+              <sc-if value="{{ c.contrast }}" hint-placeholder-val="{{ false }}">
+                <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; letter-spacing:.04em; color:var(--hero-em)">{{ c.contrast }}</span>
+              </sc-if>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+    <sc-if value="{{ isScaleView }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; flex-direction:column; gap:1.5rem">
+        <sc-for list="{{ lightGroups }}" as="g" hint-placeholder-count="5">
+          <div style="display:flex; flex-direction:column; gap:.5rem">
+            <div style="display:flex; align-items:baseline; gap:.6rem; flex-wrap:wrap">
+              <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.8125rem; letter-spacing:.06em; text-transform:uppercase; color:var(--text)">{{ g.label }}</span>
+              <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; color:var(--muted)">{{ g.note }}</span>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr)); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:4px; overflow:hidden">
+              <sc-for list="{{ g.items }}" as="c" hint-placeholder-count="4">
+                <div style="display:flex; flex-direction:column; justify-content:flex-end; gap:.15rem; min-height:7.5rem; padding:.65rem .75rem; background:{{ c.swatchBg }}; color:{{ c.onColor }}">
+                  <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; letter-spacing:.03em; overflow-wrap:anywhere">{{ c.short }}</span>
+                  <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.6875rem; letter-spacing:.04em; text-transform:uppercase; opacity:.92; overflow-wrap:anywhere">{{ c.value }}</span>
+                  <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.6875rem; letter-spacing:.04em; opacity:.92">L {{ c.lightness }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+  </section>
+
+  <section style="display:flex; flex-direction:column; gap:clamp(.9rem, 2vh, 1.4rem)">
+    <h2 style="margin:0; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:clamp(.75rem, .68rem + .22vw, .875rem); letter-spacing:.06em; text-transform:uppercase; color:var(--accent)">02 · Color — Dark</h2>
+    <sc-if value="{{ isRoleView }}" hint-placeholder-val="{{ true }}">
+      <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap:1px; background:#363A52; border:1px solid #363A52; border-radius:4px; overflow:hidden">
+        <sc-for list="{{ darkColors }}" as="c" hint-placeholder-count="12">
+          <div style="display:flex; flex-direction:column; background:#151824">
+            <div style="height:4.5rem; background:{{ c.swatchBg }}; border-bottom:1px solid #262A3E"></div>
+            <div style="display:flex; flex-direction:column; gap:.25rem; padding:.7rem .85rem 1rem">
+              <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.8125rem; letter-spacing:.03em; color:#E8E7F2">{{ c.token }}</span>
+              <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; letter-spacing:.04em; text-transform:uppercase; color:#A7A9C0">{{ c.value }}</span>
+              <span style="font-size:.875rem; line-height:1.4; color:#A7A9C0; text-wrap:pretty">{{ c.role }}</span>
+              <sc-if value="{{ c.contrast }}" hint-placeholder-val="{{ false }}">
+                <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; letter-spacing:.04em; color:#A5A8F5">{{ c.contrast }}</span>
+              </sc-if>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+    <sc-if value="{{ isScaleView }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; flex-direction:column; gap:1.5rem; padding:1.1rem; background:#151824; border:1px solid #363A52; border-radius:4px">
+        <sc-for list="{{ darkGroups }}" as="g" hint-placeholder-count="5">
+          <div style="display:flex; flex-direction:column; gap:.5rem">
+            <div style="display:flex; align-items:baseline; gap:.6rem; flex-wrap:wrap">
+              <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.8125rem; letter-spacing:.06em; text-transform:uppercase; color:#E8E7F2">{{ g.label }}</span>
+              <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; color:#A7A9C0">{{ g.note }}</span>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr)); gap:1px; background:#363A52; border:1px solid #363A52; border-radius:4px; overflow:hidden">
+              <sc-for list="{{ g.items }}" as="c" hint-placeholder-count="4">
+                <div style="display:flex; flex-direction:column; justify-content:flex-end; gap:.15rem; min-height:7.5rem; padding:.65rem .75rem; background:{{ c.swatchBg }}; color:{{ c.onColor }}">
+                  <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; letter-spacing:.03em; overflow-wrap:anywhere">{{ c.short }}</span>
+                  <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.6875rem; letter-spacing:.04em; text-transform:uppercase; opacity:.92; overflow-wrap:anywhere">{{ c.value }}</span>
+                  <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.6875rem; letter-spacing:.04em; opacity:.92">L {{ c.lightness }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+    <p style="margin:0; max-width:70ch; font-size:.9375rem; line-height:1.5; color:var(--muted); text-wrap:pretty">Dark-mode imagery: keep <code style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.875rem">grayscale(1) contrast(1.08)</code>, switch <code style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.875rem">mix-blend-mode</code> from multiply to screen (or luminosity) so the image lifts out of surface.strong; cap opacity at 0.85.</p>
+  </section>
+
+  <section style="display:flex; flex-direction:column; gap:clamp(.9rem, 2vh, 1.4rem)">
+    <h2 style="margin:0; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:clamp(.75rem, .68rem + .22vw, .875rem); letter-spacing:.06em; text-transform:uppercase; color:var(--accent)">03 · Typography</h2>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap:1rem">
+      <sc-for list="{{ families }}" as="f" hint-placeholder-count="3">
+        <div style="display:flex; flex-direction:column; gap:.5rem; padding:1rem 1.1rem 1.25rem; background:var(--surface); border:1px solid var(--border); border-radius:4px">
+          <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)">{{ f.token }}</span>
+          <span style="font-family:{{ f.stack }}; font-size:clamp(1.5rem, 1rem + 1vw, 2.25rem); line-height:1.1; color:var(--text)">{{ f.name }}</span>
+          <span style="font-family:{{ f.stack }}; font-size:.9375rem; line-height:1.45; color:var(--muted)">AaBbCc 0123456789 — {{ f.weights }}</span>
+          <span style="font-size:.875rem; line-height:1.4; color:var(--muted); text-wrap:pretty">{{ f.use }}</span>
+        </div>
+      </sc-for>
+    </div>
+    <ol style="list-style:none; margin:0; padding:0; border-top:1px solid var(--border)">
+      <sc-for list="{{ typeScale }}" as="t" hint-placeholder-count="10">
+        <li style="display:grid; grid-template-columns:minmax(8rem, max-content) 1fr; gap:.35rem clamp(1rem, 2.5vw, 2.5rem); align-items:baseline; padding:clamp(.7rem, 1.6vh, 1.1rem) 0; border-bottom:1px solid var(--border-subtle)">
+          <div style="display:flex; flex-direction:column; gap:.2rem; min-width:0">
+            <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.8125rem; letter-spacing:.03em; color:var(--text)">{{ t.token }}</span>
+            <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; line-height:1.4; color:var(--muted); overflow-wrap:anywhere">{{ t.value }}</span>
+            <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; color:var(--hero-em)">{{ t.rendered }}</span>
+          </div>
+          <span style="font-family:{{ t.stack }}; font-size:{{ t.size }}; line-height:{{ t.leading }}; letter-spacing:{{ t.tracking }}; color:var(--text); text-wrap:balance; min-width:0">{{ t.sample }}</span>
+        </li>
+      </sc-for>
+    </ol>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap:.9rem 1.5rem; padding-top:.25rem">
+      <sc-for list="{{ typeMeta }}" as="m" hint-placeholder-count="6">
+        <div style="display:flex; flex-direction:column; gap:.2rem">
+          <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)">{{ m.token }}</span>
+          <span style="font-size:.9375rem; color:var(--text); text-wrap:pretty">{{ m.value }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section style="display:flex; flex-direction:column; gap:clamp(.9rem, 2vh, 1.4rem)">
+    <h2 style="margin:0; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:clamp(.75rem, .68rem + .22vw, .875rem); letter-spacing:.06em; text-transform:uppercase; color:var(--accent)">04 · Spacing</h2>
+    <ol style="list-style:none; margin:0; padding:0; border-top:1px solid var(--border)">
+      <sc-for list="{{ spacing }}" as="s" hint-placeholder-count="8">
+        <li style="display:grid; grid-template-columns:minmax(9rem, max-content) minmax(0, 1fr); gap:.3rem clamp(1rem, 2.5vw, 2.5rem); align-items:center; padding:.55rem 0; border-bottom:1px solid var(--border-subtle)">
+          <div style="display:flex; flex-direction:column; gap:.15rem; min-width:0">
+            <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.8125rem; letter-spacing:.03em; color:var(--text)">{{ s.token }}</span>
+            <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; line-height:1.4; color:var(--muted); overflow-wrap:anywhere">{{ s.value }}</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:.65rem; min-width:0">
+            <div style="height:1.15rem; width:{{ s.value }}; min-width:2px; background:var(--accent); border-radius:2px; flex:0 0 auto"></div>
+            <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; color:var(--hero-em); white-space:nowrap">{{ s.rendered }}</span>
+          </div>
+        </li>
+      </sc-for>
+    </ol>
+  </section>
+
+  <section style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); gap:clamp(1.5rem, 3.5vw, 4rem)">
+    <div style="display:flex; flex-direction:column; gap:clamp(.9rem, 2vh, 1.4rem)">
+      <h2 style="margin:0; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:clamp(.75rem, .68rem + .22vw, .875rem); letter-spacing:.06em; text-transform:uppercase; color:var(--accent)">05 · Radius</h2>
+      <div style="display:flex; flex-wrap:wrap; gap:1rem">
+        <sc-for list="{{ radii }}" as="r" hint-placeholder-count="4">
+          <div style="display:flex; flex-direction:column; gap:.4rem; width:8.5rem">
+            <div style="height:4.5rem; background:var(--surface-strong); border:1px solid var(--border); border-radius:{{ r.value }}"></div>
+            <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.8125rem; color:var(--text)">{{ r.token }}</span>
+            <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; color:var(--muted)">{{ r.value }}</span>
+            <span style="font-size:.875rem; line-height:1.35; color:var(--muted); text-wrap:pretty">{{ r.use }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:clamp(.9rem, 2vh, 1.4rem)">
+      <h2 style="margin:0; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:clamp(.75rem, .68rem + .22vw, .875rem); letter-spacing:.06em; text-transform:uppercase; color:var(--accent)">06 · Borders &amp; lines</h2>
+      <div style="display:flex; flex-direction:column; gap:.9rem">
+        <div style="display:flex; flex-direction:column; gap:.3rem">
+          <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.8125rem; color:var(--text)">border.hairline — 1px solid var(--border)</span>
+          <div style="border-top:1px solid var(--border); height:0"></div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:.3rem">
+          <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.8125rem; color:var(--text)">border.subtle — 1px solid var(--border-subtle)</span>
+          <div style="border-top:1px solid var(--border-subtle); height:0"></div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:.3rem">
+          <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.8125rem; color:var(--text)">border.active — 2px solid var(--accent)</span>
+          <div style="border-left:2px solid var(--accent); background:var(--surface); padding:.55rem .85rem; font-size:.9375rem; color:var(--text)">Selected project row</div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:.35rem; padding-top:.2rem">
+          <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)">Underlines</span>
+          <a href="#" style="align-self:flex-start; font-size:1rem; color:var(--accent); text-decoration-thickness:1px; text-underline-offset:.18em">Link — 1px / 0.18em offset</a>
+          <a href="#" style="align-self:flex-start; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.875rem; letter-spacing:.06em; text-transform:uppercase; color:var(--text); text-decoration:underline; text-decoration-color:var(--accent); text-decoration-thickness:1.5px; text-underline-offset:.45em">Nav active — 1.5px / 0.45em</a>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:clamp(.9rem, 2vh, 1.4rem)">
+      <h2 style="margin:0; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:clamp(.75rem, .68rem + .22vw, .875rem); letter-spacing:.06em; text-transform:uppercase; color:var(--accent)">07 · Elevation</h2>
+      <div style="display:flex; flex-direction:column; gap:.9rem">
+        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:4px; overflow:hidden">
+          <div style="display:flex; flex-direction:column; justify-content:flex-end; min-height:5rem; padding:.6rem .7rem; background:var(--bg)"><span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; color:var(--muted)">bg</span></div>
+          <div style="display:flex; flex-direction:column; justify-content:flex-end; min-height:5rem; padding:.6rem .7rem; background:var(--surface)"><span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; color:var(--muted)">surface</span></div>
+          <div style="display:flex; flex-direction:column; justify-content:flex-end; min-height:5rem; padding:.6rem .7rem; background:var(--surface-strong)"><span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; color:var(--muted)">surface.strong</span></div>
+        </div>
+        <p style="margin:0; font-size:.9375rem; line-height:1.5; color:var(--muted); text-wrap:pretty"><code style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.875rem">shadow.none</code> — a flat system with no drop shadows anywhere. The three surface fills above are the entire depth ladder; blended imagery is the only other way a panel sits above the page.</p>
+      </div>
+    </div>
+  </section>
+
+  <section style="display:flex; flex-direction:column; gap:clamp(.9rem, 2vh, 1.4rem)">
+    <h2 style="margin:0; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:clamp(.75rem, .68rem + .22vw, .875rem); letter-spacing:.06em; text-transform:uppercase; color:var(--accent)">08 · Components &amp; states</h2>
+    <div style="display:flex; flex-wrap:wrap; gap:1.5rem 2.5rem; align-items:flex-start">
+      <div style="display:flex; flex-direction:column; gap:.5rem">
+        <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)">Primary button</span>
+        <a href="#" style="display:inline-flex; align-items:center; gap:.6rem; min-height:2.75rem; padding:.65rem 1.1rem; background:var(--accent); color:var(--bg); text-decoration:none; border-radius:2px; font-weight:500; font-size:1.0625rem" style-hover="background:var(--accent-hover); color:var(--bg)">Download PDF <span aria-hidden="true" style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace">↓</span></a>
+        <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; color:var(--muted)">hover → var(--accent-hover)</span>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:.5rem">
+        <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)">Icon buttons — 44×44 min</span>
+        <div style="display:flex; gap:.35rem">
+          <button type="button" style="appearance:none; -webkit-appearance:none; background:none; border:0; margin:0; padding:0; font:inherit; color:inherit; text-align:inherit; cursor:pointer; cursor:pointer; min-width:2.75rem; min-height:2.75rem; display:grid; place-items:center; background:var(--bg); color:var(--text); border:1px solid var(--border); border-radius:2px; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:1rem" style-hover="border-color:var(--accent); color:var(--accent)">←</button>
+          <button type="button" style="appearance:none; -webkit-appearance:none; background:none; border:0; margin:0; padding:0; font:inherit; color:inherit; text-align:inherit; cursor:pointer; cursor:pointer; min-width:2.75rem; min-height:2.75rem; display:grid; place-items:center; background:var(--bg); color:var(--text); border:1px solid var(--border); border-radius:2px; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:1rem" style-hover="border-color:var(--accent); color:var(--accent)">→</button>
+          <span style="padding:.35rem .6rem; align-self:center; background:var(--bg); border:1px solid var(--border); border-radius:2px; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.8125rem; letter-spacing:.06em; color:var(--text); white-space:nowrap">3 / 10</span>
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:.5rem">
+        <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)">Tooltip</span>
+        <span class="tt-wrap" style="align-self:flex-start"><button type="button" style="appearance:none; -webkit-appearance:none; background:none; border:0; margin:0; padding:0; font:inherit; color:inherit; text-align:inherit; cursor:pointer; cursor:pointer; min-width:2.75rem; min-height:2.75rem; display:grid; place-items:center; background:var(--bg); color:var(--text); border:1px solid var(--border); border-radius:2px; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:1rem" style-hover="border-color:var(--accent); color:var(--accent)">?</button><span class="tt-tip" role="tooltip">Hover for label</span></span>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:.5rem; max-width:26rem">
+        <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)">Status note</span>
+        <p style="margin:0; padding:.5rem .75rem; border-left:2px solid var(--accent); background:var(--surface); font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.9375rem; line-height:1.45; color:var(--text); text-wrap:pretty">Work in progress. Full demo journal will be available online soon.</p>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:.5rem">
+        <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)">Focus ring · selection</span>
+        <button type="button" style="appearance:none; -webkit-appearance:none; background:none; border:0; margin:0; padding:0; font:inherit; color:inherit; text-align:inherit; cursor:pointer; cursor:pointer; min-height:2.75rem; padding:.6rem .9rem; background:var(--surface); border:1px solid var(--border); border-radius:2px; font-size:1rem; color:var(--text); outline:2px solid var(--accent); outline-offset:3px">Focused state (2px / 3px offset)</button>
+        <span style="font-size:1rem; color:var(--text)"><span style="background:var(--selection); color:var(--text)">::selection sample</span></span>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:.5rem; align-items:flex-start">
+        <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)">Segmented toggle — selected state</span>
+        <div role="group" aria-label="Color scheme" style="display:flex; gap:1px; background:var(--border); border:1px solid var(--border); border-radius:2px">
+          <span class="tt-wrap"><button type="button" onClick="{{ themeSystem.select }}" aria-pressed="{{ themeSystem.pressed }}" aria-label="Follow system setting" style="appearance:none; -webkit-appearance:none; background:none; border:0; margin:0; padding:0; font:inherit; color:inherit; text-align:inherit; cursor:pointer; cursor:pointer; padding:.25rem .6rem; min-height:1.8rem; display:grid; place-items:center; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; background:{{ themeSystem.bg }}; color:{{ themeSystem.fg }}; border-radius:1px 0 0 1px" style-hover="color:{{ themeSystem.hoverFg }}">Auto</button><span class="tt-tip" role="tooltip">Follow system setting</span></span>
+          <span class="tt-wrap"><button type="button" onClick="{{ themeLight.select }}" aria-pressed="{{ themeLight.pressed }}" aria-label="Light mode" style="appearance:none; -webkit-appearance:none; background:none; border:0; margin:0; padding:0; font:inherit; color:inherit; text-align:inherit; cursor:pointer; cursor:pointer; padding:.25rem .6rem; min-height:1.8rem; display:grid; place-items:center; background:{{ themeLight.bg }}; color:{{ themeLight.fg }}" style-hover="color:{{ themeLight.hoverFg }}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" focusable="false" style="width:17px; height:17px"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 12a5 5 0 1 1-10 0a5 5 0 0 1 10 0Z"></path><path stroke-linecap="round" d="M12 2c-.377.333-.905 1.2 0 2m0 16c.377.333.906 1.2 0 2m7.5-17.497c-.532-.033-1.575.22-1.496 1.495M5.496 17.5c.033.532-.22 1.575-1.496 1.496M5.003 4.5c-.033.532.22 1.576 1.497 1.497M18 17.503c.532-.032 1.575.208 1.496 1.414M22 12c-.333-.377-1.2-.905-2 0m-16-.5c-.333.377-1.2.906-2 0"></path></g></svg></button><span class="tt-tip" role="tooltip">Light mode</span></span>
+          <span class="tt-wrap"><button type="button" onClick="{{ themeDark.select }}" aria-pressed="{{ themeDark.pressed }}" aria-label="Dark mode" style="appearance:none; -webkit-appearance:none; background:none; border:0; margin:0; padding:0; font:inherit; color:inherit; text-align:inherit; cursor:pointer; cursor:pointer; padding:.25rem .6rem; min-height:1.8rem; display:grid; place-items:center; background:{{ themeDark.bg }}; color:{{ themeDark.fg }}; border-radius:0 1px 1px 0" style-hover="color:{{ themeDark.hoverFg }}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false" style="width:15px; height:15px"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21.5 14.078A8.557 8.557 0 0 1 9.922 2.5C5.668 3.497 2.5 7.315 2.5 11.873a9.627 9.627 0 0 0 9.627 9.627c4.558 0 8.376-3.168 9.373-7.422"></path></svg></button><span class="tt-tip" role="tooltip">Dark mode</span></span>
+        </div>
+        <span style="font-size:.875rem; line-height:1.4; color:var(--muted); max-width:26rem; text-wrap:pretty">Selected segment fills with <code style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.8125rem">accent.selected</code>; labels are <code style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.8125rem">type.mono.xs</code>. The one control below the 44px hit-target minimum — compact by intent, with tooltip labels.</span>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:.5rem">
+        <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)">Fact tile</span>
+        <div style="display:flex; flex-direction:column; gap:.3rem; padding:1rem; background:var(--surface); border:1px solid var(--border); border-radius:4px; width:13rem">
+          <span style="font-family:'Young Serif',Georgia,serif; font-size:clamp(1.375rem, 1rem + 1vw + .5vh, 2.25rem); line-height:1.05; color:var(--hero-em)">45M</span>
+          <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:clamp(.75rem, .68rem + .22vw, .875rem); letter-spacing:.04em; color:var(--muted); text-wrap:pretty">students and 4.5M educators reached across 100 countries and territories</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="display:flex; flex-direction:column; gap:clamp(.9rem, 2vh, 1.4rem)">
+      <h2 style="margin:0; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:clamp(.75rem, .68rem + .22vw, .875rem); letter-spacing:.06em; text-transform:uppercase; color:var(--accent)">09 · Motion</h2>
+      <div style="display:flex; flex-wrap:wrap; gap:1rem 2rem; align-items:flex-start">
+      <div style="display:flex; flex-direction:column; gap:.4rem; align-items:flex-start">
+        <button type="button" style="appearance:none; -webkit-appearance:none; background:none; border:0; margin:0; padding:0; font:inherit; color:inherit; text-align:inherit; cursor:pointer; cursor:pointer; min-height:2.75rem; padding:.65rem 1.1rem; background:var(--accent); color:var(--bg); border-radius:2px; font-weight:500; font-size:1.0625rem" style-hover="background:var(--accent-hover)">Hover for background</button>
+        <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; color:var(--muted)">duration.base 150ms · accent → accent.hover</span>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:.4rem; align-items:flex-start">
+        <span class="tt-wrap"><button type="button" style="appearance:none; -webkit-appearance:none; background:none; border:0; margin:0; padding:0; font:inherit; color:inherit; text-align:inherit; cursor:pointer; cursor:pointer; min-height:2.75rem; padding:.6rem .9rem; background:var(--surface); border:1px solid var(--border); border-radius:2px; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.8125rem; letter-spacing:.06em; text-transform:uppercase; color:var(--text)" style-hover="border-color:var(--accent); color:var(--accent)">Hover me</button><span class="tt-tip" role="tooltip">250ms fade + 6px rise</span></span>
+        <span style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; color:var(--muted)">duration.relaxed 250ms · delay 60ms — border and text shift at duration.base</span>
+      </div>
+      </div>
+      <ul style="list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.4rem; font-size:.9375rem; color:var(--text)">
+        <li><strong style="font-weight:700">motion.duration.base</strong> — 150ms · color, border, background and underline on <code style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.875rem">a, button</code></li>
+        <li><strong style="font-weight:700">motion.duration.relaxed</strong> — 250ms · elements that appear rather than change state: tooltip opacity + 6px rise, after a 60ms hover delay</li>
+        <li><strong style="font-weight:700">motion.ease</strong> — <code style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.875rem">cubic-bezier(.2,.6,.2,1)</code> on both durations</li>
+        <li><strong style="font-weight:700">motion.reduced</strong> — all transitions and animations disabled under prefers-reduced-motion; every transition in the system lives inside the <code style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.875rem">no-preference</code> guard</li>
+      </ul>
+  </section>
+
+  <section style="display:flex; flex-direction:column; gap:clamp(.9rem, 2vh, 1.4rem)">
+    <h2 style="margin:0; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:clamp(.75rem, .68rem + .22vw, .875rem); letter-spacing:.06em; text-transform:uppercase; color:var(--accent)">10 · Imagery treatment</h2>
+    <p style="margin:0; max-width:74ch; font-size:.9375rem; line-height:1.6; color:var(--text); text-wrap:pretty">Five treatments, one rule behind them: decorative imagery is pulled into the lavender field; imagery that carries information is left alone. Every treatment sits on a <strong style="font-weight:700">surface.strong</strong> base and clips with <code style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.875rem">overflow:hidden</code> + <code style="font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.875rem">isolation:isolate</code> so blend modes stay inside the frame.</p>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap:clamp(1rem, 2.5vw, 2rem)">
+      <figure style="margin:0; display:flex; flex-direction:column">
+        <div style="position:relative; height:9rem; background:var(--surface-strong); overflow:hidden; isolation:isolate; border-radius:4px">
+          <img src="./media/zinnias-monarch.jpg" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 58%; mix-blend-mode:var(--img-blend-hero); filter:grayscale(1) contrast(1.08) brightness(1.04)">
+          <div aria-hidden="true" style="position:absolute; inset:0; pointer-events:none; background:linear-gradient(165deg, var(--img-tint) 0%, var(--img-tint-0) 55%), linear-gradient(15deg, var(--img-shade) 0%, var(--img-shade-0) 45%); mix-blend-mode:soft-light"></div>
+        </div>
+        <figcaption style="display:flex; flex-direction:column; gap:.3rem; padding-top:.55rem; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; line-height:1.5; color:var(--muted); text-wrap:pretty">
+          <span style="color:var(--text); font-weight:500; letter-spacing:.02em">image.botanical.hero</span>
+          <span>Home hero panel — the one image that has to sit inside the lavender field rather than on top of it.</span>
+          <span>grayscale + contrast 1.08 + brightness 1.04 · blend <strong style="font-weight:500">multiply</strong> (light) / <strong style="font-weight:500">screen</strong> (dark) · two overlay gradients — image.tint at 165°, image.shade at 15° — both soft-light · radius 4px</span>
+        </figcaption>
+      </figure>
+      <figure style="margin:0; display:flex; flex-direction:column">
+        <div style="position:relative; height:9rem; background:var(--surface-strong); overflow:hidden; isolation:isolate; border-radius:4px">
+          <img src="./media/zinnias-monarch.jpg" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 58%; mix-blend-mode:luminosity; filter:grayscale(1) contrast(1.08) brightness(1.04)">
+          <div aria-hidden="true" style="position:absolute; inset:0; pointer-events:none; background:linear-gradient(200deg, var(--img-tint) 0%, var(--img-tint-0) 55%); mix-blend-mode:soft-light"></div>
+        </div>
+        <figcaption style="display:flex; flex-direction:column; gap:.3rem; padding-top:.55rem; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; line-height:1.5; color:var(--muted); text-wrap:pretty">
+          <span style="color:var(--text); font-weight:500; letter-spacing:.02em">image.botanical.section</span>
+          <span>Contact panel — same botanical family, but paired with body copy, so it holds more of its own tonal range.</span>
+          <span>same filter · blend <strong style="font-weight:500">luminosity</strong> in both themes · single image.tint gradient at 200°, soft-light · radius 4px</span>
+        </figcaption>
+      </figure>
+      <figure style="margin:0; display:flex; flex-direction:column">
+        <div style="position:relative; height:9rem; background:var(--surface-strong); overflow:hidden; isolation:isolate">
+          <img src="./media/zinnias-monarch.jpg" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 58%; mix-blend-mode:luminosity; filter:grayscale(1) contrast(1.08) brightness(1.04)">
+          <div aria-hidden="true" style="position:absolute; inset:0; pointer-events:none; background:linear-gradient(200deg, var(--img-tint) 0%, var(--img-tint-0) 55%); mix-blend-mode:soft-light"></div>
+        </div>
+        <figcaption style="display:flex; flex-direction:column; gap:.3rem; padding-top:.55rem; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; line-height:1.5; color:var(--muted); text-wrap:pretty">
+          <span style="color:var(--text); font-weight:500; letter-spacing:.02em">image.inset.facts</span>
+          <span>Projects facts grid — an image cell dropped into the definition-list rhythm, so it reads as part of the table, not a picture beside it.</span>
+          <span>identical filter, blend and overlay to image.botanical.section · <strong style="font-weight:500">square corners</strong> (no radius) so the cell aligns to the grid rules · min-height 7rem, spans the leftover columns</span>
+        </figcaption>
+      </figure>
+      <figure style="margin:0; display:flex; flex-direction:column">
+        <div style="position:relative; height:9rem; background:var(--surface-strong); overflow:hidden; isolation:isolate; border-radius:4px">
+          <img src="./media/zinnias-monarch.jpg" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 58%">
+          <div aria-hidden="true" style="position:absolute; inset:0; pointer-events:none; background:linear-gradient(180deg, var(--img-tint-0) 60%, var(--img-tint) 100%); mix-blend-mode:multiply"></div>
+        </div>
+        <figcaption style="display:flex; flex-direction:column; gap:.3rem; padding-top:.55rem; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; line-height:1.5; color:var(--muted); text-wrap:pretty">
+          <span style="color:var(--text); font-weight:500; letter-spacing:.02em">image.portrait</span>
+          <span>About headshot — a person, so no desaturation and no blend: skin tone stays true.</span>
+          <span><strong style="font-weight:500">no filter, no blend mode</strong> · single bottom-anchored gradient, image.tint from 60% to 100% at <strong style="font-weight:500">multiply</strong>, grounding the crop · aspect-ratio 4/5 · radius 4px</span>
+        </figcaption>
+      </figure>
+      <figure style="margin:0; display:flex; flex-direction:column">
+        <div style="position:relative; height:9rem; background:var(--surface-strong); overflow:hidden; isolation:isolate; border-radius:4px; background:var(--media-bg)">
+          <img src="./media/zinnias-monarch.jpg" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain">
+        </div>
+        <figcaption style="display:flex; flex-direction:column; gap:.3rem; padding-top:.55rem; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; line-height:1.5; color:var(--muted); text-wrap:pretty">
+          <span style="color:var(--text); font-weight:500; letter-spacing:.02em">image.media.literal</span>
+          <span>Case-study screenshots and video — evidence of the work, shown unaltered.</span>
+          <span><strong style="font-weight:500">no filter, no blend, no overlay</strong> · object-fit contain on a media.bg letterbox so nothing is cropped</span>
+        </figcaption>
+      </figure>
+    </div>
+    <p style="margin:0; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.75rem; line-height:1.55; color:var(--muted); text-wrap:pretty">All five samples use the same source photograph so the treatments can be compared directly. Blend defaults are exposed as tweaks on the portfolio component (<code style="font-size:.75rem">blendModeHome</code>, <code style="font-size:.75rem">blendModeContact</code>, <code style="font-size:.75rem">blendModeProjects</code>, <code style="font-size:.75rem">heroOverlayBlend</code>); <code style="font-size:.75rem">multiply</code> is swapped to <code style="font-size:.75rem">screen</code> automatically in dark mode.</p>
+  </section>
+
+  <section style="display:flex; flex-direction:column; gap:clamp(.9rem, 2vh, 1.4rem)">
+    <h2 style="margin:0; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:clamp(.75rem, .68rem + .22vw, .875rem); letter-spacing:.06em; text-transform:uppercase; color:var(--accent)">11 · Layout &amp; z-index</h2>
+    <dl style="margin:0; display:grid; grid-template-columns:max-content minmax(0, 1fr); column-gap:clamp(1rem, 2.5vw, 2.5rem); row-gap:0; border-top:1px solid var(--border)">
+      <sc-for list="{{ layout }}" as="l" hint-placeholder-count="6">
+        <dt style="padding:.6rem 0; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.8125rem; letter-spacing:.03em; color:var(--muted); border-bottom:1px solid var(--border-subtle)">{{ l.token }}</dt>
+        <dd style="margin:0; padding:.6rem 0; font-size:.9375rem; color:var(--text); border-bottom:1px solid var(--border-subtle); text-wrap:pretty; overflow-wrap:anywhere">{{ l.value }}</dd>
+      </sc-for>
+    </dl>
+  </section>
+
+  <footer style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:.5rem 2rem; padding-top:clamp(.75rem, 1.4vh, 1.25rem); border-top:1px solid var(--border); font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.8125rem; letter-spacing:.04em; color:var(--muted)">
+    <span>Specimen for Katie Portfolio.dc.html</span>
+    <div style="display:flex; align-items:center; gap:.75rem">
+      <div role="group" aria-label="Color scheme" style="display:flex; gap:1px; background:var(--border); border:1px solid var(--border); border-radius:2px">
+        <span class="tt-wrap">
+          <button type="button" onClick="{{ themeSystem.select }}" aria-pressed="{{ themeSystem.pressed }}" aria-label="Follow system setting" style="appearance:none; -webkit-appearance:none; background:none; border:0; margin:0; padding:0; font:inherit; color:inherit; text-align:inherit; cursor:pointer; cursor:pointer; padding:.25rem .6rem; min-height:1.8rem; display:grid; place-items:center; font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace; font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; background:{{ themeSystem.bg }}; color:{{ themeSystem.fg }}; border-radius:1px 0 0 1px" style-hover="color:{{ themeSystem.hoverFg }}">Auto</button>
+          <span class="tt-tip" role="tooltip">Follow system setting</span>
+        </span>
+        <span class="tt-wrap">
+          <button type="button" onClick="{{ themeLight.select }}" aria-pressed="{{ themeLight.pressed }}" aria-label="Light mode" style="appearance:none; -webkit-appearance:none; background:none; border:0; margin:0; padding:0; font:inherit; color:inherit; text-align:inherit; cursor:pointer; cursor:pointer; padding:.25rem .6rem; min-height:1.8rem; display:grid; place-items:center; background:{{ themeLight.bg }}; color:{{ themeLight.fg }}" style-hover="color:{{ themeLight.hoverFg }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" focusable="false" style="width:17px; height:17px"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 12a5 5 0 1 1-10 0a5 5 0 0 1 10 0Z"></path><path stroke-linecap="round" d="M12 2c-.377.333-.905 1.2 0 2m0 16c.377.333.906 1.2 0 2m7.5-17.497c-.532-.033-1.575.22-1.496 1.495M5.496 17.5c.033.532-.22 1.575-1.496 1.496M5.003 4.5c-.033.532.22 1.576 1.497 1.497M18 17.503c.532-.032 1.575.208 1.496 1.414M22 12c-.333-.377-1.2-.905-2 0m-16-.5c-.333.377-1.2.906-2 0"></path></g></svg>
+          </button>
+          <span class="tt-tip" role="tooltip">Light mode</span>
+        </span>
+        <span class="tt-wrap">
+          <button type="button" onClick="{{ themeDark.select }}" aria-pressed="{{ themeDark.pressed }}" aria-label="Dark mode" style="appearance:none; -webkit-appearance:none; background:none; border:0; margin:0; padding:0; font:inherit; color:inherit; text-align:inherit; cursor:pointer; cursor:pointer; padding:.25rem .6rem; min-height:1.8rem; display:grid; place-items:center; background:{{ themeDark.bg }}; color:{{ themeDark.fg }}; border-radius:0 1px 1px 0" style-hover="color:{{ themeDark.hoverFg }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false" style="width:15px; height:15px"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21.5 14.078A8.557 8.557 0 0 1 9.922 2.5C5.668 3.497 2.5 7.315 2.5 11.873a9.627 9.627 0 0 0 9.627 9.627c4.558 0 8.376-3.168 9.373-7.422"></path></svg>
+          </button>
+          <span class="tt-tip" role="tooltip">Dark mode</span>
+        </span>
+      </div>
+      <a href="./theme-tokens.md" style="color:var(--muted)">theme-tokens.md</a>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1200,&quot;height&quot;:900}}">
+const MONO = "'Atkinson Hyperlegible Mono',ui-monospace,monospace";
+const BODY = "'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,sans-serif";
+const SERIF = "'Young Serif',Georgia,serif";
+
+const LIGHT = [
+  ['color.bg', '#F7F6FB', 'Page background (lavender-tinted white)', ''],
+  ['color.surface', '#EFEDF7', 'Selected row, subtle fills', ''],
+  ['color.surface.strong', '#D9D6EE', 'Image panels (blend base)', ''],
+  ['color.text', '#1F2333', 'Primary text (slate)', '15.2:1 vs bg'],
+  ['color.text.muted', '#555B70', 'Secondary text, labels, footer', '6.6:1 vs bg'],
+  ['color.text.faint', '#9A9FB2', '"Case Study" badge label', '3.1:1 — decorative only'],
+  ['color.accent', '#3E43B8', 'Links, active nav rule, primary button bg', '7.3:1 vs bg'],
+  ['color.accent.hover', '#2F3396', 'Hover/active state of accent', '9.8:1 vs bg'],
+  ['color.on-accent', '#F7F6FB', 'Text on accent button', '7.3:1 vs accent'],
+  ['color.accent.hero-em', '#686BAA', '"with love" emphasis, fact values', ''],
+  ['color.accent.selected', '#C9C6F2', 'Selected color-mode toggle bg', ''],
+  ['color.border', '#CDCBDD', 'Header/footer rules, button borders', ''],
+  ['color.border.subtle', '#E3E1EE', 'Row dividers', ''],
+  ['color.focus', '#3E43B8', '2px focus ring, 3px offset', '3.0:1+ vs all bgs'],
+  ['color.selection', '#C9C6F2', '::selection background', ''],
+  ['color.media.bg', '#1F2333', 'Carousel letterbox', ''],
+  ['color.inverse.bg', '#1F2333', 'Skip-link', ''],
+  ['color.inverse.text', '#F7F6FB', 'Text on inverse', '15.2:1'],
+  ['color.image.tint', 'rgba(62,67,184,0.22)', 'Soft-light gradient over imagery', ''],
+  ['color.image.shade', 'rgba(31,35,51,0.18)', 'Secondary soft-light gradient', ''],
+];
+
+const DARK = [
+  ['color.bg', '#151824', 'Page background (deep slate)', ''],
+  ['color.surface', '#1D2030', 'Selected row, subtle fills', ''],
+  ['color.surface.strong', '#2A2D45', 'Image panels (blend base)', ''],
+  ['color.text', '#E8E7F2', 'Primary text', '14.6:1 vs bg'],
+  ['color.text.muted', '#A7A9C0', 'Secondary text', '7.6:1 vs bg'],
+  ['color.accent', '#A5A8F5', 'Links, active nav, primary button bg', '8.4:1 vs bg'],
+  ['color.accent.hover', '#C0C2FA', 'Hover/active accent', '11.0:1 vs bg'],
+  ['color.on-accent', '#151824', 'Text on accent button', '8.4:1 vs accent'],
+  ['color.text.faint', '#7C819A', '"Case Study" badge label', 'decorative only'],
+  ['color.accent.hero-em', '#A5A8F5', '"with love" emphasis, fact values', ''],
+  ['color.accent.selected', '#3A3F7A', 'Selected color-mode toggle bg', ''],
+  ['color.border', '#363A52', 'Header/footer rules', ''],
+  ['color.border.subtle', '#262A3E', 'Row dividers', ''],
+  ['color.focus', '#A5A8F5', 'Focus ring', ''],
+  ['color.selection', '#3A3F7A', '::selection background', ''],
+  ['color.media.bg', '#0F111A', 'Carousel letterbox', ''],
+  ['color.inverse.bg', '#E8E7F2', 'Skip-link', ''],
+  ['color.inverse.text', '#151824', 'Text on inverse', ''],
+  ['color.image.tint', 'rgba(165,168,245,0.20)', 'Soft-light gradient over imagery', ''],
+  ['color.image.shade', 'rgba(0,0,0,0.30)', 'Secondary gradient', ''],
+];
+
+const TYPE = [
+  ['type.display', 'clamp(2.5rem, 1.6vw + 2.4vh + .9rem, 5.25rem)', SERIF, '1.04', '-.012em', 'Systems that work end to end'],
+  ['type.h1', 'clamp(2rem, 1.2vw + 1.8vh + .8rem, 3.75rem)', SERIF, '1.08', '-.01em', 'Projects'],
+  ['type.h2 (reserved — unused)', 'clamp(1.5rem, 1rem + 1vw + .6vh, 2.5rem)', SERIF, '1.1', 'normal', 'No current usage in the portfolio'],
+  ['type.h3', 'clamp(1.0625rem, .9rem + .4vw, 1.375rem)', SERIF, '1.2', 'normal', 'Main Character'],
+  ['type.wordmark', 'clamp(1.125rem, 1rem + .5vw, 1.5rem)', SERIF, '1.2', '-.005em', 'Katie O\u2019Connor'],
+  ['type.fact', 'clamp(1.375rem, 1rem + 1vw + .5vh, 2.25rem)', SERIF, '1.05', 'normal', '45M'],
+  ['type.lead', 'clamp(1.0625rem, .82rem + .42vw + .2vh, 1.375rem)', BODY, '1.5', 'normal', 'I architect design systems and build AI-native applications.'],
+  ['type.body', 'clamp(1rem, .82rem + .38vw, 1.25rem)', BODY, '1.5', 'normal', 'Eleven years across three generations of a component library.'],
+  ['type.body.lg', 'clamp(1rem, .82rem + .38vw + .15vh, 1.3125rem)', BODY, '1.55', 'normal', 'I live in eclectic Avondale, on Chicago\u2019s northwest side.'],
+  ['type.body.md', 'clamp(.9375rem, .8rem + .3vw, 1.0625rem)', BODY, '1.55', 'normal', 'Project long-form copy, case-study notes, resume bullets.'],
+  ['type.body.sm', 'clamp(.9375rem, .8rem + .3vw, 1.125rem)', BODY, '1.5', 'normal', 'Vue 3, Nuxt, TypeScript, design systems, theming architecture.'],
+  ['type.contact', 'clamp(1rem, .85rem + .4vw, 1.3125rem)', BODY, '1.4', 'normal', 'katie.oconnor13@gmail.com'],
+  ['type.meta', 'clamp(.875rem, .78rem + .25vw, 1rem)', BODY, '1.4', 'normal', 'Discovery Education · Chicago, IL'],
+  ['type.ui', 'clamp(.9375rem, .82rem + .3vw, 1.0625rem)', BODY, '1.4', 'normal', 'Download PDF'],
+  ['type.caption', 'clamp(.8125rem, .74rem + .13vw, .9375rem)', BODY, '1.4', 'normal', 'Photos throughout this site are my own.'],
+  ['type.role', 'clamp(.875rem, .76rem + .32vw, 1.0625rem)', MONO, '1.4', '.04em', 'Senior Software Engineer'],
+  ['type.mono', 'clamp(.8125rem, .72rem + .28vw, .9375rem)', MONO, '1.4', '.04em', 'PROJECTS · RESUME · CONTACT'],
+  ['type.mono.note', 'clamp(.8125rem, .74rem + .22vw, .9375rem)', MONO, '1.45', '.02em', 'Work in progress. Demo journal coming soon.'],
+  ['type.mono.sm', 'clamp(.75rem, .68rem + .22vw, .875rem)', MONO, '1.4', '.06em', '© 2026 KATIE O\u2019CONNOR'],
+  ['type.mono.xs', '.7rem', MONO, '1.4', '.06em', 'AUTO · LIGHT · DARK (theme toggle)'],
+];
+
+const SPACING = [
+  ['space.1', '4px'], ['space.2', '8px'], ['space.3', '12px'], ['space.4', '16px'],
+  ['space.5', '24px'], ['space.6', '32px'], ['space.7', '48px'], ['space.8', '64px'],
+  ['space.page.y', 'clamp(1.25rem, 2.4vw, 3rem)'],
+  ['space.page.x', 'clamp(1.25rem, 3.4vw, 4.5rem)'],
+  ['space.section.gap', 'clamp(1rem, 2.4vh, 2.25rem)'],
+  ['space.column.gap', 'clamp(1.5rem, 3.5vw, 5rem)'],
+  ['space.stack', 'clamp(1rem, 2.4vh, 2rem)'],
+  ['space.row.y', 'clamp(.7rem, 1.6vh, 1.1rem)'],
+  ['space.nav.gap', 'clamp(1rem, 2.2vw, 2.5rem)'],
+];
+
+const parseColor = (v) => {
+  if (v[0] === '#') {
+    const h = v.slice(1);
+    const p = h.length === 3 ? h.split('').map((c) => c + c) : [h.slice(0, 2), h.slice(2, 4), h.slice(4, 6)];
+    return { r: parseInt(p[0], 16), g: parseInt(p[1], 16), b: parseInt(p[2], 16), a: 1 };
+  }
+  const m = v.match(/rgba?\(([^)]+)\)/);
+  if (!m) return { r: 128, g: 128, b: 128, a: 1 };
+  const n = m[1].split(',').map((s) => parseFloat(s));
+  return { r: n[0], g: n[1], b: n[2], a: n[3] === undefined ? 1 : n[3] };
+};
+const composite = (c, bg) => ({ r: c.r * c.a + bg.r * (1 - c.a), g: c.g * c.a + bg.g * (1 - c.a), b: c.b * c.a + bg.b * (1 - c.a), a: 1 });
+const toHex = (c) => '#' + [c.r, c.g, c.b].map((x) => Math.round(x).toString(16).padStart(2, '0')).join('').toUpperCase();
+const luminance = (c) => {
+  const f = (x) => { x /= 255; return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); };
+  return 0.2126 * f(c.r) + 0.7152 * f(c.g) + 0.0722 * f(c.b);
+};
+const FAMILIES = [
+  ['surfaces', 'Surfaces', 'page → panels → inverse'],
+  ['text', 'Text & on-color', 'lightest to darkest ink'],
+  ['accent', 'Accent & focus', 'indigo ramp'],
+  ['lines', 'Lines & selection', 'hairlines to fills'],
+  ['overlays', 'Image overlays', 'composited on surface.strong'],
+];
+const familyOf = (t) => {
+  if (/image\./.test(t)) return 'overlays';
+  if (/border|selection/.test(t)) return 'lines';
+  if (/accent\.hover|accent\.hero-em|color\.accent$|focus/.test(t)) return 'accent';
+  if (/text|on-accent/.test(t)) return 'text';
+  return 'surfaces';
+};
+const buildGroups = (list, baseHex, overlayBaseHex) => {
+  const base = parseColor(baseHex);
+  const overlayBase = parseColor(overlayBaseHex);
+  return FAMILIES.map(([key, label, note]) => ({
+    label, note,
+    items: list.filter(([token]) => familyOf(token) === key).map(([token, value, role]) => {
+      const raw = parseColor(value);
+      const solid = composite(raw, familyOf(token) === 'overlays' ? overlayBase : base);
+      const L = luminance(solid);
+      return {
+        token, value, role,
+        short: token.replace(/^color\./, ''),
+        swatchBg: raw.a < 1 ? toHex(solid) : value,
+        onColor: (1.05 / (L + 0.05)) > ((L + 0.05) / 0.067) ? '#F7F6FB' : '#1F2333',
+        lightness: Math.round(L * 100),
+      };
+    }).reduce((acc, item) => {
+      const dupe = acc.find((x) => x.value === item.value);
+      if (dupe) dupe.short += ' · ' + item.short; else acc.push(item);
+      return acc;
+    }, []).sort((a, b) => b.lightness - a.lightness),
+  })).filter((g) => g.items.length);
+};
+
+class Component extends DCLogic {
+  state = { px: {}, theme: 'system', colorView: 'role' };
+  componentDidMount() {
+    let saved = 'system';
+    try { saved = localStorage.getItem('specimen-theme') || 'system'; } catch (e) {}
+    this.applyTheme(saved);
+    this.setState({ theme: saved });
+    this.measure(); this._onResize = () => this.measure(); window.addEventListener('resize', this._onResize);
+  }
+  applyTheme(t) {
+    const el = document.documentElement;
+    if (t === 'system') el.removeAttribute('data-theme'); else el.setAttribute('data-theme', t);
+  }
+  setTheme = (t) => {
+    this.applyTheme(t);
+    try { localStorage.setItem('specimen-theme', t); } catch (e) {}
+    this.setState({ theme: t });
+  };
+  themeBtn = (id) => ({
+    pressed: this.state.theme === id,
+    bg: this.state.theme === id ? 'var(--accent-selected)' : 'var(--bg)',
+    fg: this.state.theme === id ? 'var(--text)' : 'var(--muted)',
+    hoverFg: this.state.theme === id ? 'var(--text)' : 'var(--accent)',
+    select: () => this.setTheme(id),
+  });
+  viewBtn = (id) => ({
+    pressed: this.state.colorView === id,
+    bg: this.state.colorView === id ? 'var(--surface)' : 'var(--bg)',
+    fg: this.state.colorView === id ? 'var(--accent)' : 'var(--muted)',
+    select: () => this.setState({ colorView: id }),
+  });
+  componentWillUnmount() { window.removeEventListener('resize', this._onResize); if (this._probe) this._probe.remove(); }
+  measure() {
+    let probe = this._probe;
+    if (!probe) {
+      probe = document.createElement('div');
+      probe.style.cssText = 'position:absolute;visibility:hidden;pointer-events:none;left:-9999px;top:0';
+      document.body.appendChild(probe);
+      this._probe = probe;
+    }
+    const px = {};
+    const read = (prop, value) => {
+      probe.style.cssText = 'position:absolute;visibility:hidden;pointer-events:none;left:-9999px;top:0;' + prop + ':' + value;
+      const n = parseFloat(getComputedStyle(probe)[prop === 'width' ? 'width' : 'fontSize']);
+      return Math.round(n * 10) / 10;
+    };
+    TYPE.forEach(([t, v]) => { px['t:' + t] = read('font-size', v); });
+    SPACING.forEach(([t, v]) => { px['s:' + t] = read('width', v); });
+    this.setState({ px });
+  }
+  renderVals() {
+    const px = this.state.px;
+    const theme = this.state.theme;
+    return {
+      themeSystem: this.themeBtn('system'), themeLight: this.themeBtn('light'), themeDark: this.themeBtn('dark'),
+      isRoleView: this.state.colorView === 'role',
+      isScaleView: this.state.colorView === 'scale',
+      viewRole: this.viewBtn('role'), viewScale: this.viewBtn('scale'),
+      lightGroups: buildGroups(LIGHT, '#F7F6FB', '#D9D6EE'),
+      darkGroups: buildGroups(DARK, '#151824', '#2A2D45'),
+      lightColors: LIGHT.map(([token, value, role, contrast]) => ({ token, value, role, contrast, swatchBg: value })),
+      darkColors: DARK.map(([token, value, role, contrast]) => ({ token, value, role, contrast, swatchBg: value })),
+      families: [
+        { token: 'font.display', name: 'Young Serif', stack: SERIF, weights: '400', use: 'Headings, project names, wordmark' },
+        { token: 'font.body', name: 'Atkinson Hyperlegible Next', stack: BODY, weights: '400 / 500 / 700', use: 'Body copy, buttons' },
+        { token: 'font.mono', name: 'Atkinson Hyperlegible Mono', stack: MONO, weights: '400 / 500', use: 'Nav, labels, meta, captions' },
+      ],
+      typeScale: TYPE.map(([token, value, stack, leading, tracking, sample]) => ({
+        token, value, stack, leading, tracking, sample, size: value,
+        rendered: px['t:' + token] ? px['t:' + token] + 'px here' : '',
+      })),
+      typeMeta: [
+        { token: 'leading.tight', value: '1.04 display · 1.08 h1 · 1.1 h2 · 1.2 h3' },
+        { token: 'leading.body', value: '1.5 · 1.55 long-form' },
+        { token: 'tracking.display', value: '-0.012em' },
+        { token: 'tracking.h1', value: '-0.01em' },
+        { token: 'tracking.mono', value: '0.04em · 0.06em uppercase' },
+        { token: 'measure', value: '34ch lead · 36ch page intros · 56ch About body · 60ch case-study notes · 62ch project long-form' },
+        { token: 'font.weight', value: '400 regular · 500 buttons · 700 bold' },
+        { token: 'type.min', value: '16px body minimum · 12px absolute minimum' },
+      ],
+      spacing: SPACING.map(([token, value]) => ({ token, value, rendered: px['s:' + token] ? px['s:' + token] + 'px here' : '' })),
+      radii: [
+        { token: 'radius.none', value: '0', use: 'Rules, list rows' },
+        { token: 'radius.sm', value: '2px', use: 'Buttons, badges, focus ring' },
+        { token: 'radius.md', value: '4px', use: 'Image panels, carousel' },
+        { token: 'radius.full', value: '9999px', use: 'Reserved (not used)' },
+      ],
+      layout: [
+        { token: 'layout.root.height', value: '100dvh; grid rows auto minmax(min-content, 1fr) auto; overflow:auto fallback' },
+        { token: 'layout.column.min', value: '27rem Home/Contact · 22rem Projects/About via repeat(auto-fit, minmax(min(100%, N), 1fr)); Resume is asymmetric — minmax(min(100%, 22rem), 1fr) minmax(min(100%, 26rem), 1.4fr)' },
+        { token: 'layout.panel.min-height', value: 'min(46vh, 22rem) — Home/Contact figures' },
+        { token: 'layout.portrait', value: 'aspect-ratio 4/5; width min(100%, 34rem); max-height min(64vh, 40rem) — About headshot' },
+        { token: 'layout.carousel.height', value: 'clamp(14rem, 40vh, 28rem)' },
+        { token: 'layout.hit-target.min', value: '44 × 44px (2.75rem)' },
+        { token: 'z.base / z.overlay / z.tooltip / z.skip', value: '0 · 1 (panel gradients) · 5 (tooltips) · 10 (skip link)' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

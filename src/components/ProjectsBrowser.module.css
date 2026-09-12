@@ -1,0 +1,204 @@
+.projects {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: var(--space-column-gap);
+  grid-auto-rows: min-content;
+  align-content: start;
+  min-height: 0;
+}
+
+/* --- Selector ----------------------------------------------------------- */
+.selector {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-stack);
+  min-width: 0;
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--type-h1);
+  line-height: 1.08;
+  letter-spacing: var(--tracking-h1);
+}
+
+.intro {
+  max-width: 36ch;
+  font-size: var(--type-body-sm);
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+.list {
+  border-top: 1px solid var(--border);
+}
+
+.list > li {
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.row {
+  appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  border: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  cursor: pointer;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 2.5rem 1fr;
+  align-items: baseline;
+  padding: clamp(0.6rem, 1.3vh, 1rem) 0.25rem;
+  padding-left: 0.85rem;
+  /* Always present so selecting a row cannot shift the text. */
+  border-left: 2px solid transparent;
+}
+
+.row[data-selected] {
+  border-left-color: var(--accent);
+  background: var(--surface);
+}
+
+.row:hover {
+  color: var(--accent);
+}
+
+.index {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-sm);
+  color: var(--muted);
+}
+
+.rowBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: var(--type-h3);
+  line-height: 1.25;
+}
+
+.badge {
+  margin-left: 0.6em;
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-sm);
+  color: var(--text-faint);
+}
+
+.tagline {
+  font-size: var(--type-meta);
+  color: var(--muted);
+}
+
+/* --- Detail panel ------------------------------------------------------- */
+.detail {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.9rem, 2vh, 1.5rem);
+  min-width: 0;
+}
+
+.status {
+  padding: 0.5rem 0.75rem;
+  border-left: 2px solid var(--accent);
+  background: var(--surface);
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-note);
+  line-height: 1.45;
+}
+
+.paras {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  max-width: 62ch;
+  font-size: var(--type-body-md);
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+/* --- Case-study notes --------------------------------------------------- */
+.notes {
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  max-width: 60ch;
+  font-size: var(--type-body-md);
+}
+
+/* Structural items pull back to the true left margin and drop their marker;
+   only .noteText reads as a bullet. */
+.noteHeading,
+.noteSubheading,
+.noteDisclosure {
+  margin-left: -1.1rem;
+  list-style: none;
+}
+
+.noteHeading {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: var(--tracking-mono-caps);
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-top: 0.4rem;
+}
+
+.noteSubheading {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-transform: capitalize;
+  color: var(--muted);
+  margin-top: 0.3rem;
+}
+
+.noteDisclosure {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-sm);
+  color: var(--muted);
+}
+
+.noteText {
+  list-style: disc;
+  text-wrap: pretty;
+}
+
+.noteLink {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  letter-spacing: var(--tracking-mono);
+  white-space: nowrap;
+}
+
+.noteSubs {
+  list-style: disc;
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-top: 0.3rem;
+}
+
+/* --- Links row ---------------------------------------------------------- */
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  padding-top: 0.25rem;
+}
+
+.link {
+  font-family: var(--font-mono);
+  font-size: clamp(0.875rem, 0.78rem + 0.3vw, 1rem);
+  letter-spacing: var(--tracking-mono);
+}

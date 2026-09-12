@@ -1,0 +1,62 @@
+.contact {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 27rem), 1fr));
+  gap: var(--space-column-gap);
+  min-height: 0;
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: clamp(1.25rem, 3vh, 2.5rem);
+  min-width: 0;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-stack);
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--type-h1);
+  line-height: 1.08;
+  letter-spacing: var(--tracking-h1);
+  text-wrap: balance;
+}
+
+.lead {
+  max-width: 34ch;
+  font-size: var(--type-lead);
+  text-wrap: pretty;
+}
+
+.list {
+  border-top: 1px solid var(--border);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(5.5rem, max-content) 1fr;
+  align-items: baseline;
+  gap: 0.25rem clamp(1rem, 2vw, 2rem);
+  padding: var(--space-row-y) 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-sm);
+  letter-spacing: var(--tracking-mono-caps);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.value {
+  font-size: var(--type-contact);
+  /* Long addresses break rather than overflow the column. */
+  overflow-wrap: anywhere;
+}

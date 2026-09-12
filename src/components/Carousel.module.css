@@ -1,0 +1,98 @@
+.carousel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.stage {
+  position: relative;
+  height: clamp(14rem, 40vh, 28rem);
+  background: var(--media-bg);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Slides stack in place; only the active one is displayed. display:none keeps
+   the inactive ones out of the tab order for free. */
+.slide {
+  position: absolute;
+  inset: 0;
+  display: none;
+}
+
+.slide[data-active] {
+  display: block;
+}
+
+/* contain, not cover — screen recordings must not be cropped. The media-bg
+   letterboxes whatever aspect ratio is left over. */
+.media {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: var(--media-bg);
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+}
+
+.buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.stepButton {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  /* The 44px hit target. */
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 1rem;
+}
+
+.stepButton:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+}
+
+.slideLabel {
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.counter {
+  flex-shrink: 0;
+  letter-spacing: var(--tracking-mono-caps);
+  padding: 0.35rem 0.6rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}

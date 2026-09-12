@@ -1,0 +1,141 @@
+# Katie O'Connor — Portfolio
+
+Personal portfolio site. Five pages — Home, Projects, Resume, Contact, About —
+built from the design handoff in [`design_handoff_portfolio/`](design_handoff_portfolio/).
+
+**Live:** [ktoc.dev](https://ktoc.dev)
+
+## Stack
+
+| | |
+|---|---|
+| Framework | Next.js 16 (App Router) |
+| Language | TypeScript, React 19 |
+| Styling | Plain CSS — custom properties for tokens, CSS Modules per component |
+| Fonts | Young Serif, Atkinson Hyperlegible Next / Mono, self-hosted via `next/font` |
+| Output | Static export (`output: 'export'`) — no server runtime |
+| Host | Cloudflare |
+
+No CSS framework and no component library: the design is a bespoke token
+system, and reproducing it directly in CSS is both smaller and closer to the
+handoff than fighting a utility framework's defaults.
+
+## Develop
+
+```bash
+npm install
+npm run dev        # http://localhost:3000
+npm run build      # static export to ./out
+npm run typecheck
+```
+
+To preview the built output exactly as it deploys:
+
+```bash
+npm run build && npx serve out
+```
+
+## Structure
+
+```
+src/
+  app/
+    layout.tsx           shell: fonts, metadata, skip link, no-flash theme script
+    globals.css          the token layer — colour, type, spacing, motion
+    page.tsx             Home
+    projects/            Projects
+    resume/              Resume
+    contact/             Contact
+    about/               About
+  components/
+    SiteHeader           wordmark + primary nav
+    SiteFooter           copyright, email, theme control
+    ThemeToggle          three-state Auto / Light / Dark, persisted
+    Figure               the site's one imagery treatment (4 variants)
+    ProjectsBrowser      project selector + detail panel
+    Carousel             stepping media carousel
+    FactsGrid            case-study facts + measured filler
+  content/
+    site.ts              nav, skills, contacts, per-page copy, image alt text
+    projects.ts          project data, case-study notes, slide manifests
+    resume.ts            experience entries
+public/
+  media/                 photography
+  projects/              carousel media (slug-named)
+  Katie-OConnor-Resume.pdf
+```
+
+All copy lives in `src/content/` as typed constants, never inline in a
+template — so text changes never mean touching markup.
+
+## Design tokens
+
+`src/app/globals.css` is the single source of styling truth. It implements the
+table in [`design_handoff_portfolio/theme-tokens.md`](design_handoff_portfolio/theme-tokens.md)
+as CSS custom properties on `:root`, with the dark scheme declared twice: once
+under `prefers-color-scheme: dark` (for the Auto setting) and once under
+`[data-theme="dark"]` (for the explicit choice).
+
+Type sizes are all `clamp()` values keyed to **both** viewport width and
+height, because each page is designed to fit `100dvh`. Substituting fixed
+pixel sizes will break the one-viewport layout.
+
+### Theming
+
+Three states — `system` (default), `light`, `dark` — persisted to
+`localStorage` under `portfolio-theme`. `system` removes the `data-theme`
+attribute entirely so the media query governs again.
+
+A small synchronous script in `layout.tsx` applies the saved theme before
+first paint; without it the page renders in the system scheme and then snaps.
+
+## Accessibility
+
+Part of the spec, not an afterthought:
+
+- Skip link as the first focusable element; one `<h1>` per page
+- Landmarks: `header` / `nav[aria-label="Primary"]` / `main#main` / `footer`
+- `aria-current="page"` on the active nav item
+- `aria-pressed` on project rows and theme segments
+- `aria-live="polite"` on the project detail panel
+- 44×44px minimum hit targets, except the documented compact footer toggle
+- Every transition sits inside a `prefers-reduced-motion: no-preference` guard
+- Descriptive `alt` on all photography
+
+## Deploy
+
+Static export, so any static host works. On Cloudflare, connect this repo and
+set:
+
+| Setting | Value |
+|---|---|
+| Build command | `npm run build` |
+| Output directory | `out` |
+| Node version | from `.node-version` (24) |
+
+Pushes to `main` then deploy automatically. Point `ktoc.dev` at the project in
+the Cloudflare dashboard — since the domain is already on Cloudflare, DNS
+records are created for you.
+
+No `basePath` is configured because the site is served from the domain root.
+Deploying to a subpath would require setting `basePath` in `next.config.ts`.
+
+## Notes on the handoff
+
+Two deliberate departures from `design_handoff_portfolio/`, both documented at
+the point of change:
+
+1. **Carousel slide mapping.** The prototype's `slideVideos` / `slideImages`
+   maps had indices 3–6 scrambled for Main Character, pairing (for example)
+   the "History" label with the Categories recording. The numbered filenames
+   make the intended order unambiguous, so slides are now defined as a single
+   ordered list where each entry carries its own label and media.
+
+2. **Dark-mode image blend.** The handoff text suggests `screen` for dark, but
+   the prototype's `forDark()` only remapped `multiply`, and its actual blend
+   was `luminosity` — which passed through unchanged. `screen` over the dark
+   surface blows the photographs out to a flat wash, so both schemes use
+   `luminosity` and dark differs only in opacity.
+
+Hash routing was a prototype constraint and is replaced by real routes, as the
+handoff directs.

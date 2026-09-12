@@ -1,0 +1,53 @@
+.about {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: var(--space-column-gap);
+  min-height: 0;
+  /* start, not stretch — the portrait keeps its 4:5 ratio rather than
+     stretching to match the text column. */
+  align-items: start;
+}
+
+.right {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-stack);
+  max-width: 56ch;
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--type-h1);
+  line-height: 1.08;
+  letter-spacing: var(--tracking-h1);
+}
+
+.body {
+  font-size: var(--type-body-lg);
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+.caption {
+  font-size: var(--type-caption);
+  color: var(--muted);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.4rem clamp(1rem, 2vw, 2rem);
+  border-top: 1px solid var(--border);
+  padding-top: 0.9rem;
+  font-size: var(--type-body-sm);
+}
+
+.factLabel {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-sm);
+  letter-spacing: var(--tracking-mono-caps);
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-top: 0.2em;
+}

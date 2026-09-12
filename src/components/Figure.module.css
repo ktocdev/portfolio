@@ -1,0 +1,79 @@
+.figure {
+  position: relative;
+  background: var(--surface-strong);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  /* Contains the blend modes so they composite against surface-strong rather
+     than punching through to the page background. */
+  isolation: isolate;
+}
+
+.image {
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.08) brightness(1.04);
+  mix-blend-mode: var(--img-blend);
+  opacity: var(--img-opacity);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+  z-index: var(--z-overlay);
+}
+
+/* --- Home hero ---------------------------------------------------------- */
+.hero {
+  min-height: min(46vh, 22rem);
+}
+
+.hero .overlay {
+  background:
+    linear-gradient(165deg, var(--img-tint) 0%, var(--img-tint-0) 55%),
+    linear-gradient(15deg, var(--img-shade) 0%, var(--img-shade-0) 45%);
+}
+
+/* --- Contact hero ------------------------------------------------------- */
+.contact {
+  min-height: min(46vh, 22rem);
+}
+
+.contact .overlay {
+  background: linear-gradient(200deg, var(--img-tint) 0%, var(--img-tint-0) 55%);
+}
+
+/* --- Facts-grid filler -------------------------------------------------- */
+.facts {
+  min-height: 7rem;
+  border-radius: 0;
+  height: 100%;
+}
+
+.facts .image {
+  object-position: 50% 58%;
+}
+
+.facts .overlay {
+  background: linear-gradient(200deg, var(--img-tint) 0%, var(--img-tint-0) 60%);
+}
+
+/* --- About portrait ----------------------------------------------------- */
+/* Documented exception: full colour, no grayscale, and only a tint at the
+   bottom edge so the crop settles into the page rather than floating. */
+.portrait {
+  width: min(100%, 34rem);
+  aspect-ratio: 4 / 5;
+  max-height: min(64vh, 40rem);
+}
+
+.portrait .image {
+  filter: none;
+  mix-blend-mode: normal;
+  opacity: 1;
+}
+
+.portrait .overlay {
+  background: linear-gradient(180deg, var(--img-tint-0) 60%, var(--img-tint) 100%);
+  mix-blend-mode: multiply;
+}

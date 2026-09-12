@@ -1,0 +1,29 @@
+.footer {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem 2rem;
+  padding-top: clamp(0.75rem, 1.4vh, 1.25rem);
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-sm);
+  letter-spacing: var(--tracking-mono);
+  color: var(--muted);
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+  flex-wrap: wrap;
+}
+
+/* Muted rather than accent — the footer address is a fallback, not a CTA.
+   The Contact page carries the emphasised version. */
+.email {
+  color: var(--muted);
+}
+
+.email:hover {
+  color: var(--accent);
+}

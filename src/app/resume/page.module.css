@@ -1,0 +1,137 @@
+/* Asymmetric: the experience column carries far more content than the intro. */
+.resume {
+  display: grid;
+  grid-template-columns: minmax(min(100%, 22rem), 1fr) minmax(min(100%, 26rem), 1.4fr);
+  gap: var(--space-column-gap);
+  align-content: start;
+  min-height: 0;
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-stack);
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--type-h1);
+  line-height: 1.08;
+  letter-spacing: var(--tracking-h1);
+}
+
+.summary {
+  max-width: 36ch;
+  font-size: var(--type-body);
+  text-wrap: pretty;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+  align-items: center;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 2.75rem;
+  padding: 0.65rem 1.1rem;
+  background: var(--accent);
+  color: var(--on-accent);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  font-size: var(--type-ui);
+}
+
+.button:hover {
+  background: var(--accent-hover);
+  color: var(--on-accent);
+}
+
+.buttonGlyph {
+  font-family: var(--font-mono);
+}
+
+/* --- Experience --------------------------------------------------------- */
+.list {
+  border-top: 1px solid var(--border);
+  align-self: start;
+}
+
+.entry {
+  display: grid;
+  grid-template-columns: minmax(6.5rem, max-content) 1fr;
+  gap: 0.25rem clamp(1rem, 2vw, 2rem);
+  padding: var(--space-row-y) 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.entry[data-last] {
+  border-bottom: none;
+}
+
+.years {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-sm);
+  color: var(--muted);
+  padding-top: 0.25em;
+}
+
+.bodyCell {
+  min-width: 0;
+}
+
+.role {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--type-h3);
+  line-height: 1.2;
+}
+
+.org {
+  font-size: var(--type-meta);
+  color: var(--muted);
+}
+
+.groups {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.7rem, 1.6vh, 1.15rem);
+  margin-top: clamp(0.7rem, 1.6vh, 1.15rem);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.groupLabel {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: var(--type-mono-sm);
+  letter-spacing: var(--tracking-mono-caps);
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.bullets {
+  list-style: disc;
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: var(--type-body-md);
+  text-wrap: pretty;
+}
+
+.note {
+  margin-top: 0.35rem;
+  font-size: var(--type-body-md);
+  text-wrap: pretty;
+}

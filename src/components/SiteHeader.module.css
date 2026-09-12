@@ -1,0 +1,46 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.75rem 2rem;
+  padding-bottom: clamp(0.75rem, 1.4vh, 1.25rem);
+  border-bottom: 1px solid var(--border);
+}
+
+.wordmark {
+  font-family: var(--font-display);
+  font-size: var(--type-wordmark);
+  color: var(--text);
+  text-decoration: none;
+  letter-spacing: -0.005em;
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-nav-gap);
+}
+
+/* Every item keeps its underline at all times and only changes the underline
+   COLOUR — so nothing reflows when the active page or hover changes. */
+.navLink {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono);
+  letter-spacing: var(--tracking-mono-caps);
+  text-transform: uppercase;
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.45em;
+  text-decoration-color: transparent;
+}
+
+.navLink[data-active] {
+  text-decoration-color: var(--accent);
+}
+
+.navLink:hover {
+  color: var(--accent);
+  text-decoration-color: var(--accent);
+}
