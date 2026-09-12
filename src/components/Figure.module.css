@@ -33,7 +33,7 @@
    horizontally; the crop is biased right-of-centre so the swallowtail stays in
    frame alongside the zinnias. */
 .hero .image {
-  object-position: 60% 50%;
+  object-position: 100% 50%;
 }
 
 .hero .overlay {
