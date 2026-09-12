@@ -104,21 +104,56 @@ Part of the spec, not an afterthought:
 
 ## Deploy
 
-Static export, so any static host works. On Cloudflare, connect this repo and
-set:
+`npm run build` emits a complete static site into `out/` — no server runtime,
+so any static host works.
+
+Cloudflare config lives in [`wrangler.jsonc`](wrangler.jsonc): an assets-only
+Worker serving `./out`, with no `main` script because there is nothing to run.
+
+From the CLI:
+
+```bash
+npm run deploy     # builds, then wrangler deploy
+```
+
+For the dashboard's Git integration, override the framework preset:
 
 | Setting | Value |
 |---|---|
 | Build command | `npm run build` |
-| Output directory | `out` |
+| Deploy command | `npx wrangler deploy` |
 | Node version | from `.node-version` (24) |
 
-Pushes to `main` then deploy automatically. Point `ktoc.dev` at the project in
-the Cloudflare dashboard — since the domain is already on Cloudflare, DNS
-records are created for you.
+> [!IMPORTANT]
+> Do **not** accept Cloudflare's default Next.js preset, which sets the build
+> command to `npx opennextjs-cloudflare build`. OpenNext exists to run
+> *server-side* Next.js on Workers and expects `output: 'standalone'`. Against
+> this static export it fails with:
+>
+> ```
+> ENOENT: no such file or directory,
+> open '.next/standalone/.next/server/pages-manifest.json'
+> ```
+>
+> There is no server build here to find. Use the plain commands above.
+
+Point `ktoc.dev` at the Worker in the dashboard — since the domain is already
+on Cloudflare, DNS records are created for you.
 
 No `basePath` is configured because the site is served from the domain root.
 Deploying to a subpath would require setting `basePath` in `next.config.ts`.
+
+### Local preview
+
+`npm run preview` runs `wrangler dev`, which reproduces Cloudflare's real
+asset behaviour (trailing slashes, the 404 page). It needs wrangler's native
+`workerd` binary, whose install script this project does not auto-approve:
+
+```bash
+npm approve-scripts workerd esbuild   # one time
+```
+
+For a quick look without that, `npx serve out` is enough.
 
 ## Notes on the handoff
 

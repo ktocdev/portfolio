@@ -1,0 +1,25 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "portfolio",
+  "compatibility_date": "2026-09-12",
+
+  // This site is a fully static Next.js export: `npm run build` emits plain
+  // HTML/CSS/JS into ./out and there is no server runtime. So this is an
+  // assets-only Worker — there is deliberately no "main" script.
+  //
+  // It must NOT be built with @opennextjs/cloudflare. That adapter exists to
+  // run server-side Next.js and expects `output: 'standalone'`; pointed at a
+  // static export it fails looking for .next/server/pages-manifest.json.
+  "assets": {
+    "directory": "./out",
+
+    // Next emits out/404.html, so serve it for unmatched paths. This is a
+    // multi-page site, not an SPA — do not use "single-page-application",
+    // which would serve index.html for every miss.
+    "not_found_handling": "404-page"
+  },
+
+  "observability": {
+    "enabled": true
+  }
+}
