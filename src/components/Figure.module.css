@@ -28,6 +28,14 @@
   min-height: min(46vh, 22rem);
 }
 
+/* Framing per hero-treatment-doc.md: the asset is the full-garden 4:3 photo the
+   doc assumes. Cover fills the tall column's height and clips the overflow
+   horizontally; the crop is biased right-of-centre so the swallowtail stays in
+   frame alongside the zinnias. */
+.hero .image {
+  object-position: 60% 50%;
+}
+
 .hero .overlay {
   background:
     linear-gradient(165deg, var(--img-tint) 0%, var(--img-tint-0) 55%),
@@ -60,11 +68,20 @@
 
 /* --- About portrait ----------------------------------------------------- */
 /* Documented exception: full colour, no grayscale, and only a tint at the
-   bottom edge so the crop settles into the page rather than floating. */
+   bottom edge so the crop settles into the page rather than floating.
+   Widened to a landscape frame so the 16:9 headshot shows in full at natural
+   scale rather than being centre-cropped to a tall portrait. */
 .portrait {
   width: min(100%, 34rem);
-  aspect-ratio: 4 / 5;
-  max-height: min(64vh, 40rem);
+  aspect-ratio: 16 / 9;
+}
+
+/* Larger screens give the headshot more room (it still never overflows its
+   grid column). */
+@media (min-width: 64rem) {
+  .portrait {
+    width: min(100%, clamp(34rem, 6rem + 34vw, 56rem));
+  }
 }
 
 .portrait .image {

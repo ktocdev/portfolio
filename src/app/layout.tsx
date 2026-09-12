@@ -34,13 +34,13 @@ const mono = Atkinson_Hyperlegible_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
-    default: `${SITE.name} — ${SITE.role}`,
-    template: `%s — ${SITE.name}`,
+    default: `${SITE.name} - Senior Software Engineer / Design Engineer / Full-Stack / Design System Architect`,
+    template: `%s - ${SITE.name}`,
   },
   description:
     'Senior software engineer and design-systems architect in Chicago. Eleven years at Discovery Education across three generations of a component library.',
   openGraph: {
-    title: `${SITE.name} — ${SITE.role}`,
+    title: `${SITE.name} - Senior Software Engineer / Design Engineer / Full-Stack / Design System Architect`,
     description:
       'Senior software engineer and design-systems architect in Chicago. Eleven years at Discovery Education across three generations of a component library.',
     url: SITE.url,
@@ -66,7 +66,11 @@ const themeScript = `(function(){try{var t=localStorage.getItem('portfolio-theme
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
+    <html
+      lang="en"
+      className={`${display.variable} ${body.variable} ${mono.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
