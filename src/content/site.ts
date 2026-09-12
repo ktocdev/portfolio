@@ -102,15 +102,15 @@ export const COPY = {
 /** Photography. All images are Katie's own; alt text per the handoff. */
 export const IMAGES = {
   heroHome: {
-    src: '/media/hero-home.png',
+    src: '/media/hero-home.jpg',
     alt: 'A black swallowtail butterfly on pink and orange zinnias in a backyard garden.',
   },
   heroContact: {
-    src: '/media/hero-contact.png',
+    src: '/media/hero-contact.jpg',
     alt: 'A purple allium in full bloom against soft green garden foliage.',
   },
   headshot: {
-    src: '/media/headshot.png',
+    src: '/media/headshot.jpg',
     alt: "Katie O'Connor in front of a graffiti mural.",
   },
   zinnias: {

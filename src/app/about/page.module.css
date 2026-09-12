@@ -3,7 +3,7 @@
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
   gap: var(--space-column-gap);
   min-height: 0;
-  /* start, not stretch — the portrait keeps its 4:5 ratio rather than
+  /* start, not stretch — the portrait keeps its own ratio rather than
      stretching to match the text column. */
   align-items: start;
 }

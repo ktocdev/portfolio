@@ -38,7 +38,5 @@ yarn-error.log*
 .wrangler/
 node_modules
 
-# Design-handoff binaries — these are the SOURCE copies of assets that now
-# live (slug-renamed) in public/. Tracking both would double the repo size.
-design_handoff_portfolio/media/
-design_handoff_portfolio/uploads/
+# Design-handoff files
+design_handoff_portfolio/
