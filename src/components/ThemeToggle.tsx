@@ -25,8 +25,8 @@ export default function ThemeToggle() {
   /* Starts at the prerendered default; only the pressed segment settles on mount since layout.tsx's inline script already set the visible theme before paint. */
   const [theme, setTheme] = useState<Theme>('system');
   const segments = useRef<(HTMLButtonElement | null)[]>([]);
-  /* Tooltips are pure CSS (:hover/:focus-within) with no dismissal otherwise; Escape sets this to satisfy 1.4.13 without losing pointer position or tab order. */
-  const [tipsHidden, setTipsHidden] = useState(false);
+  /* Escape hides the tip the ring is already on, satisfying 1.4.13's dismissal without costing the segment its focus. Only the keyboard reveal reads this — the pointer path is untouched, which is why hovering back in behaves normally. */
+  const [tipDismissed, setTipDismissed] = useState(false);
 
   useEffect(() => {
     try {
@@ -50,7 +50,7 @@ export default function ThemeToggle() {
   /* Arrow keys move and select immediately, as expected for a radio group; focus is moved by hand since only the checked radio is in the tab order. */
   function onKeyDown(event: React.KeyboardEvent, index: number) {
     if (event.key === 'Escape') {
-      setTipsHidden(true);
+      setTipDismissed(true);
       return;
     }
 
@@ -76,8 +76,8 @@ export default function ThemeToggle() {
         return;
     }
 
-    /* Arrowing to a different segment is a fresh request to see its tip. */
-    setTipsHidden(false);
+    /* Arrowing onto a different segment is a fresh request to see its tip. */
+    setTipDismissed(false);
     /* Stops the arrow keys from scrolling the page out from under the footer. */
     event.preventDefault();
     select(OPTIONS[next].id);
@@ -90,10 +90,10 @@ export default function ThemeToggle() {
       role="radiogroup"
       aria-label="Color scheme"
       className={styles.group}
-      data-tips-hidden={tipsHidden || undefined}
-      onMouseLeave={() => setTipsHidden(false)}
+      data-tip-dismissed={tipDismissed || undefined}
       onBlur={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget)) setTipsHidden(false);
+        /* Leaving the control entirely resets it; moving between segments does not, so the arrow-key reset above stays the only one that matters. */
+        if (!event.currentTarget.contains(event.relatedTarget)) setTipDismissed(false);
       }}
     >
       {OPTIONS.map((option, index) => (

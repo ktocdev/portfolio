@@ -65,7 +65,6 @@ single column below the width where both tracks fit. */
 
 /* --- Experience --------------------------------------------------------- */
 .list {
-  border-top: 1px solid var(--border);
   align-self: start;
 }
 
