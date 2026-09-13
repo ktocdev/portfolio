@@ -43,11 +43,7 @@ export default function Carousel({ slides, projectName }: CarouselProps) {
 
   if (total === 0) return null;
 
-  /* Videos here are silent screen recordings — video-only content, which needs
-     a text alternative just as much as a still does, and gets no accessible
-     name at all from the element itself. Until a slide is given real `alt`
-     copy, this at least says what kind of media it is and where it is from,
-     rather than announcing the one-word chip twice or nothing whatsoever. */
+  /* Fallback alt text for slides without real copy: silent video needs a text alternative too, and gets no accessible name from the element itself. */
   const describe = (slide: Slide) =>
     slide.alt ??
     `${slide.label} — ${slide.type === 'video' ? 'screen recording' : 'screenshot'} from ${projectName}`;
@@ -94,9 +90,7 @@ export default function Carousel({ slides, projectName }: CarouselProps) {
           </button>
         </div>
 
-        {/* Stepping is otherwise silent: the label and counter change on screen
-            and nothing reaches a screen reader at all. role="status" is polite
-            and atomic, so each press announces the whole thing once. */}
+        {/* role="status" announces each step, since the label/counter change alone reaches no screen reader. */}
         <div role="status" className={styles.status}>
           <span className={styles.slideLabel}>{slides[index].label}</span>
           <span className={styles.counter}>

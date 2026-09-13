@@ -7,11 +7,7 @@ type Theme = 'system' | 'light' | 'dark';
 
 const STORAGE_KEY = 'portfolio-theme';
 
-/* `tip` is the visible tooltip. `label` overrides the accessible name, and is
-   only needed where the button also shows text of its own: a name that does not
-   contain the visible word fails WCAG 2.5.3 Label in Name, and leaves anyone
-   driving the page by voice unable to say "click Auto". The icon-only segments
-   have no visible text to agree with, so the tip serves as their name. */
+/* `label` overrides the accessible name only where visible text exists (WCAG 2.5.3); icon-only segments have none to agree with, so `tip` serves as their name. */
 const OPTIONS: { id: Theme; tip: string; label?: string }[] = [
   { id: 'system', tip: 'Use system mode', label: 'Auto — use system mode' },
   { id: 'light', tip: 'Light mode' },
@@ -20,23 +16,16 @@ const OPTIONS: { id: Theme; tip: string; label?: string }[] = [
 
 function applyTheme(theme: Theme) {
   const el = document.documentElement;
-  /* `system` removes the attribute entirely so prefers-color-scheme governs
-     again — setting data-theme="system" would match no CSS rule. */
+  /* `system` removes the attribute so prefers-color-scheme governs again, since data-theme="system" would match no CSS rule. */
   if (theme === 'system') el.removeAttribute('data-theme');
   else el.setAttribute('data-theme', theme);
 }
 
 export default function ThemeToggle() {
-  /* Starts at the prerendered default and is corrected on mount. The visible
-     theme is already correct by then — the inline script in layout.tsx set it
-     before paint — so only the pressed segment settles here. */
+  /* Starts at the prerendered default; only the pressed segment settles on mount since layout.tsx's inline script already set the visible theme before paint. */
   const [theme, setTheme] = useState<Theme>('system');
   const segments = useRef<(HTMLButtonElement | null)[]>([]);
-  /* The tooltips are pure CSS on :hover and :focus-within, which leaves no
-     way to get rid of one without moving away from the control it belongs
-     to. 1.4.13 wants a dismissal that costs you neither your pointer
-     position nor your place in the tab order, so Escape sets this and any
-     genuine departure clears it again. */
+  /* Tooltips are pure CSS (:hover/:focus-within) with no dismissal otherwise; Escape sets this to satisfy 1.4.13 without losing pointer position or tab order. */
   const [tipsHidden, setTipsHidden] = useState(false);
 
   useEffect(() => {
@@ -58,10 +47,7 @@ export default function ThemeToggle() {
     }
   }
 
-  /* Arrow keys move between the radios and select as they go, which is the
-     expected behaviour for a radio group — the choice takes effect immediately
-     rather than needing a second keypress to confirm. Focus has to be moved by
-     hand because only the checked radio is in the tab order. */
+  /* Arrow keys move and select immediately, as expected for a radio group; focus is moved by hand since only the checked radio is in the tab order. */
   function onKeyDown(event: React.KeyboardEvent, index: number) {
     if (event.key === 'Escape') {
       setTipsHidden(true);
@@ -99,11 +85,7 @@ export default function ThemeToggle() {
   }
 
   return (
-    /* A radiogroup rather than three toggle buttons: exactly one scheme is in
-       force at a time, and aria-pressed would describe each segment as
-       independently on or off. The group is also a single tab stop — the roving
-       tabindex below keeps only the checked segment reachable by Tab, so the
-       footer does not cost three stops on the way out of the page. */
+    /* Radiogroup, not toggle buttons: aria-pressed would describe segments as independently on/off; roving tabindex keeps this a single tab stop. */
     <div
       role="radiogroup"
       aria-label="Color scheme"
@@ -134,9 +116,7 @@ export default function ThemeToggle() {
             {option.id === 'light' ? <SunIcon /> : null}
             {option.id === 'dark' ? <MoonIcon /> : null}
           </button>
-          {/* Hidden from assistive tech: it only repeats the accessible name above,
-              and opacity alone would leave three loose copies of it in the
-              footer's reading order. */}
+          {/* Hidden from assistive tech: repeats the accessible name above, and opacity alone would leave it in the footer's reading order. */}
           <span aria-hidden="true" className={styles.tooltip}>
             {option.tip}
           </span>

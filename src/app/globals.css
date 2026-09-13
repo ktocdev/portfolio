@@ -19,9 +19,7 @@
   --hero-em: #686baa;
   --border: #cdcbdd;
   --border-subtle: #e3e1ee;
-  /* Dividers may be whisper-faint; the outline that tells you where a
-     control STARTS may not. This is the 3:1 boundary colour for anything
-     you can operate — segmented control, step buttons, counter. */
+  /* 3:1 boundary colour for operable controls (segmented control, step buttons, counter), unlike whisper-faint dividers. */
   --border-control: #8481a0;
   --selection: #c9c6f2;
   --media-bg: #1f2333;
@@ -242,11 +240,7 @@ ol {
   margin: 0;
 }
 
-/* WebKit drops the list role when the marker goes, so VoiceOver announces
-   these as plain text rather than "list, 3 items". Any list that relies on
-   being heard as a list has to say role="list" out loud — see the labelled
-   lists on Home, Contact, Resume and Projects. Lists that keep a disc
-   marker keep their role and need nothing. */
+/* WebKit drops the list role when the marker goes, so lists relying on being heard as lists need an explicit role="list" (see Home, Contact, Resume, Projects). */
 ul,
 ol {
   padding: 0;

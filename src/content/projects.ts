@@ -23,11 +23,7 @@ export type Note =
   | { kind: 'disclosure'; text: string }
   | { kind: 'text'; text: string; link?: Link; subs?: string[] };
 
-/**
- * `alt` is the media's text alternative. `label` is the carousel's visible
- * chip and is far too terse to serve as one on its own, so it is only the
- * fallback — describe what the screen actually shows wherever you can.
- */
+/** `alt` is the text alternative; `label` (the visible chip) is only a fallback since it's too terse on its own — describe what the screen shows. */
 export type Slide = {
   label: string;
   src: string;

@@ -48,12 +48,7 @@ export default function FactsGrid({ facts }: FactsGridProps) {
   return (
     <div ref={gridRef} className={styles.grid}>
       {facts.map((fact) => (
-        /* One list per cell rather than one around the whole grid: the filler
-           photograph has to be a grid item too, and <figure> is not something
-           a <dl> may contain. And the value is the <dt> here, inverting the
-           dt=label convention used on Home and About, because these labels
-           are written as the back half of a sentence the number starts —
-           "45M" then "students … reached" is the order that reads aloud. */
+        /* One <dl> per cell (filler photo needs to be a grid item, and <figure> can't sit in a <dl>); dt=value here since labels read as the sentence's back half. */
         <dl key={fact.label} className={styles.cell}>
           <dt className={styles.value}>{fact.value}</dt>
           <dd className={styles.label}>{fact.label}</dd>

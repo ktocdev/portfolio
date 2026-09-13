@@ -18,10 +18,7 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const project = projects[selected];
 
-  /* Arrow keys move between tabs and select as they go. Automatic activation is
-     the right trade here: the panels are already rendered client-side, so there
-     is nothing to wait for and no reason to make the user confirm. Focus has to
-     be moved by hand because only the selected tab is in the tab order. */
+  /* Arrow keys move and select together (automatic activation); focus is moved by hand since only the selected tab is in the tab order. */
   function onKeyDown(event: React.KeyboardEvent, index: number) {
     const last = projects.length - 1;
     let next: number;
