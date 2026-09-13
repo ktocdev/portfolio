@@ -11,7 +11,7 @@
   --surface-strong: #d9d6ee;
   --text: #1f2333;
   --muted: #555b70;
-  --text-faint: #9a9fb2;
+  --text-faint: #696c79;
   --accent: #3e43b8;
   --accent-hover: #2f3396;
   --accent-selected: #c9c6f2;
@@ -19,6 +19,8 @@
   --hero-em: #686baa;
   --border: #cdcbdd;
   --border-subtle: #e3e1ee;
+  /* 3:1 boundary colour for operable controls (segmented control, step buttons, counter), unlike whisper-faint dividers. */
+  --border-control: #8481a0;
   --selection: #c9c6f2;
   --media-bg: #1f2333;
   --inverse-bg: #1f2333;
@@ -48,7 +50,7 @@
     --surface-strong: #2a2d45;
     --text: #e8e7f2;
     --muted: #a7a9c0;
-    --text-faint: #7c819a;
+    --text-faint: #868ba6;
     --accent: #a5a8f5;
     --accent-hover: #c0c2fa;
     --accent-selected: #3a3f7a;
@@ -56,6 +58,7 @@
     --hero-em: #a5a8f5;
     --border: #363a52;
     --border-subtle: #262a3e;
+    --border-control: #666b8f;
     --selection: #3a3f7a;
     --media-bg: #0f111a;
     --inverse-bg: #e8e7f2;
@@ -79,7 +82,7 @@
   --surface-strong: #2a2d45;
   --text: #e8e7f2;
   --muted: #a7a9c0;
-  --text-faint: #7c819a;
+  --text-faint: #868ba6;
   --accent: #a5a8f5;
   --accent-hover: #c0c2fa;
   --accent-selected: #3a3f7a;
@@ -87,6 +90,7 @@
   --hero-em: #a5a8f5;
   --border: #363a52;
   --border-subtle: #262a3e;
+  --border-control: #666b8f;
   --selection: #3a3f7a;
   --media-bg: #0f111a;
   --inverse-bg: #e8e7f2;
@@ -236,6 +240,7 @@ ol {
   margin: 0;
 }
 
+/* WebKit drops the list role when the marker goes, so lists relying on being heard as lists need an explicit role="list" (see Home, Contact, Resume, Projects). */
 ul,
 ol {
   padding: 0;

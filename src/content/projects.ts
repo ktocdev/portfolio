@@ -23,9 +23,11 @@ export type Note =
   | { kind: 'disclosure'; text: string }
   | { kind: 'text'; text: string; link?: Link; subs?: string[] };
 
+/** `alt` is the text alternative; `label` (the visible chip) is only a fallback since it's too terse on its own — describe what the screen shows. */
 export type Slide = {
   label: string;
   src: string;
+  alt?: string;
   type: 'video' | 'image';
 };
 

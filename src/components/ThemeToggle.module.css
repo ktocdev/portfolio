@@ -1,17 +1,23 @@
 /* The 1px gaps over a border-coloured background are what render as the
    hairline dividers between segments — there are no per-segment borders. */
 .group {
+  /* Positioned so the tooltips resolve against the whole control, not against
+     one segment — see the tooltip block below. */
+  position: relative;
   display: flex;
   gap: 1px;
-  background: var(--border);
-  border: 1px solid var(--border);
+  background: var(--border-control);
+  border: 1px solid var(--border-control);
   border-radius: var(--radius-sm);
 }
 
 .segment {
+  position: relative;
   appearance: none;
   -webkit-appearance: none;
+  /* Reserved on every segment so selecting one cannot shift the row. */
   border: 0;
+  border-bottom: 2px solid transparent;
   margin: 0;
   font: inherit;
   text-align: inherit;
@@ -30,16 +36,23 @@
   color: var(--muted);
 }
 
-.segment:first-child {
+/* Keyed off the wrapper since :first-child on .segment itself would match all three; radius also shapes the focus ring, so only outer segments round outward. */
+.tooltipWrap .segment {
+  border-radius: 0;
+}
+
+.tooltipWrap:first-child .segment {
   border-radius: 1px 0 0 1px;
 }
 
-.segment:last-child {
+.tooltipWrap:last-child .segment {
   border-radius: 0 1px 1px 0;
 }
 
+/* Tinted fill alone is only 1.52:1, so the accent underline (7.2:1 light, 8.0:1 dark) carries the state, same as the header nav's current-page cue. */
 .segment[data-selected] {
   background: var(--accent-selected);
+  border-bottom-color: var(--accent);
   color: var(--text);
 }
 
@@ -51,22 +64,34 @@
   color: var(--text);
 }
 
+/* Lifts the focused segment so its ring, drawn 3px outside the button, isn't painted over by the next segment's opaque background. */
+.segment:focus-visible {
+  z-index: 1;
+}
+
 /* --- Tooltip ------------------------------------------------------------ */
+/* Arrow is positioned against the button (points at its control); bubble against the group (can slide to stay on screen) — decoupled on purpose. */
 .tooltipWrap {
-  position: relative;
   display: inline-flex;
 }
 
 .tooltip {
+  /* Overridden per segment below; also drives the rest transform so the two
+     never have to be kept in sync by hand. */
+  --tip-x: -50%;
+
   position: absolute;
   bottom: calc(100% + 8px);
   left: 50%;
-  transform: translateX(-50%) translateY(6px);
-  white-space: nowrap;
+  transform: translateX(var(--tip-x)) translateY(6px);
+  width: max-content;
+  /* Max width is the control plus the page gutter beside it; labels that don't fit wrap rather than run off the page, only where the gutter needs it. */
+  max-width: calc(100% + var(--space-page-x));
+  text-wrap: balance;
   padding: 0.3rem 0.55rem;
   background: var(--surface-strong);
   color: var(--text);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-control);
   border-radius: var(--radius-sm);
   font-family: var(--font-mono);
   font-size: 0.6875rem;
@@ -77,28 +102,56 @@
   z-index: var(--z-tooltip);
 }
 
-/* A rotated square reading as the arrow — cheaper than a second element. */
-.tooltip::after {
+/* Outer bubbles align to the group's matching edge, not centred, since a centred bubble is wider than the button and runs off the page gutter. */
+.tooltipWrap:first-child .tooltip {
+  --tip-x: 0;
+  left: 0;
+}
+
+.tooltipWrap:last-child .tooltip {
+  --tip-x: 0;
+  left: auto;
+  right: 0;
+}
+
+/* Rotated square arrow, cheaper than a second element; absolutely positioned so it's not a grid item, and outranks the bubble to cover its border. */
+.segment::after {
   content: '';
   position: absolute;
-  top: 100%;
+  bottom: calc(100% + 4px);
   left: 50%;
   width: 8px;
   height: 8px;
   background: var(--surface-strong);
-  border-right: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  transform: translate(-50%, -50%) rotate(45deg);
+  border-right: 1px solid var(--border-control);
+  border-bottom: 1px solid var(--border-control);
+  transform: translate(-50%, 6px) rotate(45deg);
+  opacity: 0;
+  pointer-events: none;
+  z-index: calc(var(--z-tooltip) + 1);
 }
 
 .tooltipWrap:hover .tooltip,
 .tooltipWrap:focus-within .tooltip {
   opacity: 1;
-  transform: translateX(-50%) translateY(0);
+  transform: translateX(var(--tip-x)) translateY(0);
+}
+
+.tooltipWrap:hover .segment::after,
+.tooltipWrap:focus-within .segment::after {
+  opacity: 1;
+  transform: translate(-50%, 0) rotate(45deg);
+}
+
+/* Escape sets this flag (handled in the component); declared after the reveal rules at the same specificity so it wins while focus/hover persist. */
+.group[data-tips-hidden] .tooltip,
+.group[data-tips-hidden] .segment::after {
+  opacity: 0;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .tooltip {
+  .tooltip,
+  .segment::after {
     transition:
       opacity var(--dur-relaxed) var(--ease) 60ms,
       transform var(--dur-relaxed) var(--ease) 60ms;

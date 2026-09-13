@@ -7,6 +7,7 @@ import styles from './Carousel.module.css';
 
 type CarouselProps = {
   slides: Slide[];
+  projectName: string;
 };
 
 /**
@@ -17,7 +18,7 @@ type CarouselProps = {
  * is both simpler and safer than reconciling an index against a new, possibly
  * shorter, slide list.
  */
-export default function Carousel({ slides }: CarouselProps) {
+export default function Carousel({ slides, projectName }: CarouselProps) {
   const [index, setIndex] = useState(0);
   const stageRef = useRef<HTMLDivElement>(null);
 
@@ -42,6 +43,11 @@ export default function Carousel({ slides }: CarouselProps) {
 
   if (total === 0) return null;
 
+  /* Fallback alt text for slides without real copy: silent video needs a text alternative too, and gets no accessible name from the element itself. */
+  const describe = (slide: Slide) =>
+    slide.alt ??
+    `${slide.label} — ${slide.type === 'video' ? 'screen recording' : 'screenshot'} from ${projectName}`;
+
   return (
     <div className={styles.carousel}>
       <div ref={stageRef} className={styles.stage}>
@@ -51,13 +57,14 @@ export default function Carousel({ slides }: CarouselProps) {
               <video
                 className={styles.media}
                 src={slide.src}
+                aria-label={describe(slide)}
                 controls
                 muted
                 playsInline
                 preload="metadata"
               />
             ) : (
-              <img className={styles.media} src={slide.src} alt={slide.label} loading="lazy" />
+              <img className={styles.media} src={slide.src} alt={describe(slide)} loading="lazy" />
             )}
           </div>
         ))}
@@ -83,10 +90,17 @@ export default function Carousel({ slides }: CarouselProps) {
           </button>
         </div>
 
-        <div className={styles.status}>
+        {/* role="status" announces each step, since the label/counter change alone reaches no screen reader. */}
+        <div role="status" className={styles.status}>
           <span className={styles.slideLabel}>{slides[index].label}</span>
           <span className={styles.counter}>
-            {index + 1} / {total}
+            <span aria-hidden="true">
+              {index + 1} / {total}
+            </span>
+            {/* The slash is read as punctuation, or skipped. Same fact, said. */}
+            <span className="visuallyHidden">
+              Slide {index + 1} of {total}
+            </span>
           </span>
         </div>
       </div>

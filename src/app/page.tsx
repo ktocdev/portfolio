@@ -13,7 +13,7 @@ export default function HomePage() {
         <div className={styles.stack}>
           <div className={styles.eyebrow}>
             <p className={styles.role}>{SITE.role}</p>
-            <ul aria-label="Specialties" className={styles.specialties}>
+            <ul role="list" aria-label="Specialties" className={styles.specialties}>
               {SITE.specialties.map((item, i) => (
                 <Fragment key={item}>
                   {i > 0 ? (

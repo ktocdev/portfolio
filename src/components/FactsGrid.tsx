@@ -48,10 +48,11 @@ export default function FactsGrid({ facts }: FactsGridProps) {
   return (
     <div ref={gridRef} className={styles.grid}>
       {facts.map((fact) => (
-        <div key={fact.label} className={styles.cell}>
-          <span className={styles.value}>{fact.value}</span>
-          <span className={styles.label}>{fact.label}</span>
-        </div>
+        /* One <dl> per cell (filler photo needs to be a grid item, and <figure> can't sit in a <dl>); dt=value here since labels read as the sentence's back half. */
+        <dl key={fact.label} className={styles.cell}>
+          <dt className={styles.value}>{fact.value}</dt>
+          <dd className={styles.label}>{fact.label}</dd>
+        </dl>
       ))}
 
       {fillerSpan > 0 ? (

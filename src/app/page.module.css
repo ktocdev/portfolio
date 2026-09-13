@@ -42,8 +42,9 @@
   color: var(--muted);
 }
 
+/* Was 1.48:1 and effectively invisible despite being decorative; control colour reads as a divider without competing with the muted text. */
 .separator {
-  color: var(--border);
+  color: var(--border-control);
 }
 
 .heading {

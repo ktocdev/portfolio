@@ -20,21 +20,26 @@ export default function ContactPage() {
           <p className={styles.lead}>{COPY.contact.lead}</p>
         </div>
 
-        <ul aria-label="Contact methods" className={styles.list}>
-          {CONTACTS.map((contact) => (
-            <li key={contact.label} className={styles.row}>
-              <span className={styles.label}>{contact.label}</span>
-              <a
-                href={contact.href}
-                className={styles.value}
-                {...(contact.href.startsWith('http')
-                  ? { target: '_blank', rel: 'noopener' }
-                  : {})}
-              >
-                {contact.text}
-              </a>
-            </li>
-          ))}
+        <ul role="list" aria-label="Contact methods" className={styles.list}>
+          {CONTACTS.map((contact) => {
+            const isExternal = contact.href.startsWith('http');
+
+            return (
+              <li key={contact.label} className={styles.row}>
+                <span className={styles.label}>{contact.label}</span>
+                <a
+                  href={contact.href}
+                  className={styles.value}
+                  {...(isExternal ? { target: '_blank', rel: 'noopener' } : {})}
+                >
+                  {contact.text}
+                  {isExternal ? (
+                    <span className="visuallyHidden"> (opens in a new tab)</span>
+                  ) : null}
+                </a>
+              </li>
+            );
+          })}
         </ul>
       </div>
 

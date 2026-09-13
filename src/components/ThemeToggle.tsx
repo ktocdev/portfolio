@@ -1,31 +1,32 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styles from './ThemeToggle.module.css';
 
 type Theme = 'system' | 'light' | 'dark';
 
 const STORAGE_KEY = 'portfolio-theme';
 
-const OPTIONS: { id: Theme; label: string }[] = [
-  { id: 'system', label: 'Follow system setting' },
-  { id: 'light', label: 'Light mode' },
-  { id: 'dark', label: 'Dark mode' },
+/* `label` overrides the accessible name only where visible text exists (WCAG 2.5.3); icon-only segments have none to agree with, so `tip` serves as their name. */
+const OPTIONS: { id: Theme; tip: string; label?: string }[] = [
+  { id: 'system', tip: 'Use system mode', label: 'Auto — use system mode' },
+  { id: 'light', tip: 'Light mode' },
+  { id: 'dark', tip: 'Dark mode' },
 ];
 
 function applyTheme(theme: Theme) {
   const el = document.documentElement;
-  /* `system` removes the attribute entirely so prefers-color-scheme governs
-     again — setting data-theme="system" would match no CSS rule. */
+  /* `system` removes the attribute so prefers-color-scheme governs again, since data-theme="system" would match no CSS rule. */
   if (theme === 'system') el.removeAttribute('data-theme');
   else el.setAttribute('data-theme', theme);
 }
 
 export default function ThemeToggle() {
-  /* Starts at the prerendered default and is corrected on mount. The visible
-     theme is already correct by then — the inline script in layout.tsx set it
-     before paint — so only the pressed segment settles here. */
+  /* Starts at the prerendered default; only the pressed segment settles on mount since layout.tsx's inline script already set the visible theme before paint. */
   const [theme, setTheme] = useState<Theme>('system');
+  const segments = useRef<(HTMLButtonElement | null)[]>([]);
+  /* Tooltips are pure CSS (:hover/:focus-within) with no dismissal otherwise; Escape sets this to satisfy 1.4.13 without losing pointer position or tab order. */
+  const [tipsHidden, setTipsHidden] = useState(false);
 
   useEffect(() => {
     try {
@@ -46,15 +47,68 @@ export default function ThemeToggle() {
     }
   }
 
+  /* Arrow keys move and select immediately, as expected for a radio group; focus is moved by hand since only the checked radio is in the tab order. */
+  function onKeyDown(event: React.KeyboardEvent, index: number) {
+    if (event.key === 'Escape') {
+      setTipsHidden(true);
+      return;
+    }
+
+    const last = OPTIONS.length - 1;
+    let next: number;
+
+    switch (event.key) {
+      case 'ArrowRight':
+      case 'ArrowDown':
+        next = index === last ? 0 : index + 1;
+        break;
+      case 'ArrowLeft':
+      case 'ArrowUp':
+        next = index === 0 ? last : index - 1;
+        break;
+      case 'Home':
+        next = 0;
+        break;
+      case 'End':
+        next = last;
+        break;
+      default:
+        return;
+    }
+
+    /* Arrowing to a different segment is a fresh request to see its tip. */
+    setTipsHidden(false);
+    /* Stops the arrow keys from scrolling the page out from under the footer. */
+    event.preventDefault();
+    select(OPTIONS[next].id);
+    segments.current[next]?.focus();
+  }
+
   return (
-    <div role="group" aria-label="Color scheme" className={styles.group}>
-      {OPTIONS.map((option) => (
+    /* Radiogroup, not toggle buttons: aria-pressed would describe segments as independently on/off; roving tabindex keeps this a single tab stop. */
+    <div
+      role="radiogroup"
+      aria-label="Color scheme"
+      className={styles.group}
+      data-tips-hidden={tipsHidden || undefined}
+      onMouseLeave={() => setTipsHidden(false)}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setTipsHidden(false);
+      }}
+    >
+      {OPTIONS.map((option, index) => (
         <span key={option.id} className={styles.tooltipWrap}>
           <button
             type="button"
+            role="radio"
+            ref={(el) => {
+              segments.current[index] = el;
+            }}
             onClick={() => select(option.id)}
-            aria-pressed={theme === option.id}
-            aria-label={option.label}
+            onKeyDown={(event) => onKeyDown(event, index)}
+            aria-checked={theme === option.id}
+            tabIndex={theme === option.id ? 0 : -1}
+            aria-label={option.label ?? option.tip}
             className={styles.segment}
             data-selected={theme === option.id || undefined}
           >
@@ -62,8 +116,9 @@ export default function ThemeToggle() {
             {option.id === 'light' ? <SunIcon /> : null}
             {option.id === 'dark' ? <MoonIcon /> : null}
           </button>
-          <span className={styles.tooltip} role="tooltip">
-            {option.label}
+          {/* Hidden from assistive tech: repeats the accessible name above, and opacity alone would leave it in the footer's reading order. */}
+          <span aria-hidden="true" className={styles.tooltip}>
+            {option.tip}
           </span>
         </span>
       ))}

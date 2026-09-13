@@ -1,10 +1,16 @@
-/* Asymmetric: the experience column carries far more content than the intro. */
+/* Explicit two-track template (not auto-fit) preserves the intentional 22rem/26rem asymmetry; 
+single column below the width where both tracks fit. */
 .resume {
   display: grid;
-  grid-template-columns: minmax(min(100%, 22rem), 1fr) minmax(min(100%, 26rem), 1.4fr);
   gap: var(--space-column-gap);
   align-content: start;
   min-height: 0;
+}
+
+@media (min-width: 56rem) {
+  .resume {
+    grid-template-columns: minmax(min(100%, 22rem), 1fr) minmax(min(100%, 26rem), 1.4fr);
+  }
 }
 
 .left {
@@ -65,10 +71,16 @@
 
 .entry {
   display: grid;
-  grid-template-columns: minmax(6.5rem, max-content) 1fr;
   gap: 0.25rem clamp(1rem, 2vw, 2rem);
   padding: var(--space-row-y) 0;
   border-bottom: 1px solid var(--border-subtle);
+}
+
+/* Same reasoning as the page grid: fixed years column is too costly on phones, so it stacks above the role below this width. */
+@media (min-width: 30rem) {
+  .entry {
+    grid-template-columns: minmax(6.5rem, max-content) 1fr;
+  }
 }
 
 .entry[data-last] {
