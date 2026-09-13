@@ -32,6 +32,12 @@ export default function ThemeToggle() {
      before paint — so only the pressed segment settles here. */
   const [theme, setTheme] = useState<Theme>('system');
   const segments = useRef<(HTMLButtonElement | null)[]>([]);
+  /* The tooltips are pure CSS on :hover and :focus-within, which leaves no
+     way to get rid of one without moving away from the control it belongs
+     to. 1.4.13 wants a dismissal that costs you neither your pointer
+     position nor your place in the tab order, so Escape sets this and any
+     genuine departure clears it again. */
+  const [tipsHidden, setTipsHidden] = useState(false);
 
   useEffect(() => {
     try {
@@ -57,6 +63,11 @@ export default function ThemeToggle() {
      rather than needing a second keypress to confirm. Focus has to be moved by
      hand because only the checked radio is in the tab order. */
   function onKeyDown(event: React.KeyboardEvent, index: number) {
+    if (event.key === 'Escape') {
+      setTipsHidden(true);
+      return;
+    }
+
     const last = OPTIONS.length - 1;
     let next: number;
 
@@ -79,6 +90,8 @@ export default function ThemeToggle() {
         return;
     }
 
+    /* Arrowing to a different segment is a fresh request to see its tip. */
+    setTipsHidden(false);
     /* Stops the arrow keys from scrolling the page out from under the footer. */
     event.preventDefault();
     select(OPTIONS[next].id);
@@ -91,7 +104,16 @@ export default function ThemeToggle() {
        independently on or off. The group is also a single tab stop — the roving
        tabindex below keeps only the checked segment reachable by Tab, so the
        footer does not cost three stops on the way out of the page. */
-    <div role="radiogroup" aria-label="Color scheme" className={styles.group}>
+    <div
+      role="radiogroup"
+      aria-label="Color scheme"
+      className={styles.group}
+      data-tips-hidden={tipsHidden || undefined}
+      onMouseLeave={() => setTipsHidden(false)}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setTipsHidden(false);
+      }}
+    >
       {OPTIONS.map((option, index) => (
         <span key={option.id} className={styles.tooltipWrap}>
           <button

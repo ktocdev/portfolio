@@ -166,6 +166,14 @@
   transform: translate(-50%, 0) rotate(45deg);
 }
 
+/* Escape, handled in the component, sets the flag this reads. Declared after
+   the reveal rules and at the same specificity, so it simply wins — and the
+   control keeps both focus and hover the whole time, which is the point. */
+.group[data-tips-hidden] .tooltip,
+.group[data-tips-hidden] .segment::after {
+  opacity: 0;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .tooltip,
   .segment::after {

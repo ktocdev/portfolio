@@ -42,8 +42,12 @@
   color: var(--muted);
 }
 
+/* aria-hidden and purely decorative, so 1.4.3 arguably never applied — but
+   at 1.48:1 these were invisible to anyone they were meant to help parse the
+   row, and every scanner reports them. The control colour reads as a divider
+   without competing with the muted text either side. */
 .separator {
-  color: var(--border);
+  color: var(--border-control);
 }
 
 .heading {

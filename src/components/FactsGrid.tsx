@@ -48,10 +48,16 @@ export default function FactsGrid({ facts }: FactsGridProps) {
   return (
     <div ref={gridRef} className={styles.grid}>
       {facts.map((fact) => (
-        <div key={fact.label} className={styles.cell}>
-          <span className={styles.value}>{fact.value}</span>
-          <span className={styles.label}>{fact.label}</span>
-        </div>
+        /* One list per cell rather than one around the whole grid: the filler
+           photograph has to be a grid item too, and <figure> is not something
+           a <dl> may contain. And the value is the <dt> here, inverting the
+           dt=label convention used on Home and About, because these labels
+           are written as the back half of a sentence the number starts —
+           "45M" then "students … reached" is the order that reads aloud. */
+        <dl key={fact.label} className={styles.cell}>
+          <dt className={styles.value}>{fact.value}</dt>
+          <dd className={styles.label}>{fact.label}</dd>
+        </dl>
       ))}
 
       {fillerSpan > 0 ? (

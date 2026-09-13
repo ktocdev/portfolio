@@ -145,6 +145,7 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
                 {link.label}
                 {' '}
                 <span aria-hidden="true">↗</span>
+                <span className="visuallyHidden"> (opens in a new tab)</span>
               </a>
             ))}
           </div>
@@ -182,6 +183,7 @@ function NoteItem({ note }: { note: Note }) {
             {note.link.label}
             {' '}
             <span aria-hidden="true">↗</span>
+            <span className="visuallyHidden"> (opens in a new tab)</span>
           </a>
         </>
       ) : null}
