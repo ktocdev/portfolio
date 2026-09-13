@@ -29,7 +29,7 @@ export default function ResumePage() {
         </div>
       </div>
 
-      <ol aria-label="Experience" className={styles.list}>
+      <ol role="list" aria-label="Experience" className={styles.list}>
         {EXPERIENCE.map((entry, i) => (
           <li
             key={`${entry.years}-${entry.role}`}

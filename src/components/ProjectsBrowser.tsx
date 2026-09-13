@@ -131,7 +131,7 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
         {project.facts?.length ? <FactsGrid facts={project.facts} /> : null}
 
         {project.notes?.length ? (
-          <ul aria-label="Case study notes" className={styles.notes}>
+          <ul role="list" aria-label="Case study notes" className={styles.notes}>
             {project.notes.map((note, i) => (
               <NoteItem key={`${note.kind}-${i}`} note={note} />
             ))}

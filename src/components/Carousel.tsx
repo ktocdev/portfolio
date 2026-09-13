@@ -94,10 +94,19 @@ export default function Carousel({ slides, projectName }: CarouselProps) {
           </button>
         </div>
 
-        <div className={styles.status}>
+        {/* Stepping is otherwise silent: the label and counter change on screen
+            and nothing reaches a screen reader at all. role="status" is polite
+            and atomic, so each press announces the whole thing once. */}
+        <div role="status" className={styles.status}>
           <span className={styles.slideLabel}>{slides[index].label}</span>
           <span className={styles.counter}>
-            {index + 1} / {total}
+            <span aria-hidden="true">
+              {index + 1} / {total}
+            </span>
+            {/* The slash is read as punctuation, or skipped. Same fact, said. */}
+            <span className="visuallyHidden">
+              Slide {index + 1} of {total}
+            </span>
           </span>
         </div>
       </div>

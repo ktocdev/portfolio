@@ -20,7 +20,7 @@ export default function ContactPage() {
           <p className={styles.lead}>{COPY.contact.lead}</p>
         </div>
 
-        <ul aria-label="Contact methods" className={styles.list}>
+        <ul role="list" aria-label="Contact methods" className={styles.list}>
           {CONTACTS.map((contact) => (
             <li key={contact.label} className={styles.row}>
               <span className={styles.label}>{contact.label}</span>

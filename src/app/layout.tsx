@@ -87,7 +87,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             Skip to content
           </a>
           <SiteHeader />
-          <main id="main" className={styles.main}>
+          {/* tabIndex makes the skip link actually move focus, not just scroll. */}
+          <main id="main" tabIndex={-1} className={styles.main}>
             {children}
           </main>
           <SiteFooter />
