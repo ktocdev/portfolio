@@ -11,7 +11,7 @@
   --surface-strong: #d9d6ee;
   --text: #1f2333;
   --muted: #555b70;
-  --text-faint: #9a9fb2;
+  --text-faint: #696c79;
   --accent: #3e43b8;
   --accent-hover: #2f3396;
   --accent-selected: #c9c6f2;
@@ -48,7 +48,7 @@
     --surface-strong: #2a2d45;
     --text: #e8e7f2;
     --muted: #a7a9c0;
-    --text-faint: #7c819a;
+    --text-faint: #868ba6;
     --accent: #a5a8f5;
     --accent-hover: #c0c2fa;
     --accent-selected: #3a3f7a;
@@ -79,7 +79,7 @@
   --surface-strong: #2a2d45;
   --text: #e8e7f2;
   --muted: #a7a9c0;
-  --text-faint: #7c819a;
+  --text-faint: #868ba6;
   --accent: #a5a8f5;
   --accent-hover: #c0c2fa;
   --accent-selected: #3a3f7a;

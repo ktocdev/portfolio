@@ -1,10 +1,23 @@
-/* Asymmetric: the experience column carries far more content than the intro. */
+/* Asymmetric: the experience column carries far more content than the intro.
+   This is the one page that cannot collapse its columns with repeat(auto-fit, …)
+   like the others, because auto-fit only ever produces equal tracks and the
+   ratio here is deliberate. An explicit two-track template never collapses, so
+   it needs a stated breakpoint: below it the two minmax() minimums both resolve
+   to min(100%, …) — the full container — and the experience list is laid out a
+   whole column width off-screen with the stretched intro left behind as blank
+   space. Single column is therefore the default, and the two-track layout is
+   opt-in above the width where 22rem + 26rem + the gap and gutters fit. */
 .resume {
   display: grid;
-  grid-template-columns: minmax(min(100%, 22rem), 1fr) minmax(min(100%, 26rem), 1.4fr);
   gap: var(--space-column-gap);
   align-content: start;
   min-height: 0;
+}
+
+@media (min-width: 56rem) {
+  .resume {
+    grid-template-columns: minmax(min(100%, 22rem), 1fr) minmax(min(100%, 26rem), 1.4fr);
+  }
 }
 
 .left {
@@ -65,10 +78,20 @@
 
 .entry {
   display: grid;
-  grid-template-columns: minmax(6.5rem, max-content) 1fr;
   gap: 0.25rem clamp(1rem, 2vw, 2rem);
   padding: var(--space-row-y) 0;
   border-bottom: 1px solid var(--border-subtle);
+}
+
+/* Same reasoning as the page grid one level down. A fixed years column costs
+   6.5rem of a phone's measure, which leaves the bullets at roughly twenty
+   characters a line and trails a column of blank space down the taller entries.
+   Above this width there is room for both, and the year reads as a margin note
+   against the role; below it the year stacks above as a label instead. */
+@media (min-width: 30rem) {
+  .entry {
+    grid-template-columns: minmax(6.5rem, max-content) 1fr;
+  }
 }
 
 .entry[data-last] {

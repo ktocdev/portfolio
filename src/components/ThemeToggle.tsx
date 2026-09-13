@@ -1,16 +1,21 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styles from './ThemeToggle.module.css';
 
 type Theme = 'system' | 'light' | 'dark';
 
 const STORAGE_KEY = 'portfolio-theme';
 
-const OPTIONS: { id: Theme; label: string }[] = [
-  { id: 'system', label: 'Follow system setting' },
-  { id: 'light', label: 'Light mode' },
-  { id: 'dark', label: 'Dark mode' },
+/* `tip` is the visible tooltip. `label` overrides the accessible name, and is
+   only needed where the button also shows text of its own: a name that does not
+   contain the visible word fails WCAG 2.5.3 Label in Name, and leaves anyone
+   driving the page by voice unable to say "click Auto". The icon-only segments
+   have no visible text to agree with, so the tip serves as their name. */
+const OPTIONS: { id: Theme; tip: string; label?: string }[] = [
+  { id: 'system', tip: 'Use system mode', label: 'Auto — use system mode' },
+  { id: 'light', tip: 'Light mode' },
+  { id: 'dark', tip: 'Dark mode' },
 ];
 
 function applyTheme(theme: Theme) {
@@ -26,6 +31,7 @@ export default function ThemeToggle() {
      theme is already correct by then — the inline script in layout.tsx set it
      before paint — so only the pressed segment settles here. */
   const [theme, setTheme] = useState<Theme>('system');
+  const segments = useRef<(HTMLButtonElement | null)[]>([]);
 
   useEffect(() => {
     try {
@@ -46,15 +52,59 @@ export default function ThemeToggle() {
     }
   }
 
+  /* Arrow keys move between the radios and select as they go, which is the
+     expected behaviour for a radio group — the choice takes effect immediately
+     rather than needing a second keypress to confirm. Focus has to be moved by
+     hand because only the checked radio is in the tab order. */
+  function onKeyDown(event: React.KeyboardEvent, index: number) {
+    const last = OPTIONS.length - 1;
+    let next: number;
+
+    switch (event.key) {
+      case 'ArrowRight':
+      case 'ArrowDown':
+        next = index === last ? 0 : index + 1;
+        break;
+      case 'ArrowLeft':
+      case 'ArrowUp':
+        next = index === 0 ? last : index - 1;
+        break;
+      case 'Home':
+        next = 0;
+        break;
+      case 'End':
+        next = last;
+        break;
+      default:
+        return;
+    }
+
+    /* Stops the arrow keys from scrolling the page out from under the footer. */
+    event.preventDefault();
+    select(OPTIONS[next].id);
+    segments.current[next]?.focus();
+  }
+
   return (
-    <div role="group" aria-label="Color scheme" className={styles.group}>
-      {OPTIONS.map((option) => (
+    /* A radiogroup rather than three toggle buttons: exactly one scheme is in
+       force at a time, and aria-pressed would describe each segment as
+       independently on or off. The group is also a single tab stop — the roving
+       tabindex below keeps only the checked segment reachable by Tab, so the
+       footer does not cost three stops on the way out of the page. */
+    <div role="radiogroup" aria-label="Color scheme" className={styles.group}>
+      {OPTIONS.map((option, index) => (
         <span key={option.id} className={styles.tooltipWrap}>
           <button
             type="button"
+            role="radio"
+            ref={(el) => {
+              segments.current[index] = el;
+            }}
             onClick={() => select(option.id)}
-            aria-pressed={theme === option.id}
-            aria-label={option.label}
+            onKeyDown={(event) => onKeyDown(event, index)}
+            aria-checked={theme === option.id}
+            tabIndex={theme === option.id ? 0 : -1}
+            aria-label={option.label ?? option.tip}
             className={styles.segment}
             data-selected={theme === option.id || undefined}
           >
@@ -62,8 +112,11 @@ export default function ThemeToggle() {
             {option.id === 'light' ? <SunIcon /> : null}
             {option.id === 'dark' ? <MoonIcon /> : null}
           </button>
-          <span className={styles.tooltip} role="tooltip">
-            {option.label}
+          {/* Hidden from assistive tech: it only repeats the accessible name above,
+              and opacity alone would leave three loose copies of it in the
+              footer's reading order. */}
+          <span aria-hidden="true" className={styles.tooltip}>
+            {option.tip}
           </span>
         </span>
       ))}

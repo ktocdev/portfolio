@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import Carousel from './Carousel';
 import FactsGrid from './FactsGrid';
@@ -15,7 +15,41 @@ type ProjectsBrowserProps = {
 export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
   /* Selection is local UI state, not a route — the case study is open on load. */
   const [selected, setSelected] = useState(0);
+  const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const project = projects[selected];
+
+  /* Arrow keys move between tabs and select as they go. Automatic activation is
+     the right trade here: the panels are already rendered client-side, so there
+     is nothing to wait for and no reason to make the user confirm. Focus has to
+     be moved by hand because only the selected tab is in the tab order. */
+  function onKeyDown(event: React.KeyboardEvent, index: number) {
+    const last = projects.length - 1;
+    let next: number;
+
+    switch (event.key) {
+      case 'ArrowDown':
+      case 'ArrowRight':
+        next = index === last ? 0 : index + 1;
+        break;
+      case 'ArrowUp':
+      case 'ArrowLeft':
+        next = index === 0 ? last : index - 1;
+        break;
+      case 'Home':
+        next = 0;
+        break;
+      case 'End':
+        next = last;
+        break;
+      default:
+        return;
+    }
+
+    /* Stops the arrow keys from scrolling the list out from under the cursor. */
+    event.preventDefault();
+    setSelected(next);
+    tabs.current[next]?.focus();
+  }
 
   return (
     <section className={styles.projects}>
@@ -23,13 +57,30 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
         <h1 className={styles.heading}>Projects</h1>
         <p className={styles.intro}>{COPY.projects.intro}</p>
 
-        <ol aria-label="Project list" className={styles.list}>
+        {/* A tablist rather than a list of toggle buttons: exactly one project
+            is open at a time, and aria-controls is what tells a screen reader
+            that the panel beside the list is the thing each row opens. The li
+            elements are presentational so the tablist sees only its tabs. */}
+        <ol
+          role="tablist"
+          aria-label="Project list"
+          aria-orientation="vertical"
+          className={styles.list}
+        >
           {projects.map((item, i) => (
-            <li key={item.slug}>
+            <li key={item.slug} role="presentation">
               <button
                 type="button"
+                role="tab"
+                id={`tab-${item.slug}`}
+                ref={(el) => {
+                  tabs.current[i] = el;
+                }}
                 onClick={() => setSelected(i)}
-                aria-pressed={i === selected}
+                onKeyDown={(event) => onKeyDown(event, i)}
+                aria-selected={i === selected}
+                aria-controls={`panel-${item.slug}`}
+                tabIndex={i === selected ? 0 : -1}
                 className={styles.row}
                 data-selected={i === selected || undefined}
               >
@@ -53,10 +104,20 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
         </ol>
       </div>
 
-      <article aria-live="polite" className={styles.detail}>
+      {/* Named by its own tab, so the panel announces which project it belongs
+          to on arrival. No live region: the tab relationship lets a screen
+          reader move here deliberately, where announcing the swap would read
+          the carousel, the prose, the facts and the notes on every keystroke. */}
+      <article
+        role="tabpanel"
+        id={`panel-${project.slug}`}
+        aria-labelledby={`tab-${project.slug}`}
+        tabIndex={0}
+        className={styles.detail}
+      >
         {project.slides?.length ? (
           /* Keyed so switching projects remounts: index resets, videos unmount. */
-          <Carousel key={project.slug} slides={project.slides} />
+          <Carousel key={project.slug} slides={project.slides} projectName={project.name} />
         ) : null}
 
         {project.status ? <p className={styles.status}>{project.status}</p> : null}
@@ -82,7 +143,7 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
             {project.links.map((link) => (
               <a key={link.href} href={link.href} target="_blank" rel="noopener" className={styles.link}>
                 {link.label}
-                {' '}
+                {' '}
                 <span aria-hidden="true">↗</span>
               </a>
             ))}
@@ -119,7 +180,7 @@ function NoteItem({ note }: { note: Note }) {
           {' '}
           <a href={note.link.href} target="_blank" rel="noopener" className={styles.noteLink}>
             {note.link.label}
-            {' '}
+            {' '}
             <span aria-hidden="true">↗</span>
           </a>
         </>
