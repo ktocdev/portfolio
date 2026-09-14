@@ -12,7 +12,7 @@ export const SITE = {
   copyright: "© 2026 Katie O'Connor",
   /* Microsoft Clarity project ID (Settings → Overview). Public value, not a
      secret. Leave empty to disable analytics — the script won't load. */
-  clarityId: '',
+  clarityId: 'yhyf2x1l6v',
 } as const;
 
 export type NavItem = {
