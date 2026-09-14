@@ -137,14 +137,32 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
 
         {project.links.length ? (
           <div className={styles.links}>
-            {project.links.map((link) => (
-              <a key={link.href} href={link.href} target="_blank" rel="noopener" className={styles.link}>
-                {link.label}
-                {' '}
-                <span aria-hidden="true">↗</span>
-                <span className="visuallyHidden"> (opens in a new tab)</span>
-              </a>
-            ))}
+            {project.links.map((link, i) => {
+              /* describedby, not link text: a badge in the link text would be
+                 underlined and clickable, and screen readers strip links from
+                 their surrounding context (e.g. tabbing, links list). */
+              const badgeId = link.badge ? `${project.slug}-link-${i}-badge` : undefined;
+
+              return (
+                <span key={link.href} className={styles.linkItem}>
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener"
+                    aria-describedby={badgeId}
+                    className={styles.link}
+                  >
+                    {link.label} <span aria-hidden="true">↗</span>
+                    <span className="visuallyHidden"> (opens in a new tab)</span>
+                  </a>
+                  {link.badge ? (
+                    <span id={badgeId} className={styles.linkBadge}>
+                      {link.badge}
+                    </span>
+                  ) : null}
+                </span>
+              );
+            })}
           </div>
         ) : null}
       </article>

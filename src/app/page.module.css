@@ -11,7 +11,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: clamp(0.65rem, 6vh - 2.4rem, 2.5rem);
+  gap: clamp(1.25rem, 3vh, 2.5rem);
   min-width: 0;
 }
 
@@ -68,10 +68,13 @@
   text-wrap: pretty;
 }
 
-/* Short viewports trade the narrow designed measure for fewer lines — at 34ch
-   the lead runs to six or seven lines, and those two extra lines are a large
-   part of what pushes the footer past the fold on a laptop. */
-@media (max-height: 75rem) {
+/* Fit-to-viewport mode — same query as globals.css. Widens the lead measure
+   for fewer lines and tightens hero spacing. */
+@media (min-width: 105rem) and (min-height: 54rem) and (max-height: 75rem) {
+  .left {
+    gap: clamp(1rem, 4.5vh - 1.125rem, 2.5rem);
+  }
+
   .lead {
     max-width: 46ch;
   }
@@ -95,7 +98,7 @@
 
 .skillLabel,
 .skillItems {
-  padding: clamp(0.25rem, 2vh - 0.75rem, 0.75rem) 0;
+  padding: clamp(0.45rem, 1vh, 0.75rem) 0;
   border-bottom: 1px solid var(--border-subtle);
 }
 

@@ -9,6 +9,8 @@ const nextConfig: NextConfig = {
   /* Emit /projects/index.html rather than /projects.html so static hosts
      resolve routes identically with or without the trailing slash. */
   trailingSlash: true,
+  /* Stop `next dev` regenerating AGENTS.md / CLAUDE.md in the repo root. */
+  agentRules: false,
 };
 
 export default nextConfig;

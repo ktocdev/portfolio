@@ -197,6 +197,26 @@
   padding-top: 0.25rem;
 }
 
+/* Keeps a link and its badge together as one item, so the row's gap falls
+   between pairs rather than between a link and the thing qualifying it. */
+.linkItem {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.linkBadge {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-xs);
+  letter-spacing: var(--tracking-mono-caps);
+  text-transform: uppercase;
+  color: var(--muted);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.1rem 0.4rem;
+  white-space: nowrap;
+}
+
 .link {
   font-family: var(--font-mono);
   font-size: clamp(0.875rem, 0.78rem + 0.3vw, 1rem);

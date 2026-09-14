@@ -64,9 +64,11 @@
   color: var(--text);
 }
 
-/* Lifts the focused segment so its ring, drawn 3px outside the button, isn't painted over by the next segment's opaque background. */
+/* Lifts the focused segment so its ring isn't painted over by the next
+   segment's opaque background. Also traps its own tooltip arrow above the
+   bubble border, via the new stacking context. */
 .segment:focus-visible {
-  z-index: 1;
+  z-index: calc(var(--z-tooltip) + 1);
 }
 
 /* --- Tooltip ------------------------------------------------------------ */
@@ -131,21 +133,43 @@
   z-index: calc(var(--z-tooltip) + 1);
 }
 
-.tooltipWrap:hover .tooltip,
-.tooltipWrap:focus-within .tooltip {
+/* Hover only. Focus used to reveal these too, but left one stuck open after
+   every click. The tip is a pointer convenience; every segment already has
+   its own aria-label. */
+.tooltipWrap:hover .tooltip {
   opacity: 1;
   transform: translateX(var(--tip-x)) translateY(0);
 }
 
-.tooltipWrap:hover .segment::after,
-.tooltipWrap:focus-within .segment::after {
+.tooltipWrap:hover .segment::after {
   opacity: 1;
   transform: translate(-50%, 0) rotate(45deg);
 }
 
-/* Escape sets this flag (handled in the component); declared after the reveal rules at the same specificity so it wins while focus/hover persist. */
-.group[data-tips-hidden] .tooltip,
-.group[data-tips-hidden] .segment::after {
+/* Keyboard focus only. :focus-visible (not :focus) skips mouse clicks, so
+   clicking no longer leaves a tip stuck open. */
+.segment:focus-visible ~ .tooltip {
+  opacity: 1;
+  transform: translateX(var(--tip-x)) translateY(0);
+}
+
+.segment:focus-visible::after {
+  opacity: 1;
+  transform: translate(-50%, 0) rotate(45deg);
+}
+
+/* Focus can stay parked on one segment while the pointer visits another;
+   two tips at once is never wanted, so the pointer wins. */
+.group:hover .tooltipWrap:not(:hover) .tooltip,
+.group:hover .tooltipWrap:not(:hover) .segment::after {
+  opacity: 0;
+}
+
+/* Escape sets the flag this reads. Scoped to :focus-visible and :not(:hover)
+   so it only cancels the keyboard reveal and clears as soon as the pointer
+   enters — an earlier group-wide version left tips suppressed too long. */
+.group:not(:hover)[data-tip-dismissed] .segment:focus-visible ~ .tooltip,
+.group:not(:hover)[data-tip-dismissed] .segment:focus-visible::after {
   opacity: 0;
 }
 

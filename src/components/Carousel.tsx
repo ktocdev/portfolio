@@ -20,6 +20,9 @@ type CarouselProps = {
  */
 export default function Carousel({ slides, projectName }: CarouselProps) {
   const [index, setIndex] = useState(0);
+  /* Sticky across steps on purpose: someone reading descriptions wants the
+     next one too, without re-pressing every slide. */
+  const [showInfo, setShowInfo] = useState(false);
   const stageRef = useRef<HTMLDivElement>(null);
 
   /* Slides are all mounted and toggled with `display`, so navigating away from
@@ -48,6 +51,10 @@ export default function Carousel({ slides, projectName }: CarouselProps) {
     slide.alt ??
     `${slide.label} — ${slide.type === 'video' ? 'screen recording' : 'screenshot'} from ${projectName}`;
 
+  /* Info control only appears when `alt` is real copy — the generated
+     fallback stays on the media itself, not surfaced here. */
+  const description = slides[index].alt;
+
   return (
     <div className={styles.carousel}>
       <div ref={stageRef} className={styles.stage}>
@@ -64,10 +71,35 @@ export default function Carousel({ slides, projectName }: CarouselProps) {
                 preload="metadata"
               />
             ) : (
-              <img className={styles.media} src={slide.src} alt={describe(slide)} loading="lazy" />
+              /* Only stills are linked — a video click belongs to its own controls.
+                 Alt stays on the img so the link inherits it as its name. */
+              <a href={slide.src} target="_blank" rel="noopener" className={styles.mediaLink}>
+                <img className={styles.media} src={slide.src} alt={describe(slide)} loading="lazy" />
+                <span className="visuallyHidden"> (opens in a new tab)</span>
+              </a>
             )}
           </div>
         ))}
+
+        {description ? (
+          <>
+            {/* No aria-label: the visible word "Info" is the accessible name
+                (2.5.3). State lives in aria-expanded instead. */}
+            <button
+              type="button"
+              onClick={() => setShowInfo((open) => !open)}
+              aria-expanded={showInfo}
+              className={styles.infoButton}
+            >
+              Info
+            </button>
+            {/* Hidden from assistive tech: it's the same string the media's
+                alt already carries, so screen readers have heard it already. */}
+            <p aria-hidden="true" className={styles.info} data-open={showInfo || undefined}>
+              {description}
+            </p>
+          </>
+        ) : null}
       </div>
 
       <div className={styles.controls}>
