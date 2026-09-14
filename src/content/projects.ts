@@ -202,7 +202,7 @@ export const PROJECTS: Project[] = [
         label: 'Search',
         src: '/projects/mc-search.png',
         type: 'image',
-        alt: 'The search screen shows a query for \"Mom\" and a list of entries that mention Mom, with the most recent at the top.',
+        alt: 'The search screen shows a query for \"Mom\" and a list of entries that mention Mom, sorted by best match.',
       },
       {
         label: 'Entities',
