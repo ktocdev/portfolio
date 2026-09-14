@@ -6,6 +6,8 @@
 export type Link = {
   label: string;
   href: string;
+  /** Small marker shown beside the link, for when the destination is not the whole story yet. */
+  badge?: string;
 };
 
 export type Fact = {
@@ -188,17 +190,62 @@ export const PROJECTS: Project[] = [
       'Main Character is intended to be local only and you need a Claude API key.',
       'This might be good for people who want to find patterns in their life, remember things better, gain perspective through reflection, work toward a goal, or just enjoy feeling like the main character in their own story.',
     ],
-    links: [{ label: 'GitHub', href: 'https://github.com/ktocdev/main-character' }],
+    links: [{ label: 'GitHub', href: 'https://github.com/ktocdev', badge: 'Coming soon' }],
     slides: [
-      { label: 'Write', src: '/projects/mc-write.mp4', type: 'video' },
-      { label: 'Search', src: '/projects/mc-search.png', type: 'image' },
-      { label: 'Entities', src: '/projects/mc-entities.mp4', type: 'video' },
-      { label: 'History', src: '/projects/mc-history.png', type: 'image' },
-      { label: 'Categories', src: '/projects/mc-categories.mp4', type: 'video' },
-      { label: 'Patterns', src: '/projects/mc-patterns.mp4', type: 'video' },
-      { label: 'Dreams', src: '/projects/mc-dreams.png', type: 'image' },
-      { label: 'Triage', src: '/projects/mc-triage.png', type: 'image' },
-      { label: 'Settings', src: '/projects/mc-settings.mp4', type: 'video' },
+      {
+        label: 'Write',
+        src: '/projects/mc-write.mp4',
+        type: 'video',
+        alt: 'On the write screen, the user saves an example entry. The companion response is a fixed demo response, taken from a real conversation.',
+      },
+      {
+        label: 'Search',
+        src: '/projects/mc-search.png',
+        type: 'image',
+        alt: 'The search screen shows a query for \"Mom\" and a list of entries that mention Mom, with the most recent at the top.',
+      },
+      {
+        label: 'Entities',
+        src: '/projects/mc-entities.mp4',
+        type: 'video',
+        alt: 'On the entities screen, the left sidebar lists entities and filters. The right panel shows details for the selected entity. The user adds \"Mom\" to a new \"Family\" group, then gives \"Coda Project\" the alias \"Coda\".',
+      },
+      {
+        label: 'History',
+        src: '/projects/mc-history.png',
+        type: 'image',
+        alt: 'The history screen shows all entry groups in the left sidebar. The middle panel orders them by most recent date. The right panel lists individual entries in the group, with links to both entry and summary.',
+      },
+      {
+        label: 'Categories',
+        src: '/projects/mc-categories.mp4',
+        type: 'video',
+        alt: 'On the categories screen, the user scrolls the page. At the top is a list of suggested categories. Below that is each entry by date, a short description, and each category it belongs to.',
+      },
+      {
+        label: 'Patterns',
+        src: '/projects/mc-patterns.mp4',
+        type: 'video',
+        alt: 'On the patterns screen, the user scrolls the page. Each pattern has a title, description, and the dates of entries that contribute to it.',
+      },
+      {
+        label: 'Dreams',
+        src: '/projects/mc-dreams.png',
+        type: 'image',
+        alt: 'The dreams screen shows a list of dreams. Each dream displays date, dream categories, dream descriptions, and \"your read\".',
+      },
+      {
+        label: 'Triage',
+        src: '/projects/mc-triage.png',
+        type: 'image',
+        alt: 'The triage screen shows entities that need to be reviewed for accuracy. \"Meridian\" is listed as a place, with options to accept, edit, delete, skip, and more.',
+      },
+      {
+        label: 'Settings',
+        src: '/projects/mc-settings.mp4',
+        type: 'video',
+        alt: 'The settings screen shows options for customizing the app. The user can adjust color mode, language, categories, models, and other preferences.',
+      },
     ],
   },
   {
@@ -225,16 +272,66 @@ export const PROJECTS: Project[] = [
       { label: 'Design System', href: 'https://ktocdev.github.io/gps2-design/' },
     ],
     slides: [
-      { label: 'Title', src: '/projects/gps3-title.png', type: 'image' },
-      { label: 'Adoption', src: '/projects/gps3-adoption.mp4', type: 'video' },
-      { label: 'Feeding', src: '/projects/gps3-feeding.mp4', type: 'video' },
-      { label: 'Poop', src: '/projects/gps3-poop.mp4', type: 'video' },
-      { label: 'Shelter', src: '/projects/gps3-shelter.mp4', type: 'video' },
-      { label: 'Interacting', src: '/projects/gps3-interacting.mp4', type: 'video' },
-      { label: 'Shopping', src: '/projects/gps3-shopping.mp4', type: 'video' },
-      { label: 'Inventory', src: '/projects/gps3-inventory.mp4', type: 'video' },
-      { label: 'Tokens', src: '/projects/gps3-tokens.png', type: 'image' },
-      { label: 'Design Elements', src: '/projects/gps3-design-elements.png', type: 'image' },
+      {
+        label: 'Title',
+        src: '/projects/gps3-title.png',
+        type: 'image',
+        alt: 'The title screen shows GPS3 in a playful font, a line of 7 colorful illustrated guinea pigs on a manila colored background.',
+      },
+      {
+        label: 'Adoption',
+        src: '/projects/gps3-adoption.mp4',
+        type: 'video',
+        alt: 'On the adoption screen, the user scrolls past four illustrated habitats, each with two guinea pigs moving around inside. The user clicks one to select the pigs for adoption. An adoption certificate appears, and the user clicks the \"Adopt\" button. An \"Adopted\" stamp appears on the certificate.',
+      },
+      {
+        label: 'Feeding',
+        src: '/projects/gps3-feeding.mp4',
+        type: 'video',
+        alt: 'In the 3D habitat, two guinea pigs are present. The user clicks on the empty food bowl and a menu appears with options. The user clicks \"Add Food\" and a list of food appears. The user clicks \"Timothy Hay\" and the food bowl fills with hay. It is quickly eaten, and the user adds pellets and more hay.',
+      },
+      {
+        label: 'Poop',
+        src: '/projects/gps3-poop.mp4',
+        type: 'video',
+        alt: 'In the 3D habitat, seen from above, two guinea pigs are present with cage items. There are numerous piles of poop on the floor. The user removes some by clicking on them. The user clicks \"Give Care\" and then \"Quick Clean\". All the poop disappears and the guinea pigs are happy.',
+      },
+      {
+        label: 'Shelter',
+        src: '/projects/gps3-shelter.mp4',
+        type: 'video',
+        alt: 'In the 3D habitat, seen from above, the pink plastic igloo is in view. Both guinea pigs have low shelter needs and are shown moving into the igloo together and resting.',
+      },
+      {
+        label: 'Interacting',
+        src: '/projects/gps3-interacting.mp4',
+        type: 'video',
+        alt: 'In the 3D habitat, the user clicks the \"Socialize\" button, then \"Pet\". A message appears that says \"Click the guinea pig you want to pet!\" The user clicks the guinea pig and a petting animation plays. The guinea pig is happy.',
+      },
+      {
+        label: 'Shopping',
+        src: '/projects/gps3-shopping.mp4',
+        type: 'video',
+        alt: 'On the \"Supplies Store\" screen, the user scrolls the \"Today\'s Picks\" section and clicks \"Buy\" on Average Bedding and Timothy Hay. The user clicks the \"Habitat\" tab and scrolls down and buys the Wooden Archway Tunnel.',
+      },
+      {
+        label: 'Inventory',
+        src: '/projects/gps3-inventory.mp4',
+        type: 'video',
+        alt: 'In the 3D habitat, the user clicks the \"Inventory\" button. The inventory panel opens with a list of items. The user clicks on the Wooden Archway Tunnel and places it in the habitat.',
+      },
+      {
+        label: 'Tokens',
+        src: '/projects/gps3-tokens.png',
+        type: 'image',
+        alt: 'The color ramps page shows four ramps: pink, green, violet, and yellow. Each step in a ramp is labeled with its number, its hex value, and its token name, such as --color-green-300.',
+      },
+      {
+        label: 'Design Elements',
+        src: '/projects/gps3-design-elements.png',
+        type: 'image',
+        alt: 'The design elements page shows the Wood section: realistic wooden fixtures used for the GPS3 interface chrome and for the shelves in the Supplies Store.',
+      },
     ],
   },
 ];

@@ -20,6 +20,10 @@ type CarouselProps = {
  */
 export default function Carousel({ slides, projectName }: CarouselProps) {
   const [index, setIndex] = useState(0);
+  /* Sticky across steps on purpose: someone reading descriptions wants the next
+     one too, and re-pressing on every slide would be the whole cost of the
+     feature. */
+  const [showInfo, setShowInfo] = useState(false);
   const stageRef = useRef<HTMLDivElement>(null);
 
   /* Slides are all mounted and toggled with `display`, so navigating away from
@@ -48,6 +52,11 @@ export default function Carousel({ slides, projectName }: CarouselProps) {
     slide.alt ??
     `${slide.label} — ${slide.type === 'video' ? 'screen recording' : 'screenshot'} from ${projectName}`;
 
+  /* Only real copy is worth showing to eyes, so the control appears per slide
+     as `alt` gets written. The generated fallback stays where it belongs: on
+     the media, for anyone who would otherwise get nothing at all. */
+  const description = slides[index].alt;
+
   return (
     <div className={styles.carousel}>
       <div ref={stageRef} className={styles.stage}>
@@ -64,10 +73,41 @@ export default function Carousel({ slides, projectName }: CarouselProps) {
                 preload="metadata"
               />
             ) : (
-              <img className={styles.media} src={slide.src} alt={describe(slide)} loading="lazy" />
+              /* Only the stills are linked. A click on a video belongs to its own
+                 controls, and the player already offers full screen. The description
+                 stays on the img rather than becoming an aria-label on the link, so
+                 the link inherits it as its name and neither reading loses it. */
+              <a href={slide.src} target="_blank" rel="noopener" className={styles.mediaLink}>
+                <img className={styles.media} src={slide.src} alt={describe(slide)} loading="lazy" />
+                <span className="visuallyHidden"> (opens in a new tab)</span>
+              </a>
             )}
           </div>
         ))}
+
+        {description ? (
+          <>
+            {/* No aria-label: the visible word is the accessible name, which is
+                what 2.5.3 wants and what a speech-input user will say. State
+                lives in aria-expanded rather than in a label that changes. */}
+            <button
+              type="button"
+              onClick={() => setShowInfo((open) => !open)}
+              aria-expanded={showInfo}
+              className={styles.infoButton}
+            >
+              Info
+            </button>
+            {/* Hidden from assistive tech because it is the same string the
+                media already carries as its text alternative — a screen reader
+                has heard it before this element is ever reached. That makes the
+                button redundant for those users, which is the right way round:
+                nobody has to press anything to get an alt text. */}
+            <p aria-hidden="true" className={styles.info} data-open={showInfo || undefined}>
+              {description}
+            </p>
+          </>
+        ) : null}
       </div>
 
       <div className={styles.controls}>

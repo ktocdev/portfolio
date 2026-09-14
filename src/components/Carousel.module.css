@@ -96,3 +96,94 @@
   border: 1px solid var(--border-control);
   border-radius: var(--radius-sm);
 }
+
+/* --- Description overlay ------------------------------------------------- */
+/* Anchored to the top of the stage, not the bottom, because a video's native
+   control bar owns the bottom edge and a panel there would sit on play/pause.
+   Opaque rather than translucent: what is underneath is arbitrary screenshot,
+   so this is the one surface whose contrast cannot be reasoned about unless it
+   covers completely — the same pairing the theme tooltips already use. */
+.info {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-overlay);
+  /* Right padding clears the button floating over this panel's own corner. */
+  padding: 0.75rem 5rem 0.8rem 0.9rem;
+  background: var(--surface-strong);
+  color: var(--text);
+  border-bottom: 1px solid var(--border-control);
+  font-size: var(--type-body-md);
+  text-wrap: pretty;
+  opacity: 0;
+  transform: translateY(-100%);
+  pointer-events: none;
+}
+
+.info[data-open] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.infoButton {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  z-index: calc(var(--z-overlay) + 1);
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+  padding: 0 0.7rem;
+  cursor: pointer;
+  /* 36px: short of the 44px the step buttons take, since this one floats over
+     the image rather than sitting in a control row, but comfortably past the
+     24px floor in 2.5.8. */
+  min-height: 2.25rem;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: var(--tracking-mono-caps);
+  text-transform: uppercase;
+}
+
+.infoButton:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Pressed state reads off the same attribute the screen reader does, so the two
+   cannot describe different things. */
+.infoButton[aria-expanded='true'] {
+  background: var(--accent-selected);
+  border-color: var(--accent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .info {
+    transition:
+      opacity var(--dur-base) var(--ease),
+      transform var(--dur-relaxed) var(--ease);
+  }
+}
+
+/* --- Full-size link ------------------------------------------------------ */
+/* Wraps the stills only, and fills the slide so the whole picture is the
+   target. The ring is pulled inside because the stage clips its overflow: drawn
+   3px outward, as everywhere else on the site, it would be cut off on all four
+   edges and the link would look unfocused. */
+.mediaLink {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.mediaLink:focus-visible {
+  outline-offset: -3px;
+}

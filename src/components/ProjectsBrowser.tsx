@@ -137,14 +137,35 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
 
         {project.links.length ? (
           <div className={styles.links}>
-            {project.links.map((link) => (
-              <a key={link.href} href={link.href} target="_blank" rel="noopener" className={styles.link}>
-                {link.label}
-                {' '}
-                <span aria-hidden="true">↗</span>
-                <span className="visuallyHidden"> (opens in a new tab)</span>
-              </a>
-            ))}
+            {project.links.map((link, i) => {
+              /* Tabbing between links, or pulling up a links list, strips a link
+                 clean out of its surroundings — so a badge sitting next to one
+                 has to be attached to it, or the promise the link makes goes
+                 unqualified. describedby rather than putting it in the link
+                 text: an underline set on an anchor cannot be lifted back off a
+                 descendant, and a badge that looks clickable gets clicked. */
+              const badgeId = link.badge ? `${project.slug}-link-${i}-badge` : undefined;
+
+              return (
+                <span key={link.href} className={styles.linkItem}>
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener"
+                    aria-describedby={badgeId}
+                    className={styles.link}
+                  >
+                    {link.label} <span aria-hidden="true">↗</span>
+                    <span className="visuallyHidden"> (opens in a new tab)</span>
+                  </a>
+                  {link.badge ? (
+                    <span id={badgeId} className={styles.linkBadge}>
+                      {link.badge}
+                    </span>
+                  ) : null}
+                </span>
+              );
+            })}
           </div>
         ) : null}
       </article>
