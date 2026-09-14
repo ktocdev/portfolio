@@ -10,6 +10,9 @@ export const SITE = {
   email: 'katie.oconnor13@gmail.com',
   url: 'https://ktoc.dev',
   copyright: "© 2026 Katie O'Connor",
+  /* Microsoft Clarity project ID (Settings → Overview). Public value, not a
+     secret. Leave empty to disable analytics — the script won't load. */
+  clarityId: 'yhyf2x1l6v',
 } as const;
 
 export type NavItem = {
@@ -47,7 +50,7 @@ export const SKILLS: SkillRow[] = [
   },
   {
     label: 'Other',
-    items: 'Cloudflare, THREE.js, Pinia, UX patterns, cross-team technical leadership',
+    items: 'Git, Github, VS Code, Cloudflare, THREE.js, Pinia, UX patterns, cross-team technical leadership',
   },
 ];
 
@@ -96,6 +99,11 @@ export const COPY = {
       { label: 'Now', value: 'Building AI-native side projects; open to new roles' },
       { label: 'Education', value: 'Columbia College Chicago, BA in Interactive Art and Media, 2009' },
     ],
+  },
+  cookies: {
+    heading: 'Cookie settings',
+    intro:
+      'This site uses Microsoft Clarity for privacy-conscious analytics — which pages get read, roughly how long, and where visitors arrive from. It sets cookies only if you turn it on, and nothing here is ever sold or used to identify you. You can change your choice at any time.',
   },
 } as const;
 

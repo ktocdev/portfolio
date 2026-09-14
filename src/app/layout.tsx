@@ -3,6 +3,7 @@ import { Young_Serif, Atkinson_Hyperlegible_Next, Atkinson_Hyperlegible_Mono } f
 
 import SiteHeader from '@/components/SiteHeader';
 import SiteFooter from '@/components/SiteFooter';
+import CookieConsent from '@/components/CookieConsent';
 import { SITE } from '@/content/site';
 
 import './globals.css';
@@ -93,6 +94,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </main>
           <SiteFooter />
         </div>
+        <CookieConsent />
       </body>
     </html>
   );

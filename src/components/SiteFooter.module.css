@@ -18,12 +18,12 @@
   flex-wrap: wrap;
 }
 
-/* Muted rather than accent — the footer address is a fallback, not a CTA.
-   The Contact page carries the emphasised version. */
-.email {
+/* Muted rather than accent — footer links are secondary, not CTAs. The Contact
+   page carries the emphasised address. */
+.link {
   color: var(--muted);
 }
 
-.email:hover {
+.link:hover {
   color: var(--accent);
 }
