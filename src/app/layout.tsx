@@ -54,9 +54,15 @@ export const metadata: Metadata = {
     url: SITE.url,
     siteName: SITE.name,
     type: 'website',
-    /* Resolved against metadataBase. 4:3 rather than the 1.91:1 ideal; the
-       crop is centred, so the zinnias stay in frame on every network. */
-    images: [{ url: IMAGES.heroHome.src, width: 2000, height: 1500, alt: IMAGES.heroHome.alt }],
+    /* Resolved against metadataBase. */
+    images: [
+      {
+        url: IMAGES.share.src,
+        width: IMAGES.share.width,
+        height: IMAGES.share.height,
+        alt: IMAGES.share.alt,
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',

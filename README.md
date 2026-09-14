@@ -1,8 +1,9 @@
 # Katie O'Connor — Portfolio
 
 Personal portfolio site. Five pages — Home, Projects, Resume, Contact, About —
-plus a Cookie settings page, built from the design handoff in
-[`design_handoff_portfolio/`](design_handoff_portfolio/).
+plus a Cookie settings page, built from a design handoff. The handoff bundle
+lives locally in `design_handoff_portfolio/`, which is git-ignored and not
+part of the repo.
 
 **Live:** [ktoc.dev](https://ktoc.dev)
 
@@ -82,8 +83,8 @@ template — so text changes never mean touching markup.
 ## Design tokens
 
 `src/app/globals.css` is the single source of styling truth. It implements the
-table in [`design_handoff_portfolio/theme-tokens.md`](design_handoff_portfolio/theme-tokens.md)
-as CSS custom properties on `:root`, with the dark scheme declared twice: once
+handoff's token table (`theme-tokens.md`, local only) as CSS custom properties
+on `:root`, with the dark scheme declared twice: once
 under `prefers-color-scheme: dark` (for the Auto setting) and once under
 `[data-theme="dark"]` (for the explicit choice).
 

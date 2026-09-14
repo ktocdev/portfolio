@@ -1,4 +1,4 @@
-# Resume fixes
+ok g# Resume fixes
 
 Changes made to the site's resume copy in `src/content/resume.ts` and
 `src/content/site.ts` on 2026-09-13, to port back into
@@ -20,13 +20,11 @@ doesn't contain the same sentence, skip that item.
 - [ ] **No phone number or street address.** The PDF is downloadable by anyone
       who visits `/resume`. Email and LinkedIn are enough; drop a phone number or
       home address if either is on there.
-- [ ] **Component counts agree with the site.** The resume says "personally
-      built 25 of the 26 components delivered"; the Projects case study says
-      "Migrated 25 of 46 legacy components… the rest had not yet been started",
-      then "Teammates also contributed… new components." Both can be true, but
-      a reader comparing them will pause. Suggested single phrasing for both:
-      "Personally built 25 of the 26 components delivered against a 46-component
-      migration roadmap."
+- [ ] **Component counts.** The site's case study now reads: "Of the 46 legacy
+      components on the roadmap, 26 had been migrated to nebula-nuxt when I
+      moved on: I built 25 of them and a teammate built the other." The resume
+      bullet ("personally built 25 of the 26 components delivered") already
+      agrees; if the PDF words it differently, use the resume bullet as is.
 - [ ] **Present-tense verbs elsewhere.** If the PDF has other bullets in
       present tense ("Uses", "Co-hosts", "Serves"), switch them to past tense to
       match, unless the role is still current, in which case change the site's

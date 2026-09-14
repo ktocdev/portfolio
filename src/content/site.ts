@@ -126,4 +126,12 @@ export const IMAGES = {
     src: '/media/zinnias-monarch.jpg',
     alt: 'A monarch butterfly resting on magenta zinnias.',
   },
+  /* Link-preview card: the home hero pre-rendered at 1200×630 with the same
+     grayscale + luminosity + soft-light treatment Figure applies in CSS. */
+  share: {
+    src: '/media/og-image.jpg',
+    width: 1200,
+    height: 630,
+    alt: 'A black swallowtail butterfly on zinnias in a backyard garden, tinted lavender.',
+  },
 } as const;
