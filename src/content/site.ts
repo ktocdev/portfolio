@@ -10,6 +10,9 @@ export const SITE = {
   email: 'katie.oconnor13@gmail.com',
   url: 'https://ktoc.dev',
   copyright: "© 2026 Katie O'Connor",
+  /* Microsoft Clarity project ID (Settings → Overview). Public value, not a
+     secret. Leave empty to disable analytics — the script won't load. */
+  clarityId: '',
 } as const;
 
 export type NavItem = {
