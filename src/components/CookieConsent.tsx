@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
 import { SITE } from '@/content/site';
@@ -70,8 +71,9 @@ export default function CookieConsent() {
               Cookies
             </p>
             <p id="cookie-desc" className={styles.message}>
-              This site uses Microsoft Clarity to understand how visitors use it. It sets
-              analytics cookies only if you accept.
+              This site uses Microsoft Clarity to understand how visitors use it, including
+              anonymized session recordings. It sets analytics cookies only if you accept, and
+              you can change your choice on the <Link href="/cookies">Cookies page</Link>.
             </p>
           </div>
           <div className={styles.actions}>

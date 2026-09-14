@@ -9,7 +9,8 @@ export const SITE = {
   specialties: ['Design Engineer', 'Full-Stack Engineer', 'Design System Architect'],
   email: 'katie.oconnor13@gmail.com',
   url: 'https://ktoc.dev',
-  copyright: "© 2026 Katie O'Connor",
+  /* Evaluated at build time (static export), so it tracks the last deploy. */
+  copyright: `© ${new Date().getFullYear()} Katie O'Connor`,
   /* Microsoft Clarity project ID (Settings → Overview). Public value, not a
      secret. Leave empty to disable analytics — the script won't load. */
   clarityId: 'yhyf2x1l6v',
@@ -42,7 +43,7 @@ export const SKILLS: SkillRow[] = [
   {
     label: 'Front-end',
     items:
-      'Vue 3, Vite, Nuxt, React, Next.js, TypeScript, design systems, component & theming architecture, Playwright MCP, Tailwind CSS, Vite, accessibility',
+      'Vue 3, Vite, Nuxt, React, Next.js, TypeScript, design systems, component & theming architecture, Playwright MCP, Tailwind CSS, accessibility',
   },
   {
     label: 'Back-end',
@@ -50,7 +51,7 @@ export const SKILLS: SkillRow[] = [
   },
   {
     label: 'Other',
-    items: 'Git, Github, VS Code, Cloudflare, THREE.js, Pinia, UX patterns, cross-team technical leadership',
+    items: 'Git, GitHub, VS Code, Cloudflare, Three.js, Pinia, UX patterns, cross-team technical leadership',
   },
 ];
 
@@ -93,7 +94,7 @@ export const COPY = {
     lead: 'Based in Chicago. Open to senior and staff roles, design-system architecture, and conversations about AI-augmented engineering.',
   },
   about: {
-    body: "I'm Katie. I live in eclectic Avondale, a lively neighborhood on Chicago's northwest side, with my two cats (Mitty and Ralphie) and guinea pig (Betty Boop), muse for GPS3. Outside of code, you can find me singing karaoke, at trivia night with friends, or hanging out with my many plants (including a voracious Venus flytrap!)",
+    body: "I'm Katie. I live in eclectic Avondale, a lively neighborhood on Chicago's northwest side, with my two cats (Mitty and Ralphie) and guinea pig (Betty Boop), muse for GPS3. Outside of code, you can find me singing karaoke, at trivia night with friends, or hanging out with my many plants (including a voracious Venus flytrap!).",
     caption: 'Photos throughout this site are my own.',
     facts: [
       { label: 'Now', value: 'Building AI-native side projects; open to new roles' },
@@ -103,7 +104,7 @@ export const COPY = {
   cookies: {
     heading: 'Cookie settings',
     intro:
-      'This site uses Microsoft Clarity for privacy-conscious analytics — which pages get read, roughly how long, and where visitors arrive from. It sets cookies only if you turn it on, and nothing here is ever sold or used to identify you. You can change your choice at any time.',
+      'This site uses Microsoft Clarity for analytics — which pages get read, roughly how long, where visitors arrive from, and anonymized session recordings and heatmaps of where people click and scroll. It sets cookies only if you turn it on, and nothing here is ever sold or used to identify you. You can change your choice at any time.',
   },
 } as const;
 
@@ -124,5 +125,13 @@ export const IMAGES = {
   zinnias: {
     src: '/media/zinnias-monarch.jpg',
     alt: 'A monarch butterfly resting on magenta zinnias.',
+  },
+  /* Link-preview card: the home hero pre-rendered at 1200×630 with the same
+     grayscale + luminosity + soft-light treatment Figure applies in CSS. */
+  share: {
+    src: '/media/og-image.jpg',
+    width: 1200,
+    height: 630,
+    alt: 'A black swallowtail butterfly on zinnias in a backyard garden, tinted lavender.',
   },
 } as const;

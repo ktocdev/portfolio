@@ -1,0 +1,9 @@
+# Cloudflare static-asset headers (applied by Workers Assets; ignored by `next dev`).
+# Next.js static export cannot use CSP nonces, so inline scripts and styles are
+# allowed; the only third-party origin is Microsoft Clarity, gated behind consent.
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.clarity.ms https://*.clarity.ms; connect-src 'self' https://*.clarity.ms https://c.bing.com; img-src 'self' data: https://*.clarity.ms; style-src 'self' 'unsafe-inline'; font-src 'self'; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()

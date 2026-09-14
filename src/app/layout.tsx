@@ -4,7 +4,7 @@ import { Young_Serif, Atkinson_Hyperlegible_Next, Atkinson_Hyperlegible_Mono } f
 import SiteHeader from '@/components/SiteHeader';
 import SiteFooter from '@/components/SiteFooter';
 import CookieConsent from '@/components/CookieConsent';
-import { SITE } from '@/content/site';
+import { IMAGES, SITE } from '@/content/site';
 
 import './globals.css';
 import styles from './layout.module.css';
@@ -18,6 +18,10 @@ const display = Young_Serif({
   variable: '--font-young-serif',
 });
 
+/* The build warns "Failed to find font override values" for both Atkinson
+   faces: next/font has no metrics table for them, so it skips the synthetic
+   size-matched fallback. Harmless — the plain fallback stack in globals.css
+   applies — and there is no option that silences it. */
 const body = Atkinson_Hyperlegible_Next({
   weight: ['400', '500', '700'],
   subsets: ['latin'],
@@ -32,21 +36,36 @@ const mono = Atkinson_Hyperlegible_Mono({
   variable: '--font-atkinson-mono',
 });
 
+const DESCRIPTION =
+  'Senior software engineer and design-systems architect in Chicago. Eleven years at Discovery Education across three generations of a component library.';
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
-    default: `${SITE.name} - Senior Software Engineer / Design Engineer / Full-Stack / Design System Architect`,
+    /* Kept under ~60 characters so search results don't truncate it; the
+       full specialties list lives in the share card title below. */
+    default: `${SITE.name} - ${SITE.role}`,
     template: `%s - ${SITE.name}`,
   },
-  description:
-    'Senior software engineer and design-systems architect in Chicago. Eleven years at Discovery Education across three generations of a component library.',
+  description: DESCRIPTION,
   openGraph: {
-    title: `${SITE.name} - Senior Software Engineer / Design Engineer / Full-Stack / Design System Architect`,
-    description:
-      'Senior software engineer and design-systems architect in Chicago. Eleven years at Discovery Education across three generations of a component library.',
+    title: `${SITE.name} - ${SITE.role} / ${SITE.specialties.join(' / ')}`,
+    description: DESCRIPTION,
     url: SITE.url,
     siteName: SITE.name,
     type: 'website',
+    /* Resolved against metadataBase. */
+    images: [
+      {
+        url: IMAGES.share.src,
+        width: IMAGES.share.width,
+        height: IMAGES.share.height,
+        alt: IMAGES.share.alt,
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
   },
   icons: {
     icon: [

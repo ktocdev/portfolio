@@ -93,7 +93,7 @@ export const PROJECTS: Project[] = [
       { kind: 'subheading', text: 'Product Integration' },
       {
         kind: 'text',
-        text: 'Migrated 25 of 46 legacy components to nebula-nuxt by myself; the rest had not yet been started when I moved on.',
+        text: 'Of the 46 legacy components on the roadmap, 26 had been migrated to nebula-nuxt when I moved on: I built 25 of them and a teammate built the other. The remaining 20 had not yet been started.',
       },
       {
         kind: 'text',
