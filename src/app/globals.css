@@ -175,24 +175,31 @@
   --z-skip: 10;
 }
 
-/* --- Short viewports ---------------------------------------------------- */
-/* The shell is designed to fit 100dvh, but on a laptop it is the hero's own
-   text that pushes the footer past the fold — the figure only ever stretches
-   to match the text column and is never the taller of the two.
-   Below 75rem tall, type and spacing switch to steeper curves. Each one is
-   algebraically equal to the base curve at exactly 75rem, so there is no jump
-   at the breakpoint; below it they simply fall faster. Every upper bound is
-   unreachable here, so viewports taller than 75rem render exactly as designed. */
-@media (max-height: 75rem) {
+/* --- Fit-to-viewport mode ----------------------------------------------- */
+/* The shell is designed to fit 100dvh, but on most screens it is the hero's
+   own text that pushes the footer past the fold. Steeper type and spacing
+   curves can pull the page back inside the viewport, but only where the
+   columns are broad enough to absorb the wrapping: a 1080p desktop or large
+   laptop in a maximized browser. On moderate laptops (1536×864, 1440×900,
+   1366×768) and phones, fitting would mean floor-value type and 4px row
+   padding, so they keep the designed sizes and simply scroll.
+   The mode is therefore gated on width and height together. Above 75rem tall
+   the base curves already fit; below 54rem even compaction cannot. Each curve
+   meets its base curve at 75rem (page-y within a few px), so there is no jump
+   at the top edge; below it they fall faster.
+   The curves are deliberately gentle: most of the saving comes from the
+   heading dropping to two lines and the lead (widened in page.module.css) to
+   five, so type and spacing only need to give up a little. Steeper curves
+   overshoot and leave a dead band above the skills table instead.
+   page.module.css mirrors this query for the home hero's own spacing. */
+@media (min-width: 105rem) and (min-height: 54rem) and (max-height: 75rem) {
   :root {
-    --type-display: clamp(2.25rem, 1.6vw + 7vh - 2.55rem, 5.25rem);
-    --type-lead: clamp(1rem, 0.07rem + 0.42vw + 1.2vh, 1.375rem);
+    --type-display: clamp(2.5rem, 1.6vw + 6vh - 1.8rem, 5.25rem);
+    --type-lead: clamp(1rem, 0.2rem + 0.42vw + 1.03vh, 1.375rem);
 
-    --type-body-sm: clamp(0.875rem, 0.8rem + 0.3vw + 0.4vh - 0.3rem, 1.125rem);
-
-    --space-page-y: clamp(0.85rem, 1.2vw + 2.4vh - 0.9rem, 3rem);
-    --space-section-gap: clamp(0.65rem, 5vh - 2.1rem, 2.25rem);
-    --space-stack: clamp(0.65rem, 5vh - 2.1rem, 2rem);
+    --space-page-y: clamp(0.85rem, 1.2vw + 2.4vh - 0.6rem, 3rem);
+    --space-section-gap: clamp(0.85rem, 4vh - 1.2rem, 2.25rem);
+    --space-stack: clamp(0.85rem, 4vh - 1.2rem, 2rem);
   }
 }
 

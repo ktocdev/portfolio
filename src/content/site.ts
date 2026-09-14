@@ -39,7 +39,7 @@ export const SKILLS: SkillRow[] = [
   {
     label: 'Front-end',
     items:
-      'Vue 3, Vite, Nuxt, TypeScript, design systems, component & theming architecture, Playwright MCP, Tailwind CSS, Vite, accessibility',
+      'Vue 3, Vite, Nuxt, React, Next.js, TypeScript, design systems, component & theming architecture, Playwright MCP, Tailwind CSS, Vite, accessibility',
   },
   {
     label: 'Back-end',
