@@ -47,7 +47,7 @@ export const SKILLS: SkillRow[] = [
   },
   {
     label: 'Other',
-    items: 'Cloudflare, THREE.js, Pinia, UX patterns, cross-team technical leadership',
+    items: 'Git, Github, VS Code, Cloudflare, THREE.js, Pinia, UX patterns, cross-team technical leadership',
   },
 ];
 
