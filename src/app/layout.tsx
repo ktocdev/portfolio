@@ -74,6 +74,9 @@ export const metadata: Metadata = {
     ],
     apple: [{ url: '/favicon-180.png', sizes: '180x180', type: 'image/png' }],
   },
+  verification: {
+    google: 'giXBu7gpbXpPEdL9sqlXLMFicfkB9AvoJqlt_eYToow',
+  },
 };
 
 export const viewport: Viewport = {
