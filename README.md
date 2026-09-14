@@ -1,7 +1,8 @@
 # Katie O'Connor — Portfolio
 
 Personal portfolio site. Five pages — Home, Projects, Resume, Contact, About —
-built from the design handoff in [`design_handoff_portfolio/`](design_handoff_portfolio/).
+plus a Cookie settings page, built from the design handoff in
+[`design_handoff_portfolio/`](design_handoff_portfolio/).
 
 **Live:** [ktoc.dev](https://ktoc.dev)
 
@@ -47,19 +48,29 @@ src/
     resume/              Resume
     contact/             Contact
     about/               About
+    cookies/             Cookie settings (analytics consent)
+    not-found.tsx        themed 404
+    robots.ts            /robots.txt
+    sitemap.ts           /sitemap.xml
   components/
     SiteHeader           wordmark + primary nav
-    SiteFooter           copyright, email, theme control
+    SiteFooter           copyright, cookies link, email, theme control
     ThemeToggle          three-state Auto / Light / Dark, persisted
     Figure               the site's one imagery treatment (4 variants)
     ProjectsBrowser      project selector + detail panel
     Carousel             stepping media carousel
     FactsGrid            case-study facts + measured filler
+    CookieConsent        consent banner; mounts the Clarity tag once accepted
+    CookieSettings       the On / Off control on the cookies page
+    ClarityAnalytics     the Microsoft Clarity tag itself
   content/
-    site.ts              nav, skills, contacts, per-page copy, image alt text
+    site.ts              nav, skills, contacts, per-page copy, image alt text, Clarity ID
     projects.ts          project data, case-study notes, slide manifests
     resume.ts            experience entries
+  lib/
+    consent.ts           shared consent storage key + change event
 public/
+  _headers               Cloudflare response headers (CSP etc.)
   media/                 photography
   projects/              carousel media (slug-named)
   Katie-OConnor-Resume.pdf
@@ -96,11 +107,30 @@ Part of the spec, not an afterthought:
 - Skip link as the first focusable element; one `<h1>` per page
 - Landmarks: `header` / `nav[aria-label="Primary"]` / `main#main` / `footer`
 - `aria-current="page"` on the active nav item
-- `aria-pressed` on project rows and theme segments
-- `aria-live="polite"` on the project detail panel
+- Project list is a vertical `tablist` with roving tabindex and arrow-key
+  selection; the detail panel is its `tabpanel`, named by the selected tab
+- Theme control is a `radiogroup` with roving tabindex; the consent control
+  uses native radios inside a `fieldset`
+- Carousel step changes are announced through a `role="status"` counter
 - 44×44px minimum hit targets, except the documented compact footer toggle
 - Every transition sits inside a `prefers-reduced-motion: no-preference` guard
-- Descriptive `alt` on all photography
+- Descriptive `alt` on all photography and carousel media
+
+## Analytics and consent
+
+Microsoft Clarity is the only third-party script. Its project ID lives in
+`SITE.clarityId`; leave it empty and neither the tag nor the consent banner
+renders. The tag mounts only after the visitor accepts, so no analytics
+cookies are set before consent. The choice is stored in `localStorage` under
+`portfolio-consent` and can be changed on `/cookies`.
+
+## Response headers
+
+`public/_headers` is copied into `out/` and applied by Cloudflare Workers
+Assets: a Content-Security-Policy allowing only the site itself and Clarity,
+plus `nosniff`, `X-Frame-Options`, `Referrer-Policy`, and a
+`Permissions-Policy`. `next dev` ignores this file — verify with
+`npm run preview` or in production.
 
 ## Deploy
 

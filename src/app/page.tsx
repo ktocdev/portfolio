@@ -13,16 +13,11 @@ export default function HomePage() {
         <div className={styles.stack}>
           <div className={styles.eyebrow}>
             <p className={styles.role}>{SITE.role}</p>
+            {/* Separators are CSS pseudo-elements so the list announces
+                three items, not five. */}
             <ul role="list" aria-label="Specialties" className={styles.specialties}>
-              {SITE.specialties.map((item, i) => (
-                <Fragment key={item}>
-                  {i > 0 ? (
-                    <li aria-hidden="true" className={styles.separator}>
-                      /
-                    </li>
-                  ) : null}
-                  <li>{item}</li>
-                </Fragment>
+              {SITE.specialties.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
           </div>

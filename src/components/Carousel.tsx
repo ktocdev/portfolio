@@ -68,7 +68,9 @@ export default function Carousel({ slides, projectName }: CarouselProps) {
                 controls
                 muted
                 playsInline
-                preload="metadata"
+                /* Every slide is mounted, so only the visible one may fetch
+                   ahead — otherwise nine videos hit the network on selection. */
+                preload={i === index ? 'metadata' : 'none'}
               />
             ) : (
               /* Only stills are linked — a video click belongs to its own controls.

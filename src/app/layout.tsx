@@ -4,7 +4,7 @@ import { Young_Serif, Atkinson_Hyperlegible_Next, Atkinson_Hyperlegible_Mono } f
 import SiteHeader from '@/components/SiteHeader';
 import SiteFooter from '@/components/SiteFooter';
 import CookieConsent from '@/components/CookieConsent';
-import { SITE } from '@/content/site';
+import { IMAGES, SITE } from '@/content/site';
 
 import './globals.css';
 import styles from './layout.module.css';
@@ -32,21 +32,30 @@ const mono = Atkinson_Hyperlegible_Mono({
   variable: '--font-atkinson-mono',
 });
 
+const DESCRIPTION =
+  'Senior software engineer and design-systems architect in Chicago. Eleven years at Discovery Education across three generations of a component library.';
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
-    default: `${SITE.name} - Senior Software Engineer / Design Engineer / Full-Stack / Design System Architect`,
+    /* Kept under ~60 characters so search results don't truncate it; the
+       full specialties list lives in the share card title below. */
+    default: `${SITE.name} - ${SITE.role}`,
     template: `%s - ${SITE.name}`,
   },
-  description:
-    'Senior software engineer and design-systems architect in Chicago. Eleven years at Discovery Education across three generations of a component library.',
+  description: DESCRIPTION,
   openGraph: {
-    title: `${SITE.name} - Senior Software Engineer / Design Engineer / Full-Stack / Design System Architect`,
-    description:
-      'Senior software engineer and design-systems architect in Chicago. Eleven years at Discovery Education across three generations of a component library.',
+    title: `${SITE.name} - ${SITE.role} / ${SITE.specialties.join(' / ')}`,
+    description: DESCRIPTION,
     url: SITE.url,
     siteName: SITE.name,
     type: 'website',
+    /* Resolved against metadataBase. 4:3 rather than the 1.91:1 ideal; the
+       crop is centred, so the zinnias stay in frame on every network. */
+    images: [{ url: IMAGES.heroHome.src, width: 2000, height: 1500, alt: IMAGES.heroHome.alt }],
+  },
+  twitter: {
+    card: 'summary_large_image',
   },
   icons: {
     icon: [

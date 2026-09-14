@@ -21,7 +21,7 @@ export const RESUME_SUMMARY =
 
 export const EXPERIENCE: Entry[] = [
   {
-    years: '2015 — 2026',
+    years: '2015–2026',
     role: 'Senior Software Engineer',
     org: 'Discovery Education · Chicago, IL',
     groups: [
@@ -38,11 +38,11 @@ export const EXPERIENCE: Entry[] = [
       {
         label: 'AI-Augmented Engineering & Prompt Strategy',
         items: [
-          'Uses Claude daily for spec-driven development, producing in-depth, well-researched implementation plans before executing.',
+          'Used Claude daily for spec-driven development, producing in-depth, well-researched implementation plans before executing.',
           'Drove the end-to-end cost of shipping a component—build, doc page, and release—to $3.05 through skill-based automation.',
           'Developed model-selection and prompt-caching strategies that reduced daily AI spend by approximately 50%, from $40–$50 to $10–$20, while preserving output quality; shared the cost-efficiency approach across the team.',
           'Built a dashboard for human-in-the-loop review and approval of AI-generated metadata, designing the API around the review workflow.',
-          "Co-hosts company's AI Office Hours, and designed and presented a cost-efficient stacked-PR strategy there, structuring PRs in advance to reduce rebasing.",
+          "Co-hosted the company's AI Office Hours, and designed and presented a cost-efficient stacked-PR strategy there, structuring PRs in advance to reduce rebasing.",
         ],
       },
       {
@@ -58,7 +58,7 @@ export const EXPERIENCE: Entry[] = [
     ],
   },
   {
-    years: '2008 — 2015',
+    years: '2008–2015',
     role: 'Front-end & Production Roles',
     org: 'Chicago, IL',
     note: 'Sears Holdings, Razorfish, AlphaZeta Interactive, Elevation, Hewitt Associates, Bankers Life and Casualty, iPort Media, WGN-TV.',

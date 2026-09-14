@@ -76,7 +76,9 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
                 onClick={() => setSelected(i)}
                 onKeyDown={(event) => onKeyDown(event, i)}
                 aria-selected={i === selected}
-                aria-controls={`panel-${item.slug}`}
+                /* Only the selected panel is rendered, so only the selected
+                   tab may point at one — a dangling id is an ARIA error. */
+                aria-controls={i === selected ? `panel-${item.slug}` : undefined}
                 tabIndex={i === selected ? 0 : -1}
                 className={styles.row}
                 data-selected={i === selected || undefined}
