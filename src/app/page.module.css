@@ -102,6 +102,12 @@
   border-bottom: 1px solid var(--border-subtle);
 }
 
+/* The final row (Other) sits directly above the footer's rule; drop its border
+   so the two hairlines don't stack into a double line. */
+.skills > :nth-last-child(-n + 2) {
+  border-bottom: 0;
+}
+
 .skillLabel {
   font-family: var(--font-mono);
   font-size: var(--type-mono-sm);
