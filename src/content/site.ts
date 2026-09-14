@@ -100,6 +100,11 @@ export const COPY = {
       { label: 'Education', value: 'Columbia College Chicago, BA in Interactive Art and Media, 2009' },
     ],
   },
+  cookies: {
+    heading: 'Cookie settings',
+    intro:
+      'This site uses Microsoft Clarity for privacy-conscious analytics — which pages get read, roughly how long, and where visitors arrive from. It sets cookies only if you turn it on, and nothing here is ever sold or used to identify you. You can change your choice at any time.',
+  },
 } as const;
 
 /** Photography. All images are Katie's own; alt text per the handoff. */

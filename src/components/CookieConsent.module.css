@@ -1,0 +1,119 @@
+/* Floating bottom bar. Solid surface + border keep it legible over the hero
+   photography without a heavy shadow the flat system doesn't otherwise use. */
+.banner {
+  position: fixed;
+  left: var(--space-4);
+  right: var(--space-4);
+  bottom: var(--space-4);
+  /* Above page content and tooltips (z 5), below the skip link (z 10) which
+     lives at the top edge and never overlaps this. */
+  z-index: 8;
+
+  max-width: 30rem;
+  margin-inline: auto;
+  padding: var(--space-4);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  /* One soft shadow, just enough to seat the bar above the page. */
+  box-shadow: 0 6px 24px -12px rgba(0, 0, 0, 0.35);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .banner {
+    animation: rise var(--dur-relaxed) var(--ease);
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.title {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-sm);
+  letter-spacing: var(--tracking-mono-caps);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.message {
+  font-size: var(--type-caption);
+  color: var(--text);
+  line-height: 1.45;
+}
+
+.message a {
+  color: var(--accent);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+/* Bordered, not filled — the system reserves the single filled button for the
+   Resume download, and carries emphasis through colour and border instead. */
+.button {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+  /* ~38px target — comfortably above the 24px WCAG 2.5.8 minimum, while keeping
+     the bar compact on small screens. */
+  min-height: 38px;
+  padding: 0 var(--space-4);
+  font: inherit;
+  font-size: var(--type-meta);
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: var(--bg);
+}
+
+/* Primary: accent border + accent text. Tinted fill only on hover, where the
+   border still does the contrast work. */
+.accept {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.accept:hover {
+  background: var(--accent-selected);
+  color: var(--text);
+}
+
+/* Secondary: neutral control border, quieter text. */
+.decline {
+  border-color: var(--border-control);
+  color: var(--muted);
+}
+
+.decline:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Wider than a phone: message and actions share a row, actions hugging the end. */
+@media (min-width: 30rem) {
+  .banner {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    max-width: 38rem;
+  }
+
+  .actions {
+    flex-shrink: 0;
+  }
+}
