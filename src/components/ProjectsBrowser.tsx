@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import Carousel from './Carousel';
 import FactsGrid from './FactsGrid';
@@ -13,10 +13,33 @@ type ProjectsBrowserProps = {
 };
 
 export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
-  /* Selection is local UI state, not a route — the case study is open on load. */
+  /* Selection is local UI state mirrored into the URL hash (/projects/#gps3),
+     so a project can be linked to directly and back/forward restore it. The
+     case study is open by default, and prerendered that way. */
   const [selected, setSelected] = useState(0);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const project = projects[selected];
+
+  useEffect(() => {
+    const fromHash = () => {
+      const slug = decodeURIComponent(window.location.hash.slice(1));
+      const index = projects.findIndex((item) => item.slug === slug);
+      setSelected(index === -1 ? 0 : index);
+    };
+    fromHash();
+    /* Back/forward between hashes fires popstate, not hashchange, once
+       pushState is involved. */
+    window.addEventListener('popstate', fromHash);
+    return () => window.removeEventListener('popstate', fromHash);
+  }, [projects]);
+
+  /* No element carries the bare slug as its id (tabs and panels are prefixed),
+     so the browser never scroll-jumps on the hash. */
+  function select(index: number) {
+    setSelected(index);
+    const hash = `#${projects[index].slug}`;
+    if (window.location.hash !== hash) window.history.pushState(null, '', hash);
+  }
 
   /* Arrow keys move and select together (automatic activation); focus is moved by hand since only the selected tab is in the tab order. */
   function onKeyDown(event: React.KeyboardEvent, index: number) {
@@ -44,7 +67,7 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
 
     /* Stops the arrow keys from scrolling the list out from under the cursor. */
     event.preventDefault();
-    setSelected(next);
+    select(next);
     tabs.current[next]?.focus();
   }
 
@@ -73,7 +96,7 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
                 ref={(el) => {
                   tabs.current[i] = el;
                 }}
-                onClick={() => setSelected(i)}
+                onClick={() => select(i)}
                 onKeyDown={(event) => onKeyDown(event, i)}
                 aria-selected={i === selected}
                 /* Only the selected panel is rendered, so only the selected

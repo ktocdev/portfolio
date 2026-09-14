@@ -136,7 +136,9 @@
   --type-mono: clamp(0.8125rem, 0.72rem + 0.28vw, 0.9375rem);
   --type-mono-note: clamp(0.8125rem, 0.74rem + 0.22vw, 0.9375rem);
   --type-mono-sm: clamp(0.75rem, 0.68rem + 0.22vw, 0.875rem);
-  --type-mono-xs: 0.7rem;
+  /* 12px floor: the theme segments and link badges use this, and 11px
+     uppercase mono was hard to read. */
+  --type-mono-xs: 0.75rem;
 
   --tracking-display: -0.012em;
   --tracking-h1: -0.01em;

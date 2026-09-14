@@ -18,6 +18,10 @@ const display = Young_Serif({
   variable: '--font-young-serif',
 });
 
+/* The build warns "Failed to find font override values" for both Atkinson
+   faces: next/font has no metrics table for them, so it skips the synthetic
+   size-matched fallback. Harmless — the plain fallback stack in globals.css
+   applies — and there is no option that silences it. */
 const body = Atkinson_Hyperlegible_Next({
   weight: ['400', '500', '700'],
   subsets: ['latin'],

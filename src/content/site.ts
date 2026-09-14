@@ -9,7 +9,8 @@ export const SITE = {
   specialties: ['Design Engineer', 'Full-Stack Engineer', 'Design System Architect'],
   email: 'katie.oconnor13@gmail.com',
   url: 'https://ktoc.dev',
-  copyright: "© 2026 Katie O'Connor",
+  /* Evaluated at build time (static export), so it tracks the last deploy. */
+  copyright: `© ${new Date().getFullYear()} Katie O'Connor`,
   /* Microsoft Clarity project ID (Settings → Overview). Public value, not a
      secret. Leave empty to disable analytics — the script won't load. */
   clarityId: 'yhyf2x1l6v',

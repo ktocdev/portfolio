@@ -32,6 +32,9 @@ export default function ThemeToggle() {
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
+      /* One post-hydration read of an external store; a lazy initialiser
+         would mismatch the prerendered 'system' markup. */
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (saved === 'light' || saved === 'dark' || saved === 'system') setTheme(saved);
     } catch {
       /* Private mode and blocked storage both throw; the default stands. */
