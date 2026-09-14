@@ -138,12 +138,9 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
         {project.links.length ? (
           <div className={styles.links}>
             {project.links.map((link, i) => {
-              /* Tabbing between links, or pulling up a links list, strips a link
-                 clean out of its surroundings — so a badge sitting next to one
-                 has to be attached to it, or the promise the link makes goes
-                 unqualified. describedby rather than putting it in the link
-                 text: an underline set on an anchor cannot be lifted back off a
-                 descendant, and a badge that looks clickable gets clicked. */
+              /* describedby, not link text: a badge in the link text would be
+                 underlined and clickable, and screen readers strip links from
+                 their surrounding context (e.g. tabbing, links list). */
               const badgeId = link.badge ? `${project.slug}-link-${i}-badge` : undefined;
 
               return (

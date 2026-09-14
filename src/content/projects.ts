@@ -6,7 +6,7 @@
 export type Link = {
   label: string;
   href: string;
-  /** Small marker shown beside the link, for when the destination is not the whole story yet. */
+  /** Small marker beside the link, e.g. "Coming soon". */
   badge?: string;
 };
 

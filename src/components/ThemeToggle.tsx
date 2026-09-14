@@ -25,7 +25,8 @@ export default function ThemeToggle() {
   /* Starts at the prerendered default; only the pressed segment settles on mount since layout.tsx's inline script already set the visible theme before paint. */
   const [theme, setTheme] = useState<Theme>('system');
   const segments = useRef<(HTMLButtonElement | null)[]>([]);
-  /* Escape hides the tip the ring is already on, satisfying 1.4.13's dismissal without costing the segment its focus. Only the keyboard reveal reads this — the pointer path is untouched, which is why hovering back in behaves normally. */
+  /* Escape hides the focused tip (1.4.13 dismissal) without losing focus.
+     Only the keyboard reveal reads this — hover is untouched. */
   const [tipDismissed, setTipDismissed] = useState(false);
 
   useEffect(() => {
@@ -92,7 +93,7 @@ export default function ThemeToggle() {
       className={styles.group}
       data-tip-dismissed={tipDismissed || undefined}
       onBlur={(event) => {
-        /* Leaving the control entirely resets it; moving between segments does not, so the arrow-key reset above stays the only one that matters. */
+        /* Only leaving the control entirely resets it; moving between segments doesn't. */
         if (!event.currentTarget.contains(event.relatedTarget)) setTipDismissed(false);
       }}
     >

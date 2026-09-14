@@ -68,10 +68,8 @@
   text-wrap: pretty;
 }
 
-/* Fit-to-viewport mode — same query as globals.css, which explains the gate.
-   Wide, moderately short viewports trade the narrow designed measure for
-   fewer lead lines and tighten the hero's own spacing; everywhere else keeps
-   the designed values and scrolls. */
+/* Fit-to-viewport mode — same query as globals.css. Widens the lead measure
+   for fewer lines and tightens hero spacing. */
 @media (min-width: 105rem) and (min-height: 54rem) and (max-height: 75rem) {
   .left {
     gap: clamp(1rem, 4.5vh - 1.125rem, 2.5rem);

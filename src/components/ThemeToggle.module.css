@@ -64,7 +64,9 @@
   color: var(--text);
 }
 
-/* Lifts the focused segment so its ring, drawn 3px outside the button, isn't painted over by the next segment's opaque background. Clears the bubbles too: the lift makes this a stacking context, trapping the arrow inside it, and the arrow still has to cover the bubble's border. */
+/* Lifts the focused segment so its ring isn't painted over by the next
+   segment's opaque background. Also traps its own tooltip arrow above the
+   bubble border, via the new stacking context. */
 .segment:focus-visible {
   z-index: calc(var(--z-tooltip) + 1);
 }
@@ -131,11 +133,9 @@
   z-index: calc(var(--z-tooltip) + 1);
 }
 
-/* Hover only. Focus used to reveal these too, which left one stuck open after
-   every click and made two visible at once — and no amount of z-index sorts
-   that out, because a focused segment traps its own arrow in a stacking
-   context. The tip is a convenience for the pointer; every segment carries its
-   own aria-label, so nothing here is the only copy of anything. */
+/* Hover only. Focus used to reveal these too, but left one stuck open after
+   every click. The tip is a pointer convenience; every segment already has
+   its own aria-label. */
 .tooltipWrap:hover .tooltip {
   opacity: 1;
   transform: translateX(var(--tip-x)) translateY(0);
@@ -146,11 +146,8 @@
   transform: translate(-50%, 0) rotate(45deg);
 }
 
-/* Keyboard focus only, so the two icon-only segments still name themselves for
-   anyone tabbing through. :focus-visible rather than :focus is the whole trick:
-   a mouse click does not match it on a button, so clicking no longer leaves a
-   tip stuck open. Sibling combinator because the tip is the button's next
-   sibling, which saves reaching for :has(). */
+/* Keyboard focus only. :focus-visible (not :focus) skips mouse clicks, so
+   clicking no longer leaves a tip stuck open. */
 .segment:focus-visible ~ .tooltip {
   opacity: 1;
   transform: translateX(var(--tip-x)) translateY(0);
@@ -161,19 +158,16 @@
   transform: translate(-50%, 0) rotate(45deg);
 }
 
-/* Focus can still be parked on one segment while the pointer visits another.
-   Two tips at once is never wanted, and the tie cannot be broken by z-index —
-   the focused segment traps its own arrow in a stacking context — so the
-   pointer wins: whatever it is over is the thing being asked about. */
+/* Focus can stay parked on one segment while the pointer visits another;
+   two tips at once is never wanted, so the pointer wins. */
 .group:hover .tooltipWrap:not(:hover) .tooltip,
 .group:hover .tooltipWrap:not(:hover) .segment::after {
   opacity: 0;
 }
 
-/* Escape sets the flag this reads. Two things keep it out of the pointer's way:
-   it only ever cancels the :focus-visible reveal, and :not(:hover) drops it the
-   moment the pointer enters the control. An earlier version was scoped to the
-   whole group and left tips suppressed until you moved the mouse out and back. */
+/* Escape sets the flag this reads. Scoped to :focus-visible and :not(:hover)
+   so it only cancels the keyboard reveal and clears as soon as the pointer
+   enters — an earlier group-wide version left tips suppressed too long. */
 .group:not(:hover)[data-tip-dismissed] .segment:focus-visible ~ .tooltip,
 .group:not(:hover)[data-tip-dismissed] .segment:focus-visible::after {
   opacity: 0;

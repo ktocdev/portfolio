@@ -98,11 +98,9 @@
 }
 
 /* --- Description overlay ------------------------------------------------- */
-/* Anchored to the top of the stage, not the bottom, because a video's native
-   control bar owns the bottom edge and a panel there would sit on play/pause.
-   Opaque rather than translucent: what is underneath is arbitrary screenshot,
-   so this is the one surface whose contrast cannot be reasoned about unless it
-   covers completely — the same pairing the theme tooltips already use. */
+/* Anchored to the top, not the bottom, since a video's control bar owns the
+   bottom edge. Opaque, not translucent, since it sits over arbitrary
+   screenshots whose contrast can't be reasoned about otherwise. */
 .info {
   position: absolute;
   top: 0;
@@ -136,9 +134,8 @@
   margin: 0;
   padding: 0 0.7rem;
   cursor: pointer;
-  /* 36px: short of the 44px the step buttons take, since this one floats over
-     the image rather than sitting in a control row, but comfortably past the
-     24px floor in 2.5.8. */
+  /* 36px: smaller than the 44px step buttons since this floats over the
+     image, but still past the 24px floor in 2.5.8. */
   min-height: 2.25rem;
   display: grid;
   place-items: center;
@@ -157,8 +154,7 @@
   border-color: var(--accent);
 }
 
-/* Pressed state reads off the same attribute the screen reader does, so the two
-   cannot describe different things. */
+/* Pressed state reads off the same attribute the screen reader does. */
 .infoButton[aria-expanded='true'] {
   background: var(--accent-selected);
   border-color: var(--accent);
@@ -173,10 +169,8 @@
 }
 
 /* --- Full-size link ------------------------------------------------------ */
-/* Wraps the stills only, and fills the slide so the whole picture is the
-   target. The ring is pulled inside because the stage clips its overflow: drawn
-   3px outward, as everywhere else on the site, it would be cut off on all four
-   edges and the link would look unfocused. */
+/* Fills the slide so the whole picture is the target. Ring pulled inside
+   (rather than the usual 3px outward) since the stage clips overflow. */
 .mediaLink {
   display: block;
   width: 100%;

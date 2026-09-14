@@ -176,22 +176,11 @@
 }
 
 /* --- Fit-to-viewport mode ----------------------------------------------- */
-/* The shell is designed to fit 100dvh, but on most screens it is the hero's
-   own text that pushes the footer past the fold. Steeper type and spacing
-   curves can pull the page back inside the viewport, but only where the
-   columns are broad enough to absorb the wrapping: a 1080p desktop or large
-   laptop in a maximized browser. On moderate laptops (1536×864, 1440×900,
-   1366×768) and phones, fitting would mean floor-value type and 4px row
-   padding, so they keep the designed sizes and simply scroll.
-   The mode is therefore gated on width and height together. Above 75rem tall
-   the base curves already fit; below 54rem even compaction cannot. Each curve
-   meets its base curve at 75rem (page-y within a few px), so there is no jump
-   at the top edge; below it they fall faster.
-   The curves are deliberately gentle: most of the saving comes from the
-   heading dropping to two lines and the lead (widened in page.module.css) to
-   five, so type and spacing only need to give up a little. Steeper curves
-   overshoot and leave a dead band above the skills table instead.
-   page.module.css mirrors this query for the home hero's own spacing. */
+/* Steeper type/spacing curves pull the footer back inside the viewport, but
+   only where columns are wide enough to absorb the wrapping (1080p+ or a
+   maximized laptop) — moderate laptops and phones keep designed sizes and
+   scroll instead. Curves meet the base curve at 75rem, so there's no jump.
+   page.module.css mirrors this query for the hero's own spacing. */
 @media (min-width: 105rem) and (min-height: 54rem) and (max-height: 75rem) {
   :root {
     --type-display: clamp(2.5rem, 1.6vw + 6vh - 1.8rem, 5.25rem);
