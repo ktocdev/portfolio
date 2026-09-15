@@ -1,3 +1,5 @@
+import { SITE } from '@/content/site';
+
 /**
  * Shared analytics-consent state. One key, one event, so the banner
  * (CookieConsent) and the settings page (CookieSettings) never drift apart:
@@ -35,3 +37,19 @@ export function writeConsent(choice: ConsentChoice): void {
     /* No window (shouldn't happen in a client component); nothing to notify. */
   }
 }
+
+/**
+ * The analytics tools that are actually configured, named for the consent copy.
+ * Drop an ID in site.ts and the banner, the settings legend, and the tags
+ * themselves all follow — there is one source of truth for "what is running".
+ */
+export const VENDORS: readonly string[] = [
+  ...(SITE.clarityId ? ['Microsoft Clarity'] : []),
+  ...(SITE.gaId ? ['Google Analytics'] : []),
+];
+
+/** The vendors as a sentence fragment: "A", or "A and B". */
+export const VENDOR_LIST = VENDORS.join(' and ');
+
+/** False when nothing is configured — then there is nothing to consent to. */
+export const ANALYTICS_CONFIGURED = VENDORS.length > 0;

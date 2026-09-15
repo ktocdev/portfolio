@@ -6,7 +6,7 @@ import styles from './page.module.css';
 
 export const metadata: Metadata = {
   title: 'Cookie settings',
-  description: 'Choose whether this site uses Microsoft Clarity analytics cookies.',
+  description: 'Choose whether this site uses analytics cookies.',
 };
 
 export default function CookiesPage() {

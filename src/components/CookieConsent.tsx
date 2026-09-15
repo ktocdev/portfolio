@@ -3,9 +3,15 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
-import { SITE } from '@/content/site';
-import { CONSENT_EVENT, readConsent, writeConsent } from '@/lib/consent';
+import {
+  ANALYTICS_CONFIGURED,
+  CONSENT_EVENT,
+  VENDOR_LIST,
+  readConsent,
+  writeConsent,
+} from '@/lib/consent';
 import ClarityAnalytics from './ClarityAnalytics';
+import GoogleAnalytics from './GoogleAnalytics';
 import styles from './CookieConsent.module.css';
 
 /* 'loading' until the stored choice is read on mount, so the server render and
@@ -13,14 +19,14 @@ import styles from './CookieConsent.module.css';
 type Consent = 'loading' | 'undecided' | 'granted' | 'denied';
 
 /**
- * A one-time consent gate for Microsoft Clarity. The analytics tag only mounts
- * after the visitor accepts, so no analytics cookies are set until then. The
- * choice is remembered, and the banner never reappears once made.
+ * A one-time consent gate for the analytics tags. They only mount after the
+ * visitor accepts, so no analytics cookies are set until then. The choice is
+ * remembered, and the banner never reappears once made.
  *
  * Stays in sync with the settings page: a change there (or in another tab)
- * updates this component live, mounting or unmounting the tag to match.
+ * updates this component live, mounting or unmounting the tags to match.
  *
- * Renders nothing when no Clarity ID is configured — there is nothing to
+ * Renders nothing when no analytics IDs are configured — there is nothing to
  * consent to, so there is no banner.
  */
 export default function CookieConsent() {
@@ -28,7 +34,7 @@ export default function CookieConsent() {
   const dialog = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!SITE.clarityId) return;
+    if (!ANALYTICS_CONFIGURED) return;
 
     const sync = () => setConsent(readConsent() ?? 'undecided');
     sync();
@@ -50,11 +56,18 @@ export default function CookieConsent() {
     if (consent === 'undecided') dialog.current?.focus();
   }, [consent]);
 
-  if (!SITE.clarityId) return null;
+  if (!ANALYTICS_CONFIGURED) return null;
 
   return (
     <>
-      {consent === 'granted' && <ClarityAnalytics />}
+      {/* Each tag no-ops on its own if its ID is unset, so one switch here
+          covers however many are configured. */}
+      {consent === 'granted' && (
+        <>
+          <ClarityAnalytics />
+          <GoogleAnalytics />
+        </>
+      )}
 
       {consent === 'undecided' && (
         <div
@@ -71,8 +84,8 @@ export default function CookieConsent() {
               Cookies
             </p>
             <p id="cookie-desc" className={styles.message}>
-              This site uses Microsoft Clarity to understand how visitors use it, including
-              anonymized session recordings. It sets analytics cookies only if you accept, and
+              This site uses {VENDOR_LIST} to understand how visitors use it, including
+              anonymized session recordings. Analytics cookies are set only if you accept, and
               you can change your choice on the <Link href="/cookies">Cookies page</Link>.
             </p>
           </div>
