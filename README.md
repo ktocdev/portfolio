@@ -46,7 +46,7 @@ src/
     globals.css          the token layer — colour, type, spacing, motion
     page.tsx             Home
     projects/            Projects
-    resume/              Resume
+    resume/              Resume (the full document; also the print source for the PDF)
     contact/             Contact
     about/               About
     cookies/             Cookie settings (analytics consent)
@@ -67,9 +67,10 @@ src/
   content/
     site.ts              nav, skills, contacts, per-page copy, image alt text, Clarity ID
     projects.ts          project data, case-study notes, slide manifests
-    resume.ts            experience entries
+    resume.ts            resume: summary, experience, skills, projects, contact
   lib/
     consent.ts           shared consent storage key + change event
+    nowrap.tsx           keeps hyphenated names (nebula-nuxt) on one line
 public/
   _headers               Cloudflare response headers (CSP etc.)
   media/                 photography
