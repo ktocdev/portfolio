@@ -14,6 +14,11 @@ export const SITE = {
   /* Microsoft Clarity project ID (Settings → Overview). Public value, not a
      secret. Leave empty to disable analytics — the script won't load. */
   clarityId: 'yhyf2x1l6v',
+  /* GA4 measurement ID (Admin → Data streams → your web stream), shaped
+     G-XXXXXXXXXX. Public value, not a secret. Leave empty to disable — the
+     script won't load and the banner stops naming it, but COPY.cookies.intro
+     below is hand-written prose, so edit that too if you drop a tool. */
+  gaId: 'G-G8J5PP2S3F',
 } as const;
 
 export type NavItem = {
@@ -104,7 +109,7 @@ export const COPY = {
   cookies: {
     heading: 'Cookie settings',
     intro:
-      'This site uses Microsoft Clarity for analytics — which pages get read, roughly how long, where visitors arrive from, and anonymized session recordings and heatmaps of where people click and scroll. It sets cookies only if you turn it on, and nothing here is ever sold or used to identify you. You can change your choice at any time.',
+      'This site uses Microsoft Clarity and Google Analytics — which pages get read, roughly how long, where visitors arrive from, and anonymized session recordings and heatmaps of where people click and scroll. They set cookies only if you turn them on, and nothing here is ever sold or used to identify you. You can change your choice at any time.',
   },
 } as const;
 

@@ -2,7 +2,13 @@
 
 import { useEffect, useState } from 'react';
 
-import { CONSENT_EVENT, readConsent, writeConsent, type ConsentChoice } from '@/lib/consent';
+import {
+  CONSENT_EVENT,
+  VENDOR_LIST,
+  readConsent,
+  writeConsent,
+  type ConsentChoice,
+} from '@/lib/consent';
 import styles from './CookieSettings.module.css';
 
 type State = 'loading' | 'undecided' | ConsentChoice;
@@ -10,7 +16,7 @@ type State = 'loading' | 'undecided' | ConsentChoice;
 /**
  * The control on the /cookies page. Reflects the stored choice and lets the
  * visitor change it; writing through the shared helper updates the banner and
- * the Clarity tag live, without a reload.
+ * the analytics tags live, without a reload.
  *
  * Native radios keep the group fully keyboard- and screen-reader-operable for
  * free (arrow keys, roving focus, group semantics from the fieldset).
@@ -44,7 +50,7 @@ export default function CookieSettings() {
 
   return (
     <fieldset className={styles.fieldset}>
-      <legend className={styles.legend}>Microsoft Clarity analytics</legend>
+      <legend className={styles.legend}>{VENDOR_LIST}</legend>
 
       <div className={styles.options}>
         <label className={styles.option}>
