@@ -139,9 +139,17 @@
    only .noteText reads as a bullet. */
 .noteHeading,
 .noteSubheading,
-.noteDisclosure {
+.noteDisclosure,
+.notePara {
   margin-left: -1.1rem;
   list-style: none;
+}
+
+/* Reads as a lead paragraph inside the notes list — no bullet, body copy. */
+.notePara {
+  line-height: 1.55;
+  text-wrap: pretty;
+  margin-bottom: 0.4rem;
 }
 
 .noteHeading {

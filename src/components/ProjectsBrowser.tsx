@@ -19,6 +19,7 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
   const [selected, setSelected] = useState(0);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const project = projects[selected];
+  const paras = project.paras ?? [project.description];
 
   useEffect(() => {
     const fromHash = () => {
@@ -144,11 +145,13 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
 
         {project.status ? <p className={styles.status}>{project.status}</p> : null}
 
-        <div className={styles.paras}>
-          {(project.paras ?? [project.description]).map((para) => (
-            <p key={para}>{para}</p>
-          ))}
-        </div>
+        {paras.length ? (
+          <div className={styles.paras}>
+            {paras.map((para) => (
+              <p key={para}>{para}</p>
+            ))}
+          </div>
+        ) : null}
 
         {project.facts?.length ? <FactsGrid facts={project.facts} /> : null}
 
@@ -196,9 +199,9 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
 }
 
 /**
- * Four item types share one list. Everything except `text` hangs back to the
- * left margin and drops its marker, so headings read as structure rather than
- * as bullets.
+ * Five item types share one list. Everything except `text` hangs back to the
+ * left margin and drops its marker, so headings and `para` read as structure
+ * or prose rather than as bullets.
  */
 function NoteItem({ note }: { note: Note }) {
   if (note.kind === 'heading') {
@@ -211,6 +214,10 @@ function NoteItem({ note }: { note: Note }) {
 
   if (note.kind === 'disclosure') {
     return <li className={styles.noteDisclosure}>{note.text}</li>;
+  }
+
+  if (note.kind === 'para') {
+    return <li className={styles.notePara}>{note.text}</li>;
   }
 
   return (

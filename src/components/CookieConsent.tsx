@@ -56,6 +56,35 @@ export default function CookieConsent() {
     if (consent === 'undecided') dialog.current?.focus();
   }, [consent]);
 
+  /* The banner is fixed, so it would sit over whatever ends at the bottom of
+     the page: the footer, and on a phone the last rows of content too. While
+     it is up, publish the space it occupies from the viewport's bottom edge
+     (height plus bottom offset) as --consent-inset; the shell (.root in
+     layout.module.css) pads its bottom by that much. On a page that fits one
+     viewport the shell's flexible middle row absorbs the padding, so the page
+     still fits and the footer simply sits above the banner; on a taller page
+     the end of the content scrolls clear of it. Re-measured when the banner
+     changes size; cleared when it goes. */
+  useEffect(() => {
+    const el = dialog.current;
+    const root = document.documentElement;
+    if (consent !== 'undecided' || !el) {
+      root.style.removeProperty('--consent-inset');
+      return;
+    }
+    const update = () => {
+      const offset = parseFloat(getComputedStyle(el).bottom) || 0;
+      root.style.setProperty('--consent-inset', `${el.offsetHeight + offset}px`);
+    };
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      root.style.removeProperty('--consent-inset');
+    };
+  }, [consent]);
+
   if (!ANALYTICS_CONFIGURED) return null;
 
   return (

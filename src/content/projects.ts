@@ -16,13 +16,14 @@ export type Fact = {
 };
 
 /**
- * Case-study notes mix four item types. All but `text` hang back to the left
+ * Case-study notes mix five item types. All but `text` hang back to the left
  * margin and drop their marker; `text` is the only conventional bullet.
  */
 export type Note =
   | { kind: 'heading'; text: string }
   | { kind: 'subheading'; text: string }
   | { kind: 'disclosure'; text: string }
+  | { kind: 'para'; text: string }
   | { kind: 'text'; text: string; link?: Link; subs?: string[] };
 
 /** `alt` is the text alternative; `label` (the visible chip) is only a fallback since it's too terse on its own — describe what the screen shows. */
@@ -57,6 +58,8 @@ export const PROJECTS: Project[] = [
     caseStudy: true,
     description:
       "Three generations of one company's design system: founding team for Comet (2016), builder of its successor Nebula (2020), and sole architect of nebula-nuxt (2026), a themed component layer that lets twelve product teams replace legacy UI incrementally while migrating to Nuxt.",
+    /* Shown as the first case-study note (below the stats), not a lead paragraph. */
+    paras: [],
     facts: [
       {
         value: '45M',
@@ -76,11 +79,15 @@ export const PROJECTS: Project[] = [
       { value: '$3.05', label: 'cost to create a component, doc page, and release end to end' },
     ],
     notes: [
+      {
+        kind: 'para',
+        text: "Three generations of one company's design system: founding team for Comet (2016), builder of its successor Nebula (2020), and sole architect of nebula-nuxt (2026), a themed component layer that lets twelve product teams replace legacy UI incrementally while migrating to Nuxt.",
+      },
       { kind: 'heading', text: 'nebula-nuxt' },
       { kind: 'subheading', text: 'Proposal Stage' },
       {
         kind: 'text',
-        text: 'Built nebula-nuxt: Nuxt UI + custom components, themed to match legacy Nebula brand. Purpose: apps migrate to new Nuxt components/pages without visual mismatch vs. unmigrated legacy pages. Deliberately transitional, not end state. Payoff: post-migration, org can shift visual language via theme change alone, no component rebuild needed.',
+        text: 'Architected nebula-nuxt: Nuxt UI plus custom components, themed to match the legacy Nebula brand, letting teams replace legacy UI incrementally while migrating to Nuxt and separating visual-language changes from component rebuilds. Deliberately transitional, not the end state. Payoff: post-migration, the org can shift visual language via a theme change alone, with no component rebuild needed.',
       },
       {
         kind: 'text',
@@ -88,7 +95,7 @@ export const PROJECTS: Project[] = [
       },
       {
         kind: 'text',
-        text: "nebula-nuxt was officially accepted as the quarter's Planning Interval (PI) deliverable, the company's formal engineering planning process; legacy Nebula support was separately recognized as its own PI item.",
+        text: "nebula-nuxt was selected over competing proposals as the quarter's committed deliverable; legacy Nebula support was separately recognized as its own committed item.",
       },
       { kind: 'subheading', text: 'Product Integration' },
       {
@@ -101,7 +108,7 @@ export const PROJECTS: Project[] = [
       },
       {
         kind: 'text',
-        text: 'Integrated nebula-nuxt into the platform layer: implemented new Page Shell and Global Nav for production use, and built a live theme switcher and component-comparison playground (legacy Nebula vs. nebula-nuxt side by side) to demonstrate theming support.',
+        text: "Integrated nebula-nuxt into the platform layer with ten production components, including Global Nav, Page Shell, and Modal; added pages to the platform team's playground showing those components under a live theme switcher, legacy Nebula vs. nebula-nuxt side by side, proving they stayed themable inside the production shell.",
       },
       { kind: 'subheading', text: 'Doc Site Designer' },
       {
@@ -125,7 +132,7 @@ export const PROJECTS: Project[] = [
       },
       {
         kind: 'text',
-        text: 'Built MegaMenu for high-stakes Back-to-School (BTS) product deliverable. Core technical feature: smart-detects when to responsively collapse into a linked drill-down list view, rather than relying on fixed breakpoint. Component adapts own layout based on available space and content, rather than hiding items past hardcoded width.',
+        text: 'Built MegaMenu for a Back-to-School product deliverable. Core technical feature: detects at runtime when to collapse into a linked drill-down list view, rather than relying on fixed breakpoints. Component adapts its own layout based on available space and content, rather than hiding items past a hardcoded width.',
         link: { label: 'MegaMenu demo', href: 'https://nebula.discoveryeducation.com/mega-menu-sink' },
         subs: [
           'Designed the responsive collapsed view myself: a linked drill-down list, not an accordion, that lets users tap into a category and navigate back out.',
@@ -144,7 +151,7 @@ export const PROJECTS: Project[] = [
       { kind: 'subheading', text: 'Claude Skills' },
       {
         kind: 'text',
-        text: 'Wrote a Claude planning skill that picks the build approach per component: themed primitive, wrapped primitive, or custom, running at about $1.75 per run.',
+        text: 'Wrote a Claude planning skill that picks the build approach per component: themed primitive, wrapped primitive, or fully custom component, running at about $1.75 per run.',
       },
       {
         kind: 'text',

@@ -1,45 +1,56 @@
-/* Explicit two-track template (not auto-fit) preserves the intentional 22rem/26rem asymmetry; 
-single column below the width where both tracks fit. */
-.resume {
-  display: grid;
-  gap: var(--space-column-gap);
-  align-content: start;
-  min-height: 0;
+/* The resume: one reading column, centred in the shell. Unlike every
+   other page this one is meant to scroll (a two-page document can't fit
+   100dvh) and it is the print source for the PDF, so it deliberately opts
+   out of the site's viewport-keyed type scale. Sizes come from the resume's
+   own document scale (a 14px base with em steps, carried over from the
+   standalone resume draft) so the page and the printed sheet read the same;
+   fonts and colour are the site's. */
+.document {
+  /* Document type scale: em steps relative to the base. */
+  --doc-size-base: 14px;
+  --doc-size-xs: 0.875em; /* contact, dates, meta, caps labels */
+  --doc-size-md: 1.1em; /* entry headline */
+  --doc-size-xl: 1.7em; /* name */
+  --doc-lh: 1.3;
+  --doc-tracking-caps: 0.12em; /* section headings */
+
+  /* Vertical rhythm. Sections space themselves (margins, not a container
+     gap) so the header-to-summary distance can differ from section-to-section. */
+  --doc-gap-section: clamp(1.75rem, 4vh, 2.75rem);
+  --doc-gap-header: 1.6em; /* contact line to the first heading, as the draft */
+
+  justify-self: center;
+  width: min(100%, 46rem);
+  display: flex;
+  flex-direction: column;
+  padding-bottom: var(--space-section-gap);
+  font-size: var(--doc-size-base);
+  line-height: var(--doc-lh);
 }
 
-@media (min-width: 56rem) {
-  .resume {
-    grid-template-columns: minmax(min(100%, 22rem), 1fr) minmax(min(100%, 26rem), 1.4fr);
-  }
-}
-
-.left {
+/* --- Top: tools row + document header ----------------------------------- */
+.top {
   display: flex;
   flex-direction: column;
   gap: var(--space-stack);
 }
 
-.heading {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: var(--type-h1);
-  line-height: 1.08;
-  letter-spacing: var(--tracking-h1);
-}
-
-.summary {
-  max-width: 36ch;
-  font-size: var(--type-body);
-  text-wrap: pretty;
-}
-
-.actions {
+/* Screen-only affordances: label on the left, PDF button on the right. */
+.tools {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem 1rem;
+  justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  font-family: var(--font-mono);
+  font-size: var(--doc-size-xs);
+  letter-spacing: var(--tracking-mono-caps);
+  text-transform: uppercase;
+  color: var(--muted);
 }
 
+/* The site's one filled button, on the site's UI scale (not the document
+   scale) so it matches the buttons elsewhere. Resets the row's mono caps. */
 .button {
   display: inline-flex;
   align-items: center;
@@ -50,8 +61,11 @@ single column below the width where both tracks fit. */
   color: var(--on-accent);
   text-decoration: none;
   border-radius: var(--radius-sm);
+  font-family: var(--font-body);
   font-weight: 500;
   font-size: var(--type-ui);
+  letter-spacing: normal;
+  text-transform: none;
 }
 
 .button:hover {
@@ -63,69 +77,201 @@ single column below the width where both tracks fit. */
   font-family: var(--font-mono);
 }
 
-/* --- Experience --------------------------------------------------------- */
-.list {
-  align-self: start;
+/* Name above a two-row lockup (tagline, contact), all one line each at
+   desktop and on the printed sheet. */
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
 }
 
-.entry {
+.name {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--doc-size-xl);
+  line-height: 1.1;
+  letter-spacing: var(--tracking-h1);
+  text-wrap: balance;
+}
+
+/* The lockup is only as wide as its wider row (fit-content, not the flex
+   item's default stretch), so the other row's space-between spreads its
+   items and dividers out to exactly that width. */
+.lockup {
   display: grid;
-  gap: 0.25rem clamp(1rem, 2vw, 2rem);
-  padding: var(--space-row-y) 0;
-  border-bottom: 1px solid var(--border-subtle);
+  width: fit-content;
+  max-width: 100%;
 }
 
-/* Same reasoning as the page grid: fixed years column is too costly on phones, so it stacks above the role below this width. */
-@media (min-width: 30rem) {
-  .entry {
-    grid-template-columns: minmax(6.5rem, max-content) 1fr;
+/* Both rows are in the body face, as in the draft, so the header carries no
+   mono: the tagline is the emphatic line, the contact line the quiet one. */
+.tagline,
+.contact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  font-family: var(--font-body);
+  white-space: nowrap;
+}
+
+/* Base size, medium weight, tightly tracked; bracketed by dividers. */
+.tagline {
+  gap: 0.5em;
+  margin-bottom: 0.1em;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+
+/* One step smaller, regular; dividers between items only. */
+.contact {
+  gap: 0.25em;
+  font-size: var(--doc-size-xs);
+  font-style: normal;
+}
+
+/* The ∷ separators: control colour, as the site's dividers are; regular
+   weight so they don't pick up the tagline's medium. */
+.divider {
+  font-size: var(--doc-size-xs);
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--border-control);
+}
+
+.tagline .divider {
+  font-size: 0.875em;
+}
+
+/* Below ~40rem the rows can't stay on one line; stack the items instead and
+   drop the dividers, which only make sense between items on a line. */
+@media (max-width: 40rem) {
+  .lockup {
+    width: 100%;
+  }
+
+  .tagline,
+  .contact {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35em;
+    white-space: normal;
+  }
+
+  .divider {
+    display: none;
   }
 }
 
-.entry[data-last] {
-  border-bottom: none;
+/* Inherit the text colour, as the draft does: the header is identity, not a
+   row of calls to action. The underline stays on screen and goes in print. */
+.contactLink {
+  color: inherit;
 }
 
-.years {
+.contactLink:hover {
+  color: var(--accent);
+}
+
+/* --- Sections ----------------------------------------------------------- */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.9rem, 2vh, 1.4rem);
+  margin-top: var(--doc-gap-section);
+}
+
+.top + .section {
+  margin-top: var(--doc-gap-header);
+}
+
+/* Base size, uppercase and widely tracked over a hairline: the resume's own
+   section-heading treatment, set in the site's mono (which is what the site
+   uses for uppercase). Presence comes from the rule and tracking, not size,
+   so the entry headlines below can be the larger element. */
+.sectionHeading {
   font-family: var(--font-mono);
-  font-size: var(--type-mono-sm);
-  color: var(--muted);
-  padding-top: 0.25em;
+  font-weight: 400;
+  font-size: 1em;
+  line-height: var(--doc-lh);
+  letter-spacing: var(--doc-tracking-caps);
+  text-transform: uppercase;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
 }
 
-.bodyCell {
-  min-width: 0;
+.summary {
+  text-wrap: pretty;
+}
+
+/* --- Entries ------------------------------------------------------------ */
+.entries {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 3vh, 2rem);
+}
+
+/* Inside an entry the rhythm is the draft's em scale: 0.9em from the
+   employer line to the first group label, 1em from the end of a list to the
+   next label, 0.4em from a label to its bullets, 0.5em from a project's
+   stack line to its bullets. */
+.entry {
+  display: flex;
+  flex-direction: column;
+}
+
+.entryHeader + .group {
+  margin-top: 0.9em;
+}
+
+.group + .group {
+  margin-top: 1em;
+}
+
+.entryHeader + .bullets,
+.entryHeader + .note {
+  margin-top: 0.5em;
+}
+
+.entryHeader {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.2rem clamp(1rem, 2vw, 2rem);
+  align-items: baseline;
 }
 
 .role {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: var(--type-h3);
+  font-size: var(--doc-size-md);
   line-height: 1.2;
+  text-wrap: balance;
+}
+
+.years {
+  font-family: var(--font-mono);
+  font-size: var(--doc-size-xs);
+  letter-spacing: var(--tracking-mono);
+  color: var(--muted);
+  white-space: nowrap;
 }
 
 .org {
-  font-size: var(--type-meta);
+  grid-column: 1 / -1;
+  font-size: var(--doc-size-xs);
   color: var(--muted);
-}
-
-.groups {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(0.7rem, 1.6vh, 1.15rem);
-  margin-top: clamp(0.7rem, 1.6vh, 1.15rem);
 }
 
 .group {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.4em;
 }
 
 .groupLabel {
   font-family: var(--font-mono);
   font-weight: 400;
-  font-size: var(--type-mono-sm);
+  font-size: var(--doc-size-xs);
   letter-spacing: var(--tracking-mono-caps);
   text-transform: uppercase;
   color: var(--accent);
@@ -137,12 +283,135 @@ single column below the width where both tracks fit. */
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
-  font-size: var(--type-body-md);
   text-wrap: pretty;
 }
 
+.bullets li::marker {
+  color: var(--text-faint);
+}
+
 .note {
-  margin-top: 0.35rem;
-  font-size: var(--type-body-md);
   text-wrap: pretty;
+}
+
+/* --- Skills ------------------------------------------------------------- */
+.skills {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: clamp(1rem, 2vw, 2rem);
+  row-gap: 0;
+}
+
+.skillLabel,
+.skillItems {
+  padding: clamp(0.45rem, 1vh, 0.75rem) 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* The section heading already carries the top rule; the last row's rule
+   would only float in the gap before Projects. */
+.skills > :nth-last-child(-n + 2) {
+  border-bottom: 0;
+}
+
+.skillLabel {
+  font-family: var(--font-mono);
+  font-size: var(--doc-size-xs);
+  letter-spacing: var(--tracking-mono-caps);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.skillItems {
+  text-wrap: pretty;
+}
+
+/* A max-content label column leaves too little for the items on a phone. */
+@media (max-width: 30rem) {
+  .skills {
+    grid-template-columns: 1fr;
+  }
+
+  .skillLabel {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+}
+
+/* --- Print -------------------------------------------------------------- */
+/* Type is already the document scale (14px = 10.5pt), so print only fixes
+   the sheet, tightens the vertical rhythm to fit two US Letter pages, and
+   controls page breaks. globals.css handles the shell and colours. */
+@page {
+  size: letter;
+  margin: 0.5in;
+}
+
+@media print {
+  .document {
+    --doc-gap-section: 11pt;
+    --doc-gap-header: 12pt;
+
+    width: 100%;
+    padding-bottom: 0;
+  }
+
+  .top {
+    gap: 0;
+  }
+
+  .tools {
+    display: none;
+  }
+
+  .header {
+    gap: 4pt;
+  }
+
+  .contactLink {
+    text-decoration: none;
+  }
+
+  .section {
+    gap: 6pt;
+  }
+
+  .sectionHeading {
+    padding-bottom: 3pt;
+    break-after: avoid;
+  }
+
+  .entries {
+    gap: 8pt;
+  }
+
+  .entryHeader {
+    gap: 1pt 16pt;
+    break-after: avoid;
+  }
+
+  .groupLabel {
+    break-after: avoid;
+  }
+
+  .bullets {
+    gap: 2pt;
+    padding-left: 11pt;
+  }
+
+  .bullets li,
+  .note {
+    break-inside: avoid;
+  }
+
+  .skills {
+    grid-template-columns: max-content 1fr;
+    column-gap: 16pt;
+  }
+
+  .skillLabel,
+  .skillItems {
+    padding: 3pt 0;
+    border-bottom: 1px solid var(--border-subtle);
+  }
 }

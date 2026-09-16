@@ -6,6 +6,12 @@
   display: grid;
   grid-template-rows: auto minmax(min-content, 1fr) auto;
   padding: var(--space-page-y) var(--space-page-x);
+  /* The fixed cookie banner would cover whatever ends at the bottom of the
+     page. While it is up, CookieConsent publishes its height plus bottom
+     offset as --consent-inset and the shell keeps that much clear below the
+     footer: the 1fr row absorbs it on a page that fits one viewport, a
+     taller page scrolls that much further. Unset once the banner goes. */
+  padding-bottom: calc(var(--space-page-y) + var(--consent-inset, 0px));
   gap: var(--space-section-gap);
   overflow: auto;
   background: var(--bg);
