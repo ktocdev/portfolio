@@ -229,6 +229,7 @@ body {
 h1,
 h2,
 h3,
+h4,
 p,
 figure,
 dl,
@@ -311,4 +312,44 @@ a:hover {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* Keeps a hyphenated name (e.g. nebula-nuxt) on one line; applied by
+   lib/nowrap.tsx. */
+.nowrap {
+  white-space: nowrap;
+}
+
+/* --- Print: the resume -------------------------------------------------- */
+/* Scoped to the page that carries .printDocument (/resume), so every
+   other page prints as it renders. The shell's chrome — site header, footer,
+   skip link, consent banner — is dropped and the document gets the whole
+   sheet. Colours pin to the light table so a dark-mode visitor doesn't print
+   pale text on white; only the tokens the document uses are overridden. */
+@media print {
+  :root:has(.printDocument) {
+    --bg: #ffffff;
+    --text: #1f2333;
+    --muted: #555b70;
+    --text-faint: #696c79;
+    --accent: #3e43b8;
+    --border: #cdcbdd;
+    --border-subtle: #e3e1ee;
+    --border-control: #8481a0;
+    color-scheme: light;
+  }
+
+  body:has(.printDocument) > div:has(> main) {
+    display: block;
+    min-height: 0;
+    padding: 0;
+    overflow: visible;
+  }
+
+  body:has(.printDocument) > div > header,
+  body:has(.printDocument) > div > footer,
+  body:has(.printDocument) > div > a[href='#main'],
+  body:has(.printDocument) [role='dialog'] {
+    display: none;
+  }
 }
