@@ -339,7 +339,7 @@ a:hover {
     color-scheme: light;
   }
 
-  body:has(.printDocument) > div {
+  body:has(.printDocument) > div:has(> main) {
     display: block;
     min-height: 0;
     padding: 0;
