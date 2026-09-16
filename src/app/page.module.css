@@ -42,10 +42,13 @@
   color: var(--muted);
 }
 
-/* Slash dividers between items. Was 1.48:1 and effectively invisible despite being decorative; control colour reads as a divider without competing with the muted text. */
-.specialties li + li::before {
+/* Slash dividers between items. Was 1.48:1 and effectively invisible despite being decorative; control colour reads as a divider without competing with the muted text.
+   Trailing separator (::after on non-last items) so the slash stays with the
+   preceding item when the list wraps on mobile, rather than orphaning at the
+   start of the wrapped line. */
+.specialties li:not(:last-child)::after {
   content: '/';
-  margin-right: 1.25rem;
+  margin-left: 1.25rem;
   color: var(--border-control);
 }
 
