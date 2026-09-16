@@ -43,12 +43,12 @@ export const SKILLS: SkillRow[] = [
   {
     label: 'AI engineering',
     items:
-      'Prompt engineering, spec-driven development, Prompt Caching, Model Routing, AI orchestration, LLM cost & model strategy, RAG, vector databases, Anthropic Claude API, Claude Design',
+      'Prompt Engineering, Spec-Driven Development, LLM Cost/Model Strategy, Prompt Caching, RAG, Vector Databases, Anthropic Claude API, Claude Design',
   },
   {
     label: 'Front-end',
     items:
-      'Vue 3, Vite, Nuxt, React, Next.js, TypeScript, design systems, component & theming architecture, Playwright MCP, Tailwind CSS, accessibility',
+      'Vue 3, Nuxt, TypeScript, Design Systems, Component Architecture, Theming Architecture, Tailwind CSS, Vite, Accessibility (WCAG 2.2, ARIA)',
   },
   {
     label: 'Back-end',
@@ -56,7 +56,7 @@ export const SKILLS: SkillRow[] = [
   },
   {
     label: 'Other',
-    items: 'Git, GitHub, VS Code, Cloudflare, Three.js, Pinia, UX patterns, cross-team technical leadership',
+    items: 'User Experience Patterns, Cross-Team Technical Leadership, Figma, Git, GitHub, VS Code, Cloudflare',
   },
 ];
 
