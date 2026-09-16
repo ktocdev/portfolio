@@ -6,7 +6,7 @@
 export const SITE = {
   name: "Katie O'Connor",
   role: 'Senior Software Engineer',
-  specialties: ['Design Engineer', 'Design System Architect'],
+  specialties: ['Design System Architect', 'Design Engineer'],
   email: 'katie.oconnor13@gmail.com',
   url: 'https://ktoc.dev',
   /* Evaluated at build time (static export), so it tracks the last deploy. */
