@@ -25,9 +25,9 @@ export const metadata: Metadata = {
 };
 
 /* Decorative separator between header items; hidden from assistive tech. */
-function Divider() {
+function Divider({ className }: { className?: string }) {
   return (
-    <span aria-hidden="true" className={styles.divider}>
+    <span aria-hidden="true" className={[styles.divider, className].filter(Boolean).join(' ')}>
       ∷
     </span>
   );
@@ -40,7 +40,7 @@ function EntryHeader({ entry }: { entry: Entry }) {
   return (
     <div className={styles.entryHeader}>
       <h3 className={styles.role}>{entry.role}</h3>
-      <span className={styles.years}>{entry.years}</span>
+      {entry.years ? <span className={styles.years}>{entry.years}</span> : null}
       {meta ? <p className={styles.org}>{meta}</p> : null}
     </div>
   );
@@ -87,18 +87,25 @@ export default function ResumePage() {
               ))}
             </p>
             <address className={styles.contact}>
-              {RESUME_CONTACT.map((row, i) => (
-                <Fragment key={row.text}>
-                  {i > 0 ? <Divider /> : null}
-                  {row.href ? (
-                    <a href={row.href} className={styles.contactLink}>
-                      {row.text}
-                    </a>
-                  ) : (
-                    <span>{row.text}</span>
-                  )}
-                </Fragment>
-              ))}
+              {RESUME_CONTACT.map((row, i) => {
+                /* A print-only row takes its leading divider with it, so the
+                   line keeps one divider between every pair of visible
+                   items in both media. */
+                const printOnly = row.printOnly ? styles.printOnly : undefined;
+
+                return (
+                  <Fragment key={row.text}>
+                    {i > 0 ? <Divider className={printOnly} /> : null}
+                    {row.href ? (
+                      <a href={row.href} className={[styles.contactLink, printOnly].filter(Boolean).join(' ')}>
+                        {row.text}
+                      </a>
+                    ) : (
+                      <span className={printOnly}>{row.text}</span>
+                    )}
+                  </Fragment>
+                );
+              })}
             </address>
           </div>
         </header>
@@ -117,7 +124,7 @@ export default function ResumePage() {
         </h2>
         <div className={styles.entries}>
           {EXPERIENCE.map((entry) => (
-            <div key={`${entry.years}-${entry.role}`} className={styles.entry}>
+            <div key={`${entry.org ?? ''}-${entry.role}`} className={styles.entry}>
               <EntryHeader entry={entry} />
               {entry.groups?.map((group) => (
                 <div key={group.label} className={styles.group}>

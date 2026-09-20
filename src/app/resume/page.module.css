@@ -163,6 +163,13 @@
   }
 }
 
+/* Off the screen page, on the printed sheet. Used for the phone number in
+   the contact line: the PDF that goes out with an application carries it,
+   the public page does not. */
+.printOnly {
+  display: none;
+}
+
 /* Inherit the text colour, as the draft does: the header is identity, not a
    row of calls to action. The underline stays on screen and goes in print. */
 .contactLink {
@@ -370,6 +377,10 @@
 
   .contactLink {
     text-decoration: none;
+  }
+
+  .printOnly {
+    display: inline;
   }
 
   .section {

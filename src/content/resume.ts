@@ -12,7 +12,8 @@ export type BulletGroup = {
 };
 
 export type Entry = {
-  years: string;
+  /** Omitted where a date would signal age more than experience. */
+  years?: string;
   role: string;
   org?: string;
   location?: string;
@@ -34,13 +35,15 @@ export type ResumeProject = {
 export type ResumeContact = {
   text: string;
   href?: string;
+  /** Rendered on the printed sheet only: kept off the public page. */
+  printOnly?: boolean;
 };
 
 /** Job titles in the document header, in reading order. */
 export const RESUME_TITLES = [
   'Senior Software Engineer',
-  'Design Systems Architect',
-  'Design Engineer',
+  'Design System Architect',
+  'AI Engineer',
 ] as const;
 
 const contact = (label: string): ResumeContact => {
@@ -49,9 +52,23 @@ const contact = (label: string): ResumeContact => {
   return { text: row.text, href: row.href };
 };
 
-/** Header contact line: location, email, site, LinkedIn. */
+/**
+ * Read at build time, from .env.print.local via `npm run dev:print` or
+ * `npm run build:print`. A plain build leaves it undefined, so the number is
+ * absent from the deployed HTML rather than merely hidden in it — CSS alone
+ * would still hand it to anyone reading the page source. Not NEXT_PUBLIC_, so
+ * it cannot reach the client bundle either.
+ */
+const phone = process.env.RESUME_PHONE?.trim();
+
+/**
+ * Header contact line: location, phone, email, site, LinkedIn. The phone is
+ * print-only on top of being build-gated, so even the print build's screen
+ * view leaves it off. CONTACTS stays as is: it feeds /contact too.
+ */
 export const RESUME_CONTACT: ResumeContact[] = [
   { text: 'Chicago, IL' },
+  ...(phone ? [{ text: phone, printOnly: true }] : []),
   contact('Email'),
   { text: SITE.url.replace(/^https?:\/\//, ''), href: SITE.url },
   contact('LinkedIn'),
@@ -105,14 +122,12 @@ export const EXPERIENCE: Entry[] = [
 
 /** Pre-2015 roles, summarised as one line. */
 export const EARLIER_ROLES: Entry = {
-  years: '2008–2015',
   role: 'Front-end & Production Roles',
   location: 'Chicago, IL',
   note: 'Sears Holdings Corporation, Razorfish, AlphaZeta Interactive, Elevation, Hewitt Associates, Bankers Life and Casualty, iPort Media, WGN-TV.',
 };
 
 export const EDUCATION: Entry = {
-  years: '2009',
   role: 'BA, Interactive Art and Media',
   org: 'Columbia College Chicago',
 };
