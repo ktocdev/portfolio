@@ -185,7 +185,7 @@ export const PROJECTS: Project[] = [
     meta: 'Python · FastAPI · ChromaDB · Claude API',
     description:
       "An AI-powered journal that uses local embeddings, an entity graph, multi-level summaries, and semantic retrieval over personal entries. The retrieval pipeline grounds LLM responses in the user's actual journal history rather than generic model knowledge.",
-    status: 'Work in progress. Full demo journal will be available online soon.',
+    status: 'Work in progress. The demo journal runs in your browser — no signup, no API key.',
     paras: [
       'Main Character is a journal app with an AI companion who responds to your entries. The companion is supportive, never sycophantic, and always roots for you like you are the main character. When you make mistakes and show flaws, it gives a helpful perspective and gets you on with your day.',
       "I had the vision for this app after having conversations with Claude about life stuff. I found that it didn't have very good memory. I came up with a workflow where I would have Claude make a summary of our conversation, then upload that as context for the next chat. This worked for a while, but I wanted more control.",
@@ -197,7 +197,10 @@ export const PROJECTS: Project[] = [
       'Main Character is intended to be local only and you need a Claude API key.',
       'This might be good for people who want to find patterns in their life, remember things better, gain perspective through reflection, work toward a goal, or just enjoy feeling like the main character in their own story.',
     ],
-    links: [{ label: 'GitHub', href: 'https://github.com/ktocdev', badge: 'Coming soon' }],
+    links: [
+      { label: 'Try the demo', href: '/main-character/demo/' },
+      { label: 'GitHub', href: 'https://github.com/ktocdev/main-character' },
+    ],
     slides: [
       {
         label: 'Write',
