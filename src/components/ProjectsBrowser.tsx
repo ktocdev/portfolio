@@ -145,24 +145,6 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
 
         {project.status ? <p className={styles.status}>{project.status}</p> : null}
 
-        {paras.length ? (
-          <div className={styles.paras}>
-            {paras.map((para) => (
-              <p key={para}>{para}</p>
-            ))}
-          </div>
-        ) : null}
-
-        {project.facts?.length ? <FactsGrid facts={project.facts} /> : null}
-
-        {project.notes?.length ? (
-          <ul role="list" aria-label="Case study notes" className={styles.notes}>
-            {project.notes.map((note, i) => (
-              <NoteItem key={`${note.kind}-${i}`} note={note} />
-            ))}
-          </ul>
-        ) : null}
-
         {project.links.length ? (
           <div className={styles.links}>
             {project.links.map((link, i) => {
@@ -192,6 +174,24 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
               );
             })}
           </div>
+        ) : null}
+
+        {paras.length ? (
+          <div className={styles.paras}>
+            {paras.map((para) => (
+              <p key={para}>{para}</p>
+            ))}
+          </div>
+        ) : null}
+
+        {project.facts?.length ? <FactsGrid facts={project.facts} /> : null}
+
+        {project.notes?.length ? (
+          <ul role="list" aria-label="Case study notes" className={styles.notes}>
+            {project.notes.map((note, i) => (
+              <NoteItem key={`${note.kind}-${i}`} note={note} />
+            ))}
+          </ul>
         ) : null}
       </article>
     </section>
