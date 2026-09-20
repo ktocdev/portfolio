@@ -49,33 +49,6 @@
   color: var(--muted);
 }
 
-/* The site's one filled button, on the site's UI scale (not the document
-   scale) so it matches the buttons elsewhere. Resets the row's mono caps. */
-.button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  min-height: 2.75rem;
-  padding: 0.65rem 1.1rem;
-  background: var(--accent);
-  color: var(--on-accent);
-  text-decoration: none;
-  border-radius: var(--radius-sm);
-  font-family: var(--font-body);
-  font-weight: 500;
-  font-size: var(--type-ui);
-  letter-spacing: normal;
-  text-transform: none;
-}
-
-.button:hover {
-  background: var(--accent-hover);
-  color: var(--on-accent);
-}
-
-.buttonGlyph {
-  font-family: var(--font-mono);
-}
 
 /* Name above a two-row lockup (tagline, contact), all one line each at
    desktop and on the printed sheet. */

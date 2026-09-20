@@ -36,7 +36,8 @@
   object-position: 100% 50%;
 }
 
-.hero .overlay {
+.hero .overlay,
+.about .overlay {
   background:
     linear-gradient(165deg, var(--img-tint) 0%, var(--img-tint-0) 55%),
     linear-gradient(15deg, var(--img-shade) 0%, var(--img-shade-0) 45%);
@@ -66,22 +67,14 @@
   background: linear-gradient(200deg, var(--img-tint) 0%, var(--img-tint-0) 60%);
 }
 
-/* --- About portrait ----------------------------------------------------- */
+/* --- Home portrait -------------------------------------------------------- */
 /* Documented exception: full colour, no grayscale, and only a tint at the
-   bottom edge so the crop settles into the page rather than floating.
-   Widened to a landscape frame so the 16:9 headshot shows in full at natural
-   scale rather than being centre-cropped to a tall portrait. */
+   bottom edge so the crop settles into the page rather than floating. */
 .portrait {
-  width: min(100%, 34rem);
-  aspect-ratio: 16 / 9;
-}
-
-/* Larger screens give the headshot more room (it still never overflows its
-   grid column). */
-@media (min-width: 64rem) {
-  .portrait {
-    width: min(100%, clamp(34rem, 6rem + 34vw, 56rem));
-  }
+  width: min(100%, 26rem);
+  aspect-ratio: 4 / 5;
+  max-height: min(64vh, 34rem);
+  justify-self: center;
 }
 
 .portrait .image {
@@ -93,4 +86,18 @@
 .portrait .overlay {
   background: linear-gradient(180deg, var(--img-tint-0) 60%, var(--img-tint) 100%);
   mix-blend-mode: multiply;
+}
+
+/* --- About figure --------------------------------------------------------- */
+/* Standard hero treatment (grayscale + blend from the base .image/.overlay
+   rules), sized to a fixed box since About's grid doesn't stretch the figure
+   to a row height the way Home's used to. */
+.about {
+  width: min(100%, 34rem);
+  aspect-ratio: 4 / 5;
+  max-height: min(64vh, 40rem);
+}
+
+.about .image {
+  object-position: 50% 58%;
 }

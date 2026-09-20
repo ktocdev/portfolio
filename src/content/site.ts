@@ -39,6 +39,12 @@ export type SkillRow = {
   items: string;
 };
 
+/**
+ * TODO: unused since the Home skills table was removed (see
+ * UPDATE-home-and-about.md). Resume already renders its own table
+ * (`RESUME_SKILLS` in resume.ts); keep this one as data until Katie decides
+ * whether it belongs on About too, or can be dropped for good.
+ */
 export const SKILLS: SkillRow[] = [
   {
     label: 'AI engineering',
@@ -87,8 +93,9 @@ export const CONTACTS: ContactRow[] = [
 /** Per-page copy. */
 export const COPY = {
   home: {
-    lead: 'I architect design systems and build AI-native applications. Eleven years at Discovery Education, across three generations of a component library serving products that reach 45M students in 100 countries, most recently as architect and technical lead of nebula-nuxt.',
-    cta: 'See selected projects',
+    heading: "Hi, I'm Katie.",
+    lead: "I'm a senior software engineer in Chicago. I've architected three generations of a component library, and now I build AI-native apps end to end. I'm endlessly curious about how things work, and driven to learn more.",
+    cta: "See what I've been making",
   },
   projects: {
     intro:
@@ -115,10 +122,6 @@ export const COPY = {
 
 /** Photography. All images are Katie's own; alt text per the handoff. */
 export const IMAGES = {
-  heroHome: {
-    src: '/media/hero-home.jpg',
-    alt: 'A black swallowtail butterfly on pink and orange zinnias in a backyard garden.',
-  },
   heroContact: {
     src: '/media/hero-contact.jpg',
     alt: 'A purple allium in full bloom against soft green garden foliage.',

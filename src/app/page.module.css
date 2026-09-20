@@ -1,127 +1,43 @@
 /* Columns collapse to one at narrow widths with no media query — the
-   minmax(min(100%, N), 1fr) technique is used on every page. */
+   minmax(min(100%, N), 1fr) technique is used on every page. Image first in
+   source order, so it stacks above the text at the single-column breakpoint. */
 .home {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 27rem), 1fr));
-  gap: var(--space-column-gap);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: clamp(2.5rem, 6vw, 8rem);
+  align-items: center;
+  padding: clamp(1.5rem, 5vh, 4.5rem) 0;
   min-height: 0;
 }
 
-.left {
+.right {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: clamp(1.25rem, 3vh, 2.5rem);
+  gap: clamp(1.75rem, 4.5vh, 3.25rem);
+  max-width: 40ch;
   min-width: 0;
-}
-
-.stack {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-stack);
-}
-
-.eyebrow {
-  display: flex;
-  flex-direction: column;
-  gap: 0.45rem;
-  font-family: var(--font-mono);
-  letter-spacing: var(--tracking-mono);
-}
-
-.role {
-  font-size: var(--type-role);
-  color: var(--text);
-}
-
-.specialties {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem 1.25rem;
-  font-size: var(--type-mono);
-  color: var(--muted);
-}
-
-/* Slash dividers between items. Was 1.48:1 and effectively invisible despite being decorative; control colour reads as a divider without competing with the muted text.
-   Trailing separator (::after on non-last items) so the slash stays with the
-   preceding item when the list wraps on mobile, rather than orphaning at the
-   start of the wrapped line. */
-.specialties li:not(:last-child)::after {
-  content: '/';
-  margin-left: 1.25rem;
-  color: var(--border-control);
 }
 
 .heading {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: var(--type-display);
-  line-height: 1.04;
-  letter-spacing: var(--tracking-display);
+  /* A new, slightly smaller ramp than --type-display (4.75rem vs 5.25rem at
+     the top end) because this line is short. */
+  font-size: clamp(2.5rem, 1.5vw + 2.2vh + 0.9rem, 4.75rem);
+  line-height: 1.06;
+  letter-spacing: -0.012em;
   text-wrap: balance;
   color: var(--text);
 }
 
-.emphasis {
-  font-style: italic;
-  color: var(--hero-em);
-}
-
 .lead {
-  max-width: 34ch;
   font-size: var(--type-lead);
+  line-height: 1.6;
   text-wrap: pretty;
-}
-
-/* Fit-to-viewport mode — same query as globals.css. Widens the lead measure
-   for fewer lines and tightens hero spacing. */
-@media (min-width: 105rem) and (min-height: 54rem) and (max-height: 75rem) {
-  .left {
-    gap: clamp(1rem, 4.5vh - 1.125rem, 2.5rem);
-  }
-
-  .lead {
-    max-width: 46ch;
-  }
+  color: var(--text);
 }
 
 .cta {
   align-self: flex-start;
-  font-family: var(--font-mono);
-  font-size: clamp(0.875rem, 0.78rem + 0.3vw, 1rem);
-  letter-spacing: var(--tracking-mono);
-}
-
-/* --- Skills table ------------------------------------------------------- */
-.skills {
-  display: grid;
-  grid-template-columns: max-content 1fr;
-  column-gap: clamp(1rem, 2vw, 2rem);
-  row-gap: 0;
-  border-top: 1px solid var(--border);
-}
-
-.skillLabel,
-.skillItems {
-  padding: clamp(0.45rem, 1vh, 0.75rem) 0;
-  border-bottom: 1px solid var(--border-subtle);
-}
-
-/* The final row (Other) sits directly above the footer's rule; drop its border
-   so the two hairlines don't stack into a double line. */
-.skills > :nth-last-child(-n + 2) {
-  border-bottom: 0;
-}
-
-.skillLabel {
-  font-family: var(--font-mono);
-  font-size: var(--type-mono-sm);
-  letter-spacing: var(--tracking-mono-caps);
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.skillItems {
-  font-size: var(--type-body-sm);
-  text-wrap: pretty;
+  margin-top: 0.5rem;
 }

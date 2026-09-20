@@ -14,8 +14,7 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <section className={styles.about}>
-      {/* The only page that leads with the figure. */}
-      <Figure src={IMAGES.headshot.src} alt={IMAGES.headshot.alt} variant="portrait" priority />
+      <Figure src={IMAGES.zinnias.src} alt={IMAGES.zinnias.alt} variant="about" priority />
 
       <div className={styles.right}>
         <h1 className={styles.heading}>About</h1>
