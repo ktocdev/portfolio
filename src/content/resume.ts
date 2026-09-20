@@ -58,7 +58,7 @@ export const RESUME_CONTACT: ResumeContact[] = [
 ];
 
 export const RESUME_SUMMARY =
-  "Senior software engineer and design-systems architect. Spent 11+ years at Discovery Education on products reaching 45M students and 4.5M educators across 100 countries; architected and shipped three successive generations of the company's component library. Now building AI-native applications end-to-end, from local vector-search retrieval systems to full 3D game architecture, pairing deep design-systems and accessibility expertise with daily AI-assisted engineering workflows.";
+  "Senior software engineer and design-systems architect. 11+ years at Discovery Education on products reaching 45M students and 4.5M educators across 100 countries, architecting three successive generations of the company's component library. Now building AI-native applications end-to-end, from local vector-search retrieval systems to full 3D game architecture, pairing deep design-systems and accessibility expertise with daily AI-assisted engineering.";
 
 /** Detailed roles — each renders as grouped bullet sets. */
 export const EXPERIENCE: Entry[] = [
@@ -71,30 +71,32 @@ export const EXPERIENCE: Entry[] = [
       {
         label: 'Design Systems',
         items: [
-          'Founding team for Comet (2016), build team for its successor Nebula (2020), and owner and primary contributor for nebula-nuxt (2026); managed 124 components and utilities across Nebula and nebula-nuxt simultaneously.',
           "Architected nebula-nuxt, a themed component system letting teams replace legacy UI incrementally while migrating to Nuxt, separating visual-language changes from component rebuilds; selected over competing proposals as the quarter's committed deliverable.",
-          'Led the migration audit and stakeholder roadmap for 46 legacy component replacements; personally built 25 of the 26 components delivered in the new system and released nebula-nuxt for platform-layer consumption. Also built the nebula-nuxt doc site with searchable documentation (Nuxt Content) and a theme editor that switches themes and customizes them down to semantic tokens and font choice.',
+          'Led the migration audit and stakeholder roadmap for 46 legacy component replacements; personally built 25 of the 26 components delivered in the new system and released nebula-nuxt for platform-layer consumption.',
+          "Founding team for Comet (2016), build team for its successor Nebula (2020), and owner and primary contributor for nebula-nuxt (2026); managed 124 components and utilities across Nebula and nebula-nuxt simultaneously, consumed by every product in Discovery Education's app ecosystem.",
+          'Built the nebula-nuxt doc site with searchable documentation (Nuxt Content) and a theme editor that switches themes and customizes them down to semantic tokens and font choice.',
           'Architected and shipped MegaMenu for a Back-to-School product deliverable in 3 days, then delivered a refactored production version in another 3; detects at runtime when to collapse into a linked drill-down list rather than relying on fixed breakpoints.',
           'Developed custom Claude skills to support migration: a planning skill that determines the right build approach (themed primitive, wrapped primitive, or fully custom component) for each legacy component, and a release-automation skill.',
         ],
       },
       {
-        label: 'AI-Assisted Engineering',
+        label: 'Product Engineering',
         items: [
-          'Drove the end-to-end cost of shipping a component—build, doc page, and release—to $3.05 through spec-driven development and skill-based automation.',
-          'Developed model-selection and prompt-caching strategies that reduced daily AI spend by roughly two-thirds, from $40–$50 to $10–$20, while preserving output quality; shared the cost-efficiency approach across the team.',
-          'Built a dashboard for human-in-the-loop review and approval of AI-generated metadata, designing the API around the review workflow.',
-          "Co-hosted the company's AI Office Hours, and designed and presented a cost-efficient stacked-PR strategy there, structuring PRs in advance to reduce rebasing.",
-        ],
-      },
-      {
-        label: 'Cross-Team Product Work',
-        items: [
-          "Integrated nebula-nuxt into the platform layer with ten production components, including Global Nav, Page Shell, and Modal; added pages to the platform team's playground showing those components under a live theme switcher, proving they stayed themable inside the production shell.",
-          'Systems consumed by 12 product teams; partnered directly with teams including Techbook, Search, Assessments, Admin tools, and User Onboarding to architect layouts, interfaces, and components across varied product domains.',
+          'Contributed as a product engineer to 12+ product teams across the app ecosystem, including Techbook, Search, Assessments, Admin Tools, and User Onboarding; architected layouts, interfaces, and components across varied product domains.',
+          'Embedded with the AI team for a quarter; built the frontend for a human-in-the-loop dashboard for reviewing and approving AI-generated metadata, completing the partial design and presenting it to real users for feedback.',
+          'Specified the data shape for the API feeding the dashboard view and the POST contract for saving reviews, documenting both for the engineer who built the API.',
+          'Integrated nebula-nuxt into the platform layer with ten production components, including Global Nav, Page Shell, and Modal; validated theming through a live-switcher playground.',
           'Designed production-ready interfaces directly in code with Claude and existing design-system components when designs were incomplete or unavailable, bridging design and engineering to keep product work moving.',
           'Advised engineers on theming architecture, component placement, and accessibility best practices; redirected in-progress work into the shared library.',
           'Served as accessibility subject matter expert, performing audits, bug fixes, and code review to enforce accessible implementation across products and shared components.',
+        ],
+      },
+      {
+        label: 'AI-Assisted Engineering',
+        items: [
+          'Automated end-to-end component delivery (build, doc page, and release) through spec-driven development and skill-based automation; $3.05 in AI spend per component, replacing roughly a day or two of hands-on engineering.',
+          'Developed model-selection and prompt-caching strategies that reduced daily AI spend by roughly two-thirds, from $40–$50 to $10–$20, while preserving output quality; shared the cost-efficiency approach across the team.',
+          "Co-hosted the company's AI Office Hours, and designed and presented a cost-efficient stacked-PR strategy there, structuring PRs in advance to reduce rebasing.",
         ],
       },
     ],
