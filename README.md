@@ -37,6 +37,29 @@ To preview the built output exactly as it deploys:
 npm run build && npx serve out
 ```
 
+## The resume PDF
+
+`public/Katie-OConnor-Resume.pdf` is printed from `/resume`, which carries the
+`@media print` rules that strip the site chrome. Regenerate it after any change
+to `src/content/resume.ts`:
+
+```bash
+npm run pdf        # build, print, overwrite public/Katie-OConnor-Resume.pdf
+npm run pdf -- --out draft.pdf   # write elsewhere instead
+```
+
+It drives the Chrome or Edge already installed (set `PDF_BROWSER` to pick one)
+over a throwaway static server, so there is no extra dependency and no browser
+download.
+
+The phone number is the one field that is not in the repo. It lives in
+`.env.print.local` (gitignored) as `RESUME_PHONE`, and only `npm run pdf`,
+`npm run dev:print` and `npm run build:print` load it — Next does not auto-load
+that filename. So the number reaches the PDF, while a plain `npm run build`
+leaves it out of the deployed HTML entirely rather than merely hiding it with
+CSS. `npm run deploy` runs `scripts/check-no-phone.mjs` over the export and
+refuses to upload if a phone number ever shows up there.
+
 ## Structure
 
 ```

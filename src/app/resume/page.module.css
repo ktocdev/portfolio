@@ -163,6 +163,13 @@
   }
 }
 
+/* Off the screen page, on the printed sheet. Used for the phone number in
+   the contact line: the PDF that goes out with an application carries it,
+   the public page does not. */
+.printOnly {
+  display: none;
+}
+
 /* Inherit the text colour, as the draft does: the header is identity, not a
    row of calls to action. The underline stays on screen and goes in print. */
 .contactLink {
@@ -368,8 +375,34 @@
     gap: 4pt;
   }
 
+  /* On screen the two rows share a width: the lockup shrink-wraps to the
+     wider one and space-between spreads the other to match. The phone makes
+     the contact row long enough that the stretch pulls the three titles far
+     apart, so the sheet drops the shared width and spaces every item and
+     divider evenly instead. Screen keeps the lockup. */
+  .lockup {
+    width: auto;
+  }
+
+  .tagline,
+  .contact {
+    justify-content: flex-start;
+  }
+
+  .tagline {
+    gap: 0.6em;
+  }
+
+  .contact {
+    gap: 0.5em;
+  }
+
   .contactLink {
     text-decoration: none;
+  }
+
+  .printOnly {
+    display: inline;
   }
 
   .section {
