@@ -118,6 +118,22 @@ export default function ResumePage() {
         <p className={styles.summary}>{RESUME_SUMMARY}</p>
       </section>
 
+      <section className={styles.section} aria-labelledby="resume-skills">
+        <h2 id="resume-skills" className={styles.sectionHeading}>
+          Skills
+        </h2>
+        {/* dt/dd are direct grid children so the columns line up and each row
+            draws its own rule — the same construction as the Home table. */}
+        <dl className={styles.skills}>
+          {RESUME_SKILLS.map((skill) => (
+            <Fragment key={skill.label}>
+              <dt className={styles.skillLabel}>{skill.label}</dt>
+              <dd className={styles.skillItems}>{skill.items}</dd>
+            </Fragment>
+          ))}
+        </dl>
+      </section>
+
       <section className={styles.section} aria-labelledby="resume-experience">
         <h2 id="resume-experience" className={styles.sectionHeading}>
           Experience
@@ -139,22 +155,6 @@ export default function ResumePage() {
             </div>
           ))}
         </div>
-      </section>
-
-      <section className={styles.section} aria-labelledby="resume-skills">
-        <h2 id="resume-skills" className={styles.sectionHeading}>
-          Skills
-        </h2>
-        {/* dt/dd are direct grid children so the columns line up and each row
-            draws its own rule — the same construction as the Home table. */}
-        <dl className={styles.skills}>
-          {RESUME_SKILLS.map((skill) => (
-            <Fragment key={skill.label}>
-              <dt className={styles.skillLabel}>{skill.label}</dt>
-              <dd className={styles.skillItems}>{skill.items}</dd>
-            </Fragment>
-          ))}
-        </dl>
       </section>
 
       <section className={styles.section} aria-labelledby="resume-projects">

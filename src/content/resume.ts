@@ -68,7 +68,7 @@ const phone = process.env.RESUME_PHONE?.trim();
  */
 export const RESUME_CONTACT: ResumeContact[] = [
   { text: 'Chicago, IL' },
-  ...(phone ? [{ text: phone, printOnly: true }] : []),
+  ...(phone ? [{ text: phone, href: `tel:+1${phone.replace(/\D/g, '')}`, printOnly: true }] : []),
   contact('Email'),
   { text: SITE.url.replace(/^https?:\/\//, ''), href: SITE.url },
   contact('LinkedIn'),
@@ -157,7 +157,7 @@ export const RESUME_SKILLS: ResumeSkill[] = [
 
 export const RESUME_PROJECTS: ResumeProject[] = [
   {
-    title: 'Main Character — AI Personal Knowledge & Retrieval System',
+    title: 'Main Character: AI Personal Knowledge & Retrieval System',
     stack: 'Python, FastAPI, ChromaDB, Anthropic Claude API',
     items: [
       'Architected an AI-powered journal application using local embeddings, an entity graph, multi-level summaries, and semantic retrieval over personal journal entries.',
