@@ -4,6 +4,16 @@
 # gated behind consent. Adding an analytics tool means adding its origins here
 # too, or the browser silently blocks it — `next dev` ignores this file, so a
 # missing origin only shows up in production.
+#
+# c.bing.com is deliberately absent from img-src. Clarity's loader fires an
+# unconditional pixel at c.clarity.ms/c.gif that redirects to c.bing.com —
+# Microsoft Advertising identity sync, the _uetmsclkid/_uetvid cookies. It is
+# hardcoded in the tag, runs before the project config is read, and no Clarity
+# setting disables it, so blocking the redirect here is the only lever. Nothing
+# is lost: recordings, heatmaps and metrics are unaffected, and it keeps the
+# site to the analytics-only promise the consent banner makes. The cost is one
+# CSP violation logged per page load — that message is the block working, not a
+# bug. Do not add c.bing.com to img-src to silence it.
 /*
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.clarity.ms https://*.clarity.ms https://www.googletagmanager.com; connect-src 'self' https://*.clarity.ms https://c.bing.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com; img-src 'self' data: https://*.clarity.ms https://*.google-analytics.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; font-src 'self'; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
   X-Content-Type-Options: nosniff
