@@ -24,11 +24,18 @@ export const SITE = {
 export type NavItem = {
   label: string;
   href: string;
+  /* Set false to stop the router prefetching this route from every other page.
+     Only worth doing for a route that ships its own CSS chunk: the prefetch
+     preloads that stylesheet site-wide for visitors who never go there, and
+     Chrome reports the unused preload in the console on every page load. */
+  prefetch?: false;
 };
 
 export const NAV: NavItem[] = [
   { label: 'Home', href: '/' },
-  { label: 'Projects', href: '/projects' },
+  /* The one route with a page-specific stylesheet (ProjectsBrowser). Static
+     export on a CDN, so fetching it on click instead costs ~9 KB gzipped. */
+  { label: 'Projects', href: '/projects', prefetch: false },
   { label: 'Resume', href: '/resume' },
   { label: 'Contact', href: '/contact' },
   { label: 'About', href: '/about' },

@@ -25,6 +25,7 @@ export default function SiteHeader() {
             <Link
               key={item.href}
               href={item.href}
+              prefetch={item.prefetch}
               aria-current={isActive ? 'page' : undefined}
               className={styles.navLink}
               data-active={isActive || undefined}
