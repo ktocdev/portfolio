@@ -320,6 +320,50 @@ a:hover {
   white-space: nowrap;
 }
 
+/* --- Not found (404) ----------------------------------------------------- */
+/* Global rather than a CSS module on purpose. The not-found boundary sits in
+   every route's tree, so a not-found.module.css compiles to its own chunk that
+   Next preloads on every page and then never uses — a wasted request site-wide
+   and a console warning on every load. These rules are ~700 bytes on a sheet
+   that is already loaded everywhere. Names are prefixed because they are
+   global; keep them that way if this grows. */
+.notFoundPage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-stack);
+  max-width: 48ch;
+  align-content: start;
+}
+
+.notFoundEyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-sm);
+  letter-spacing: var(--tracking-mono-caps);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.notFoundHeading {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--type-h1);
+  line-height: 1.08;
+  letter-spacing: var(--tracking-h1);
+}
+
+.notFoundBody {
+  font-size: var(--type-body-lg);
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+.notFoundLink {
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-size: clamp(0.875rem, 0.78rem + 0.3vw, 1rem);
+  letter-spacing: var(--tracking-mono);
+}
+
 /* --- Print: the resume -------------------------------------------------- */
 /* Scoped to the page that carries .printDocument (/resume), so every
    other page prints as it renders. The shell's chrome — site header, footer,
