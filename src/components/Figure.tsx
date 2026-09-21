@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import styles from './Figure.module.css';
 
-type Variant = 'hero' | 'contact' | 'facts' | 'portrait';
+type Variant = 'hero' | 'contact' | 'facts' | 'portrait' | 'about';
 
 type FigureProps = {
   src: string;
@@ -18,7 +18,8 @@ type FigureProps = {
  * opacity come from tokens so dark mode flips them without a JS branch.
  *
  * `portrait` is the documented exception — the headshot keeps its colour and
- * takes only a tint at the bottom edge.
+ * takes only a tint at the bottom edge. `about` is the standard treatment
+ * sized for the About page's figure.
  */
 export default function Figure({ src, alt, variant, className, priority, style }: FigureProps) {
   const classes = [styles.figure, styles[variant], className].filter(Boolean).join(' ');

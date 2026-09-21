@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Fragment } from 'react';
 
+import ButtonLink from '@/components/ButtonLink';
 import {
   EARLIER_ROLES,
   EDUCATION,
@@ -55,16 +56,12 @@ export default function ResumePage() {
   return (
     <article className={`${styles.document} printDocument`} aria-labelledby="resume-name">
       <div className={styles.top}>
-        {/* Screen only: page label and the PDF, the only filled button in the
-            system. Print drops the row. */}
+        {/* Screen only: page label and the PDF button. Print drops the row. */}
         <p className={styles.tools}>
           <span>Resume</span>
-          <a href="/Katie-OConnor-Resume.pdf" download="Katie-OConnor-Resume.pdf" className={styles.button}>
-            Download PDF{' '}
-            <span aria-hidden="true" className={styles.buttonGlyph}>
-              ↓
-            </span>
-          </a>
+          <ButtonLink href="/Katie-OConnor-Resume.pdf" download="Katie-OConnor-Resume.pdf" glyph="↓">
+            Download PDF
+          </ButtonLink>
         </p>
 
         <header className={styles.header}>

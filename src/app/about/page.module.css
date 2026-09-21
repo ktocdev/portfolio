@@ -1,18 +1,18 @@
 .about {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 27rem), 1fr));
   gap: var(--space-column-gap);
   min-height: 0;
-  /* start, not stretch — the portrait keeps its own ratio rather than
-     stretching to match the text column. */
-  align-items: start;
 }
 
+/* The grid row still stretches the figure to full height; the text centres
+   against it rather than hanging from the top. */
 .right {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: var(--space-stack);
-  max-width: 56ch;
+  min-width: 0;
 }
 
 .heading {
@@ -21,33 +21,18 @@
   font-size: var(--type-h1);
   line-height: 1.08;
   letter-spacing: var(--tracking-h1);
+  text-wrap: balance;
 }
 
 .body {
+  max-width: 52ch;
   font-size: var(--type-body-lg);
   line-height: 1.55;
   text-wrap: pretty;
 }
 
 .caption {
+  max-width: 52ch;
   font-size: var(--type-caption);
   color: var(--muted);
-}
-
-.facts {
-  display: grid;
-  grid-template-columns: max-content 1fr;
-  gap: 0.4rem clamp(1rem, 2vw, 2rem);
-  border-top: 1px solid var(--border);
-  padding-top: 0.9rem;
-  font-size: var(--type-body-sm);
-}
-
-.factLabel {
-  font-family: var(--font-mono);
-  font-size: var(--type-mono-sm);
-  letter-spacing: var(--tracking-mono-caps);
-  text-transform: uppercase;
-  color: var(--muted);
-  padding-top: 0.2em;
 }

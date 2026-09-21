@@ -36,7 +36,8 @@
   object-position: 100% 50%;
 }
 
-.hero .overlay {
+.hero .overlay,
+.about .overlay {
   background:
     linear-gradient(165deg, var(--img-tint) 0%, var(--img-tint-0) 55%),
     linear-gradient(15deg, var(--img-shade) 0%, var(--img-shade-0) 45%);
@@ -66,31 +67,57 @@
   background: linear-gradient(200deg, var(--img-tint) 0%, var(--img-tint-0) 60%);
 }
 
-/* --- About portrait ----------------------------------------------------- */
+/* --- Home headshot -------------------------------------------------------- */
 /* Documented exception: full colour, no grayscale, and only a tint at the
    bottom edge so the crop settles into the page rather than floating.
-   Widened to a landscape frame so the 16:9 headshot shows in full at natural
-   scale rather than being centre-cropped to a tall portrait. */
-.portrait {
-  width: min(100%, 34rem);
-  aspect-ratio: 16 / 9;
-}
 
-/* Larger screens give the headshot more room (it still never overflows its
-   grid column). */
-@media (min-width: 64rem) {
-  .portrait {
-    width: min(100%, clamp(34rem, 6rem + 34vw, 56rem));
-  }
+   One height at every screen size: the photo never changes scale, the frame
+   just reveals less of it as the column narrows, so nothing on the page moves
+   vertically. The 64vh guard engages only below a ~594px-tall viewport — a
+   landscape phone — where a fixed 380px hero would not fit. */
+.portrait {
+  --frame-h: min(23.75rem, 64vh);
+  /* How far Katie sits from the frame's centre — (0.544 − 0.5) × 16/9 of the
+     photo's width — measured against the rendered height. */
+  --frame-nudge: calc(var(--frame-h) * 0.0782);
+
+  height: var(--frame-h);
+  /* width, not just max-width: both children are absolutely positioned, so
+     without it justify-self leaves the figure nothing to size from and it
+     collapses. At this scale the photo is 16/9 × --frame-h wide, and capping
+     the frame at 1.6 × --frame-h leaves more than 2 × --frame-nudge of it
+     hanging past the edges — the slack the offset below needs to shift into
+     without dragging the photo's own edge into frame. */
+  width: 100%;
+  max-width: calc(var(--frame-h) * 1.6);
+  justify-self: center;
 }
 
 .portrait .image {
   filter: none;
   mix-blend-mode: normal;
   opacity: 1;
+  /* object-position resolves to (frame − photo) × 50% + this length. Solve
+     that for "Katie on the centre line" and the frame term cancels, so a
+     single offset holds her there at every width, where a percentage would
+     drift as the frame narrows. */
+  object-position: calc(50% - var(--frame-nudge)) 50%;
 }
 
 .portrait .overlay {
   background: linear-gradient(180deg, var(--img-tint-0) 60%, var(--img-tint) 100%);
   mix-blend-mode: multiply;
+}
+
+/* --- About figure --------------------------------------------------------- */
+/* Standard hero treatment (grayscale + blend from the base .image/.overlay
+   rules). Like Contact's, it stretches to the grid row height and takes the
+   full column width; min-height keeps it from collapsing when the text column
+   is short or the columns have stacked. */
+.about {
+  min-height: min(46vh, 22rem);
+}
+
+.about .image {
+  object-position: 50% 58%;
 }
