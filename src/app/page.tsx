@@ -6,9 +6,7 @@ import styles from './page.module.css';
 export default function HomePage() {
   return (
     <section className={styles.home}>
-      <Figure src={IMAGES.headshot.src} alt={IMAGES.headshot.alt} variant="portrait" priority />
-
-      <div className={styles.right}>
+      <div className={styles.left}>
         <h1 className={styles.heading}>{COPY.home.heading}</h1>
 
         <p className={styles.lead}>{COPY.home.lead}</p>
@@ -17,6 +15,8 @@ export default function HomePage() {
           {COPY.home.cta}
         </ButtonLink>
       </div>
+
+      <Figure src={IMAGES.headshot.src} alt={IMAGES.headshot.alt} variant="portrait" priority />
     </section>
   );
 }

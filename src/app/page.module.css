@@ -1,16 +1,24 @@
 /* Columns collapse to one at narrow widths with no media query — the
-   minmax(min(100%, N), 1fr) technique is used on every page. Image first in
-   source order, so it stacks above the text at the single-column breakpoint. */
+   minmax(min(100%, N), 1fr) technique is used on every page. Text first in
+   source order, so it stacks above the headshot at the single-column
+   breakpoint. */
 .home {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
-  gap: clamp(2.5rem, 6vw, 8rem);
+  /* 3.5vw to a 5rem ceiling, matching --space-column-gap, so the halves stay
+     a pair as the page widens. The 2.5rem floor is the vertical gap once the
+     hero stacks, so it stays where it was. */
+  gap: clamp(2.5rem, 3.5vw, 5rem);
   align-items: center;
   padding: clamp(1.5rem, 5vh, 4.5rem) 0;
   min-height: 0;
+  /* Past ~1400px the two columns drift too far apart to read as one hero, so
+     the pair stops widening and centres in the page instead. */
+  max-width: 87.5rem;
+  margin-inline: auto;
 }
 
-.right {
+.left {
   display: flex;
   flex-direction: column;
   gap: clamp(1.75rem, 4.5vh, 3.25rem);
@@ -40,4 +48,22 @@
 .cta {
   align-self: flex-start;
   margin-top: 0.5rem;
+}
+
+/* Stacked layout. 49.875rem is where .home runs out of room for two 22rem
+   tracks plus the column gap: with --space-page-x at 3.4vw and the gap still on
+   its 2.5rem floor, the two tracks stop fitting just under 49.9rem. Recompute
+   this and the band in Figure.module.css if either the padding or the gap
+   changes. Below it the copy centres over the photo, which is back to its
+   natural width in the single column. */
+@media (max-width: 49.875rem) {
+  .left {
+    align-items: center;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .cta {
+    align-self: center;
+  }
 }

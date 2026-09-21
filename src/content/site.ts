@@ -108,10 +108,6 @@ export const COPY = {
   about: {
     body: "I'm Katie. I live in eclectic Avondale, a lively neighborhood on Chicago's northwest side, with my two cats (Mitty and Ralphie) and guinea pig (Betty Boop), muse for GPS3. Outside of code, you can find me singing karaoke, at trivia night with friends, or hanging out with my many plants (including a voracious Venus flytrap!).",
     caption: 'Photos throughout this site are my own.',
-    facts: [
-      { label: 'Now', value: 'Building AI-native side projects; open to new roles' },
-      { label: 'Education', value: 'Columbia College Chicago, BA in Interactive Art and Media, 2009' },
-    ],
   },
   cookies: {
     heading: 'Cookie settings',
