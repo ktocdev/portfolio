@@ -95,6 +95,15 @@ export const viewport: Viewport = {
  */
 const themeScript = `(function(){try{var t=localStorage.getItem('portfolio-theme');if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();`;
 
+/**
+ * Clears the server-rendered page loader on first load as soon as fonts and
+ * the page's visible images are in, by flagging <html>. On a slow connection
+ * the app's own script can arrive long after the page is ready, and the
+ * loader would sit over a finished page until it did. Mirrors whenReady()
+ * in PageTransition, which takes over for route changes; a 15s cap as there.
+ */
+const firstLoadScript = `(function(){var d=document,done=function(){d.documentElement.setAttribute('data-first-ready','')};setTimeout(done,15000);function check(){var w=[].slice.call(d.querySelectorAll('main img')).filter(function(i){if(i.complete)return false;var r=i.getClientRects();if(!r.length)return false;return!(i.loading==='lazy'&&r[0].top>innerHeight*1.5)}).map(function(i){return new Promise(function(res){i.addEventListener('load',res,{once:true});i.addEventListener('error',res,{once:true})})});if(d.fonts)w.push(d.fonts.ready);Promise.all(w).then(done,done)}if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',check);else check()})();`;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
@@ -104,6 +113,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script dangerouslySetInnerHTML={{ __html: firstLoadScript }} />
+        {/* The page loader is server-rendered and cleared by script; without
+            script it would never clear. */}
+        <noscript
+          dangerouslySetInnerHTML={{ __html: '<style>[data-page-loader]{display:none}</style>' }}
+        />
       </head>
       <body>
         <div className={styles.root}>
