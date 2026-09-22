@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { Slide } from '@/content/projects';
 import styles from './Carousel.module.css';
@@ -61,17 +61,7 @@ export default function Carousel({ slides, projectName }: CarouselProps) {
         {slides.map((slide, i) => (
           <div key={slide.src} className={styles.slide} data-active={i === index || undefined}>
             {slide.type === 'video' ? (
-              <video
-                className={styles.media}
-                src={slide.src}
-                aria-label={describe(slide)}
-                controls
-                muted
-                playsInline
-                /* Every slide is mounted, so only the visible one may fetch
-                   ahead — otherwise nine videos hit the network on selection. */
-                preload={i === index ? 'metadata' : 'none'}
-              />
+              <VideoSlide src={slide.src} label={describe(slide)} active={i === index} />
             ) : (
               /* Only stills are linked — a video click belongs to its own controls.
                  Alt stays on the img so the link inherits it as its name. */
@@ -139,5 +129,81 @@ export default function Carousel({ slides, projectName }: CarouselProps) {
         </div>
       </div>
     </div>
+  );
+}
+
+/* Videos that have reached metadata at least once, by src. Module-level so it
+   outlives the carousel's remount on project change: coming back to a video
+   that already loaded doesn't flash the spinner. */
+const readyVideos = new Set<string>();
+
+type VideoSlideProps = {
+  src: string;
+  label: string;
+  active: boolean;
+};
+
+/**
+ * A video slide with its buffering spinner. The spinner shows only on the
+ * current slide, while the video has no data yet or has stalled mid-play.
+ * metadata counts as ready on purpose: with preload="metadata", Safari fires
+ * nothing further until play is pressed, so waiting for canplay would spin
+ * forever over a playable video.
+ */
+function VideoSlide({ src, label, active }: VideoSlideProps) {
+  const ref = useRef<HTMLVideoElement>(null);
+  const [buffering, setBuffering] = useState(() => !readyVideos.has(src));
+
+  /* Bound once per element with addEventListener. */
+  useEffect(() => {
+    const video = ref.current;
+    if (!video) return;
+
+    const onReady = () => {
+      readyVideos.add(src);
+      setBuffering(false);
+    };
+    const onWaiting = () => setBuffering(true);
+    /* A broken file hides the spinner rather than spinning forever. */
+    const onError = () => setBuffering(false);
+
+    const ready = ['loadedmetadata', 'canplay', 'playing'];
+    ready.forEach((type) => video.addEventListener(type, onReady));
+    video.addEventListener('waiting', onWaiting);
+    video.addEventListener('error', onError);
+
+    /* The metadata may have arrived before the listeners did. */
+    if (video.readyState >= HTMLMediaElement.HAVE_METADATA) onReady();
+
+    return () => {
+      ready.forEach((type) => video.removeEventListener(type, onReady));
+      video.removeEventListener('waiting', onWaiting);
+      video.removeEventListener('error', onError);
+    };
+  }, [src]);
+
+  return (
+    <>
+      <video
+        ref={ref}
+        className={styles.media}
+        src={src}
+        aria-label={label}
+        controls
+        muted
+        playsInline
+        /* Every slide is mounted, so only the visible one may fetch
+           ahead — otherwise nine videos hit the network on selection. */
+        preload={active ? 'metadata' : 'none'}
+      />
+      {active && buffering ? (
+        /* pointer-events:none in the CSS keeps the native controls usable
+           underneath. */
+        <div role="status" data-loader="" className={styles.buffering}>
+          <span aria-hidden="true" className={styles.ring} />
+          <span className={styles.bufferingLabel}>Buffering video</span>
+        </div>
+      ) : null}
+    </>
   );
 }

@@ -285,6 +285,59 @@ a:hover {
   }
 }
 
+/* --- Loaders ------------------------------------------------------------ */
+/* Page loader and video spinner share one timing: mounted invisible, faded
+   in only after a 400ms grace period, unmounted the moment the wait is over.
+   The delay is CSS, not a timer, so a load that beats it never shows and
+   never needs cancelling. Each loader's own keyframes live in its CSS
+   module: a module scopes keyframe names, so a global one wouldn't match. */
+@keyframes ld-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+[data-loader] {
+  animation: ld-in 0.25s var(--ease) 0.4s both;
+}
+
+/* The first-load loader skips the grace period. Its clock would start at
+   first paint, when the text is already on screen, so waiting 400ms only
+   means covering content that was just shown. It is up from the first frame
+   instead, and firstLoadScript in layout.tsx takes it down as soon as fonts
+   and images are in, without waiting for the app's own script. */
+[data-loader][data-first-load] {
+  animation-delay: 0s;
+}
+
+:root[data-first-ready] [data-first-load] {
+  display: none;
+}
+
+/* Still appears after the grace period, but static: no fade, stepping or spin. */
+@media (prefers-reduced-motion: reduce) {
+  [data-loader],
+  [data-loader] * {
+    animation-duration: 0s !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0.4s !important;
+  }
+
+  [data-loader][data-first-load] {
+    animation-delay: 0s !important;
+  }
+
+  /* The zero-duration override above would park the squares at ld-step's
+     .25 start; static means all three solid instead. */
+  [data-loader] [data-loader-square] {
+    animation: none !important;
+    opacity: 1;
+  }
+}
+
 /* --- Shared primitives -------------------------------------------------- */
 
 /* Button reset — the system has exactly one filled button (Resume download);

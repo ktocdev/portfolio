@@ -1,7 +1,117 @@
 /* Stands in for <main> as the page's grid parent, so it has to carry the same
-   shrink rules: min-height:0 keeps the page inside one viewport. */
+   shrink rules: min-height:0 keeps the page inside one viewport. Shares its
+   grid cell with the loader. */
 .page {
+  grid-area: 1 / 1;
   min-height: 0;
   min-width: 0;
   display: grid;
+}
+
+/* A new route's page, held until its fonts and images are in. */
+.page[data-waiting] {
+  visibility: hidden;
+}
+
+/* --- Page loader -------------------------------------------------------- */
+/* Same cell as .page, on top of it: covers the page without moving it.
+   height:0 + min-height:100% means it fills the cell without adding to it,
+   so a short page never grows (and scrolls) because of the loader. */
+.loader {
+  grid-area: 1 / 1;
+  z-index: 2;
+  height: 0;
+  min-height: 100%;
+  overflow: hidden;
+  display: grid;
+  min-width: 0;
+  background: var(--bg);
+}
+
+/* Fills the cell, so the loader is centred between header and footer. Capped
+   at one viewport for the one page taller than that (Resume), so it stays on
+   the first screen rather than centring on the whole document. */
+.loaderBox {
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  max-height: 100dvh;
+}
+
+.loading,
+.slow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.squares {
+  display: flex;
+  gap: 6px;
+}
+
+/* Delays are on the squares, not the root, so the stepping runs on its own
+   clock under the root's grace fade-in. */
+.squares > span {
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  animation: ld-step 1.2s ease-in-out infinite;
+}
+
+.squares > span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.squares > span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes ld-step {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.slow {
+  text-align: center;
+  max-width: 32ch;
+}
+
+.slowHeading {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.375rem;
+  line-height: 1.2;
+  color: var(--text);
+}
+
+.slowBody {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+/* Never in a printed resume, however the print is timed. */
+@media print {
+  .loader {
+    display: none;
+  }
 }

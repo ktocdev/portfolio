@@ -168,6 +168,37 @@
   }
 }
 
+/* --- Buffering spinner -------------------------------------------------- */
+/* Fixed colours, not tokens: the stage is dark in both themes (--media-bg),
+   so the ring and label take the dark theme's accent and text either way. */
+.buffering {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 14px;
+  pointer-events: none;
+}
+
+.ring {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid rgba(232, 231, 242, 0.18);
+  border-top-color: #a5a8f5;
+  animation: ld-spin 0.9s linear infinite;
+}
+
+.bufferingLabel {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #e8e7f2;
+}
+
 /* --- Full-size link ------------------------------------------------------ */
 /* Fills the slide so the whole picture is the target. Ring pulled inside
    (rather than the usual 3px outward) since the stage clips overflow. */
@@ -181,3 +212,10 @@
 .mediaLink:focus-visible {
   outline-offset: -3px;
 }
+
+@keyframes ld-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
