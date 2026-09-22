@@ -191,11 +191,16 @@ flash them. Under reduced motion they still appear, but without animation.
     reload restarts a load that may be nearly done.
   - While it is up, `<main>` carries `aria-busy` and the page under it is
     `inert`.
-- **Video spinner** (`Carousel`): "Buffering video" over the current slide
-  while its video has no metadata yet or stalls mid-play (`waiting`).
-  `loadedmetadata` counts as ready, because Safari loads nothing further
-  under `preload="metadata"` until play is pressed. It uses
-  `pointer-events: none`, so the native controls stay usable.
+- **Carousel spinner** (`Carousel`): a ring, no text, over the current slide
+  while its media loads. For an image, until it loads or errors. For a video,
+  only until its first frame shows (`loadeddata`) or play is pressed. After
+  that, buffering belongs to the browser's own controls. The native spinner
+  lives inside those controls and can't be styled away, so the controls are
+  withheld until the first frame is in, and the two spinners never stack. A
+  `#t=0.001` media fragment gets Safari to decode that first frame under
+  `preload="metadata"`, and a 6s cap after metadata covers a browser that
+  still doesn't. Client-only, and `pointer-events: none`, so the native
+  controls stay usable.
 
 ## Accessibility
 

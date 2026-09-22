@@ -1,9 +1,10 @@
 'use client';
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
 import { EASE, PAGE_ENTER, PAGE_EXIT_MS, prefersReducedMotion, staggerZones, zonesOf } from '@/lib/motion';
+import { useHydrated } from '@/lib/useHydrated';
 import styles from './PageTransition.module.css';
 
 /* trailingSlash:true means paths arrive as "/projects/" — compare without it. */
@@ -252,15 +253,6 @@ export default function PageTransition({ children }: { children: React.ReactNode
   );
 }
 
-/* Server snapshot false, client true: flips only after hydration. */
-const noSubscribe = () => () => {};
-const useHydrated = () =>
-  useSyncExternalStore(
-    noSubscribe,
-    () => true,
-    () => false,
-  );
-
 /**
  * Three stepped squares and a visible "Loading" label, swapped in place for
  * the slow message at 8s. The status role announces both. Its own timer
@@ -291,7 +283,7 @@ function PageLoader({ firstLoad }: { firstLoad: boolean }) {
         {slow ? (
           <div className={styles.slow}>
             <p className={styles.slowHeading}>Still loading…</p>
-            <p className={styles.slowBody}>This is taking longer than usual. It may be your connection.</p>
+            <p className={styles.slowBody}>This is taking longer than usual. Think happy thoughts!</p>
           </div>
         ) : (
           <div className={styles.loading}>

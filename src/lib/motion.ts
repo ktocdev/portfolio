@@ -40,6 +40,21 @@ export function zonesOf(container: Element): Element[] {
 }
 
 /**
+ * The image a zone should wait for, if any. Skips images that aren't
+ * displayed (an inactive carousel slide, which is lazy and would never load)
+ * and anything inside [data-own-loader], which shows its own spinner and
+ * must be visible for it to be seen.
+ */
+function gatingImage(zone: HTMLElement): HTMLImageElement | null {
+  const images = zone instanceof HTMLImageElement ? [zone] : [...zone.querySelectorAll('img')];
+  return (
+    images.find(
+      (img) => !img.complete && img.getClientRects().length > 0 && !img.closest('[data-own-loader]'),
+    ) ?? null
+  );
+}
+
+/**
  * Rises each zone in DOM order. A zone whose image has not loaded yet is held
  * at opacity 0 and starts on the image's load (or error — a broken image must
  * still end up visible), so a photo never pops in mid-animation.
@@ -64,8 +79,8 @@ export function staggerZones(
       fill: 'backwards',
     };
 
-    const img = zone instanceof HTMLImageElement ? zone : zone.querySelector('img');
-    if (img && !img.complete) {
+    const img = gatingImage(zone);
+    if (img) {
       zone.style.opacity = '0';
       const start = () => {
         release();
