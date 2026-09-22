@@ -17,30 +17,47 @@
 }
 
 .nav {
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-nav-gap);
 }
 
-/* Every item keeps its underline at all times and only changes the underline
-   COLOUR — so nothing reflows when the active page or hover changes. */
+/* Hover underline. Always present (transparent) so nothing reflows, and a
+   separate channel from the current-page indicator below, so hovering one
+   link while another is current doesn't fight it. */
 .navLink {
   font-family: var(--font-mono);
   font-size: var(--type-mono);
   letter-spacing: var(--tracking-mono-caps);
   text-transform: uppercase;
   color: var(--text);
-  text-decoration: underline;
-  text-decoration-thickness: 1.5px;
-  text-underline-offset: 0.45em;
-  text-decoration-color: transparent;
-}
-
-.navLink[data-active] {
-  text-decoration-color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1.5px solid transparent;
 }
 
 .navLink:hover {
   color: var(--accent);
-  text-decoration-color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* The current page's underline: one element that slides between items.
+   SiteHeader measures the current link and sets left / width / top. No
+   defaults for those: from auto, the first measurement lands without
+   sliding in from the corner. */
+.indicator {
+  position: absolute;
+  height: 1.5px;
+  background: var(--accent);
+  pointer-events: none;
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .indicator {
+    transition:
+      left 0.34s var(--ease),
+      width 0.34s var(--ease),
+      top 0.34s var(--ease);
+  }
 }

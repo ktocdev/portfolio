@@ -4,6 +4,7 @@ import { Young_Serif, Atkinson_Hyperlegible_Next, Atkinson_Hyperlegible_Mono } f
 import SiteHeader from '@/components/SiteHeader';
 import SiteFooter from '@/components/SiteFooter';
 import CookieConsent from '@/components/CookieConsent';
+import PageTransition from '@/components/PageTransition';
 import { IMAGES, SITE } from '@/content/site';
 
 import './globals.css';
@@ -112,7 +113,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <SiteHeader />
           {/* tabIndex makes the skip link actually move focus, not just scroll. */}
           <main id="main" tabIndex={-1} className={styles.main}>
-            {children}
+            <PageTransition>{children}</PageTransition>
           </main>
           <SiteFooter />
         </div>

@@ -49,9 +49,7 @@
   text-align: inherit;
   cursor: pointer;
   width: 100%;
-  display: grid;
-  grid-template-columns: 2.5rem 1fr;
-  align-items: baseline;
+  display: block;
   padding: clamp(0.6rem, 1.3vh, 1rem) 0.25rem;
   padding-left: 0.85rem;
   /* Always present so selecting a row cannot shift the text. */
@@ -65,12 +63,6 @@
 
 .row:hover {
   color: var(--accent);
-}
-
-.index {
-  font-family: var(--font-mono);
-  font-size: var(--type-mono-sm);
-  color: var(--muted);
 }
 
 .rowBody {
