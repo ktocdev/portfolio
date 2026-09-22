@@ -77,7 +77,8 @@ src/
     robots.ts            /robots.txt
     sitemap.ts           /sitemap.xml
   components/
-    SiteHeader           wordmark + primary nav
+    SiteHeader           wordmark + primary nav with a sliding current-page indicator
+    PageTransition       page container: fade out on navigate, zone-by-zone rise in
     SiteFooter           copyright, cookies link, email, theme control
     ThemeToggle          three-state Auto / Light / Dark, persisted
     Figure               the site's one imagery treatment (4 variants)
@@ -93,6 +94,7 @@ src/
     resume.ts            resume: summary, experience, skills, projects, contact
   lib/
     consent.ts           shared consent storage key + change event
+    motion.ts            the rise-stagger: timings, zone finding, image load gate
     nowrap.tsx           keeps hyphenated names (nebula-nuxt) on one line
 public/
   _headers               Cloudflare response headers (CSP etc.)
@@ -124,6 +126,31 @@ attribute entirely so the media query governs again.
 
 A small synchronous script in `layout.tsx` applies the saved theme before
 first paint; without it the page renders in the system scheme and then snaps.
+
+## Motion
+
+One recipe, imperative WAAPI (`Element.animate`) since the content it moves
+is freshly mounted each time:
+
+- **Page change** — clicking an internal link fades the page out (150ms)
+  before the route commits; the new page's section then rises zone by zone
+  (`opacity 0 → 1`, `translateY(10px) → 0`, 380ms each, 55ms apart, delay
+  capped at the 8th zone). Back/forward skip the fade. The commit also fires
+  on a timeout in case `onfinish` never does, and a second click cancels an
+  exit in flight.
+- **Zones** are the section's direct children; with fewer than three, one
+  level down — except into anything holding an `img`, so a figure (photo,
+  crop, overlay) always moves as one unit. Home's source order stays
+  text-then-figure because that is the reveal order.
+- **Image gate** — a zone whose image hasn't loaded is held at opacity 0 and
+  rises on `load` (or `error`, so a broken image still ends up visible).
+  Invisible on a warm cache; test with the network throttled.
+- **Project switch** re-runs the rise on the detail column only, faster
+  (320ms / 45ms). Not on first mount — the page rise covers that.
+- **Nav** — the current item is marked by one indicator that slides between
+  links; hover uses each link's own bottom border.
+
+All of it is skipped under `prefers-reduced-motion: reduce`.
 
 ## Accessibility
 

@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import Carousel from './Carousel';
 import FactsGrid from './FactsGrid';
 import type { Note, Project } from '@/content/projects';
 import { COPY } from '@/content/site';
+import { PANE_ENTER, prefersReducedMotion, staggerZones } from '@/lib/motion';
 import styles from './ProjectsBrowser.module.css';
 
 type ProjectsBrowserProps = {
@@ -18,6 +19,10 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
      case study is open by default, and prerendered that way. */
   const [selected, setSelected] = useState(0);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
+  const detail = useRef<HTMLElement>(null);
+  /* Set by a user-driven switch (click, keys, back/forward). The hash read on
+     mount leaves it false: the page-level enter already covers first paint. */
+  const animateSwitch = useRef(false);
   const project = projects[selected];
   const paras = project.paras ?? [project.description];
 
@@ -27,16 +32,31 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
       const index = projects.findIndex((item) => item.slug === slug);
       setSelected(index === -1 ? 0 : index);
     };
+    const onPopState = () => {
+      animateSwitch.current = true;
+      fromHash();
+    };
     fromHash();
     /* Back/forward between hashes fires popstate, not hashchange, once
        pushState is involved. */
-    window.addEventListener('popstate', fromHash);
-    return () => window.removeEventListener('popstate', fromHash);
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
   }, [projects]);
+
+  /* Switching projects re-runs the rise on the detail column only — faster
+     than the page's, since it answers a click. The list, header and footer
+     stay put. */
+  useLayoutEffect(() => {
+    if (!animateSwitch.current) return;
+    animateSwitch.current = false;
+    if (!detail.current || prefersReducedMotion()) return;
+    return staggerZones([...detail.current.children], PANE_ENTER);
+  }, [project.slug]);
 
   /* No element carries the bare slug as its id (tabs and panels are prefixed),
      so the browser never scroll-jumps on the hash. */
   function select(index: number) {
+    if (index !== selected) animateSwitch.current = true;
     setSelected(index);
     const hash = `#${projects[index].slug}`;
     if (window.location.hash !== hash) window.history.pushState(null, '', hash);
@@ -107,7 +127,6 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
                 className={styles.row}
                 data-selected={i === selected || undefined}
               >
-                <span className={styles.index}>{String(i + 1).padStart(2, '0')}</span>
                 <span className={styles.rowBody}>
                   <span className={styles.name}>
                     {item.name}
@@ -132,6 +151,7 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
           reader move here deliberately, where announcing the swap would read
           the carousel, the prose, the facts and the notes on every keystroke. */}
       <article
+        ref={detail}
         role="tabpanel"
         id={`panel-${project.slug}`}
         aria-labelledby={`tab-${project.slug}`}

@@ -46,6 +46,19 @@
 /* --- Contact hero ------------------------------------------------------- */
 .contact {
   min-height: min(46vh, 22rem);
+  /* Lets the crop below measure the frame. */
+  container-type: size;
+}
+
+/* When the frame is shorter than the 4:3 photo (the stacked phone layout),
+   cover scales it to the frame's width and crops top and bottom. Centred,
+   that crop cuts into the flower head, which sits high — its centre is 37%
+   down the photo. Instead the photo is offset to put that point on the
+   frame's centre line: 50cqh − 0.37 × (75cqw, the photo's rendered height).
+   The max() stops it lifting so far the photo's bottom edge shows; the min()
+   pins it to the top when there is nothing to crop. */
+.contact .image {
+  object-position: 50% min(0px, max(100cqh - 75cqw, 50cqh - 27.75cqw));
 }
 
 .contact .overlay {

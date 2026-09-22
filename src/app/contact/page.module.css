@@ -60,3 +60,27 @@
   /* Long addresses break rather than overflow the column. */
   overflow-wrap: anywhere;
 }
+
+/* Stacked layout (phones, narrow windows). The photo takes whatever height
+   is left under the contact list, up to the size it has alongside the text,
+   so the page fits one viewport instead of scrolling. The row is 1fr rather
+   than a fixed size so the photo counts only its 9rem floor when the shell
+   works out the page's height — a fixed row would count the full photo and
+   push the footer off screen. 9rem still holds the whole flower head at
+   phone widths.
+
+   60.1875rem is where the two 27rem tracks stop fitting: with
+   --space-page-x at 3.4vw and --space-column-gap at 3.5vw, 0.897 × width
+   has to reach 54rem. Recompute if either token or the track width changes. */
+@media (max-width: 60.1875rem) {
+  .contact {
+    grid-template-rows: auto minmax(9rem, 1fr);
+  }
+
+  /* Beats Figure's own min-height, which would otherwise hold it tall. The
+     cap is the size it had before, so roomy screens look unchanged. */
+  .contact > figure {
+    min-height: 9rem;
+    max-height: min(46vh, 22rem);
+  }
+}

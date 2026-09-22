@@ -1,0 +1,7 @@
+/* Stands in for <main> as the page's grid parent, so it has to carry the same
+   shrink rules: min-height:0 keeps the page inside one viewport. */
+.page {
+  min-height: 0;
+  min-width: 0;
+  display: grid;
+}
