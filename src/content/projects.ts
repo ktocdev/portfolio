@@ -66,9 +66,9 @@ export const PROJECTS: Project[] = [
         label: 'students and 4.5M educators reached across 100 countries and territories',
       },
       {
-        value: '6',
+        value: '8',
         label:
-          'dimensions of UI rigor: visual polish, i18n/l10n, tracking, responsiveness, a11y, API flexibility',
+          'dimensions of UI rigor: theming, polish, i18n/l10n, analytics, responsiveness, a11y, API, and performance',
       },
       {
         value: '3',
