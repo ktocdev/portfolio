@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
 import { EASE, PAGE_ENTER, PAGE_EXIT_MS, prefersReducedMotion, staggerZones, zonesOf } from '@/lib/motion';
@@ -36,6 +36,9 @@ function routeTarget(event: MouseEvent): URL | null {
 /* When the loader turns into the slow message, and the cap that reveals the
    page regardless. Its 400ms grace period is CSS ([data-loader] in globals.css). */
 const SLOW_AFTER_MS = 8000;
+
+/* The page loader's petal indices; each one's angle and delay come from --i. */
+const PETALS = [0, 1, 2, 3, 4, 5, 6];
 const READY_CAP_MS = 15000;
 
 /**
@@ -254,7 +257,7 @@ export default function PageTransition({ children }: { children: React.ReactNode
 }
 
 /**
- * Three stepped squares and a visible "Loading" label, swapped in place for
+ * A ring of seven stepped petals and a visible "Loading" label, swapped in place for
  * the slow message at 8s. The status role announces both. Its own timer
  * drives the switch, so unmounting on ready is what clears it. The 400ms
  * grace is the CSS delay on [data-loader], as with the video spinner.
@@ -287,10 +290,16 @@ function PageLoader({ firstLoad }: { firstLoad: boolean }) {
           </div>
         ) : (
           <div className={styles.loading}>
-            <div aria-hidden="true" className={styles.squares}>
-              <span data-loader-square="" />
-              <span data-loader-square="" />
-              <span data-loader-square="" />
+            <div aria-hidden="true" className={styles.zinnia}>
+              {PETALS.map((i) => (
+                <span
+                  key={i}
+                  data-loader-petal=""
+                  className={styles.petal}
+                  style={{ '--i': i } as CSSProperties}
+                />
+              ))}
+              <span className={styles.center} />
             </div>
             <span className={styles.label}>Loading</span>
           </div>
