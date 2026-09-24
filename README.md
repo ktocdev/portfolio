@@ -176,8 +176,8 @@ Both loaders mount invisible and fade in only after a 400ms grace period (a
 CSS animation delay on `[data-loader]` in `globals.css`), so fast loads never
 flash them. Under reduced motion they still appear, but without animation.
 
-- **Page loader** (`PageTransition`): three stepped accent squares and a
-  "Loading" label covering `<main>` until fonts and the page's visible images
+- **Page loader** (`PageTransition`): a ring of seven stepped accent
+  petals around a centre octagon and a "Loading" label covering `<main>` until fonts and the page's visible images
   are in.
   - On first load it skips the grace period and is up from first paint. It is
     server-rendered, and a small inline script in `layout.tsx` clears it

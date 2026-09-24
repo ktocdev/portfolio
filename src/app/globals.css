@@ -330,9 +330,9 @@ a:hover {
     animation-delay: 0s !important;
   }
 
-  /* The zero-duration override above would park the squares at ld-step's
-     .25 start; static means all three solid instead. */
-  [data-loader] [data-loader-square] {
+  /* The zero-duration override above would park the petals at ld-step's
+     .25 start; static means all seven solid instead. */
+  [data-loader] [data-loader-petal] {
     animation: none !important;
     opacity: 1;
   }
