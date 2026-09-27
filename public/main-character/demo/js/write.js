@@ -3,6 +3,8 @@ import { $, api, download, esc, refreshStatus } from './core.js';
 import { state } from './state.js';
 import { addMsg, streamInto, composerBusy, anchorTop } from './conversation.js';
 import { renderSessionPart, addSessionBraid, loadHistory } from './history.js';
+import * as popover from './popover.js';
+import { tipOf, setTip } from './tooltip.js';
 
 // ---- draft persistence + growing textarea ----
 // the write box survives an accidental refresh or tab close; it grows with
@@ -61,7 +63,7 @@ function saveIdFor(text) {
 function settleSave() {
   try { localStorage.removeItem(PENDING_SAVE); } catch (e) { }
 }
-const SAVED_NOTE = 'becomes journal memory when you close the chat';
+const SAVED_NOTE = 'becomes journal memory when you close the chapter';
 const UNREACHED = 'could not reach the journal. Your draft is back, and '
   + 'saving it again will not make a second copy';
 // The one rule that decides whether a close is possible, mirrored from the
@@ -72,7 +74,10 @@ export function hasNewMaterial(messages) {
   return (messages || []).some(m => m.role === 'you' && !m.dream);
 }
 
-export async function closeSession() {
+// `question` opens the one confirm the close asks: the menu's plain one, or
+// askToCloseIfLong's. Returns false when the author says no, so that caller
+// can tell a "not yet" from a close that failed.
+export async function closeSession(question = 'Close this chapter?') {
   // A pending candidate is retired, not carried: generate_candidate folds the
   // new archive into the *live* seed, so an unuploaded candidate's integration
   // is backed up and then skipped in the seed's lineage. Say so before the
@@ -84,15 +89,43 @@ export async function closeSession() {
       + 'one from the live seed instead. What it integrated is kept as a file '
       + 'but drops out of the seed. Download and upload it first to keep it.\n'
     : '';
-  if (!confirm('Close this chat?' + pending + '\n\nYour side of it becomes a journal entry, and tagging, entities, summaries, dream extraction, and the seed summary candidate run in the background. A fresh chat starts empty.')) return;
+  if (!confirm(question + pending + '\n\nYour side of it becomes a journal entry, and tagging, entities, summaries, dream extraction, and the seed summary candidate run in the background. The next chapter starts empty.')) return false;
   const r = await api('/api/sessions/close', {});
   if (!r) return;
   $('write-log').innerHTML = '';
-  $('entry-saved').textContent = `chat closed and saved as "${r.title}".`;
+  $('entry-saved').textContent = `chapter closed and saved as "${r.title}".`;
   trackCloseProgress();
   state.sessionSel = 'current';
   if (state.activeTab === 'history') await loadHistory();
   refreshStatus();
+  return true;
+}
+
+// A chapter past the length set in Settings (MC_CHAPTER_CLOSE_CHARS, counted
+// in the author's own writing) is worth closing: nothing in it is searchable
+// until then, and every reply resends all of it. So after an entry or a
+// message lands, ask -- through the close's own confirm, so there is one
+// question, not two. "Not yet" tells the server, which waits for the chapter
+// to grow before the next ask. The server decides when to ask; this only
+// does what it says. Queued rather than awaited, so the composer is free
+// before the dialog opens.
+const LONG_ENOUGH = 'Your chapter has grown long enough to close and process. Are you ready?';
+let askingToClose = false;
+export function askToCloseIfLong() {
+  setTimeout(async () => {
+    if (askingToClose) return;
+    askingToClose = true;
+    try {
+      let r;
+      try { r = await (await fetch('/api/sessions/current')).json(); }
+      catch (e) { return; }
+      if (!r.close_prompt || !r.close_prompt.ask) return;
+      if (await closeSession(LONG_ENOUGH) === false) {
+        try { await fetch('/api/sessions/close/not-yet', {method: 'POST'}); }
+        catch (e) { }   // unrecorded: it asks again next time, which is harmless
+      }
+    } finally { askingToClose = false; }
+  }, 0);
 }
 
 // After a close, the memory pipeline runs as background tasks — so the close
@@ -102,16 +135,17 @@ export async function closeSession() {
 // a real key; against a live key the stages are genuinely long. When the seed
 // stage lands, its candidate banner appears the way watching /api/seed used to.
 let closePoll = null;
-const CP_GLYPH = {done: '✓', running: '…', failed: '✕', pending: '·'};
+const CP_GLYPH = {done: '·', running: '…', failed: '✕', pending: '·'};
 function renderCloseProgress(steps, done) {
   const box = $('close-progress');
   if (!box) return;
   box.hidden = false;
-  box.innerHTML = '<b>updating memory</b>'
-    + steps.map(s => `<div class="cp-step cp-${s.status}">`
-        + `<span class="cp-mark">${CP_GLYPH[s.status] || '·'}</span>`
+  box.innerHTML = '<div class="eyebrow strong">updating memory</div><div class="checklist">'
+    + steps.map(s => `<div class="step ${s.status}">`
+        + `<span class="mark">${CP_GLYPH[s.status] || '·'}</span>`
         + `<span>${esc(s.label)}</span></div>`).join('')
-    + (done ? '<div class="cp-done">memory updated, and a fresh chat is open</div>' : '');
+    + '</div>'
+    + (done ? '<div class="done-line">memory updated, and the next chapter is open</div>' : '');
 }
 function trackCloseProgress() {
   clearInterval(closePoll);
@@ -195,10 +229,10 @@ async function maybeFirstRun(el) {
   if ((s.sessions || []).some(i => i.kind === 'archive')) return;
   const d = document.createElement('div');
   d.id = 'write-first-run';
-  d.innerHTML = '<p>This is one open chat, and everything you write here joins it. '
+  d.innerHTML = '<p>This is one open chapter, and everything you write here joins it. '
     + '<b>save entry</b> keeps a journal entry, and <b>send</b> talks it over with the companion.</p>'
     + '<p>Write for about a week, then open the <b>⋯</b> menu and choose '
-    + '<b>summarize &amp; close chat</b>. That is when it all becomes journal memory.</p>';
+    + '<b>close chapter</b>. That is when it all becomes journal memory.</p>';
   el.appendChild(d);
 }
 
@@ -229,9 +263,9 @@ function renderStamp() {
     hour: 'numeric', minute: '2-digit',
   });
   $('entry-stamp-text').textContent = `Started ${when}`;
-  $('entry-stamp-text').title = state.tz
+  setTip($('entry-stamp-text'), state.tz
     ? `when this entry was written · ${state.tz}`
-    : 'when this entry was written';
+    : 'when this entry was written');
 }
 
 function startStamp() {
@@ -287,6 +321,7 @@ export function init() {
     anchorTop(you);   // stay on your own message while the reply streams in
     try { await streamInto(el, '/api/chat', {message: text}); }
     finally { composerBusy(false); $('entry-text').focus(); }
+    askToCloseIfLong();
   };
 
   $('reflect-btn').onclick = async () => {
@@ -299,9 +334,14 @@ export function init() {
 
   $('reset').onclick = () => { $('write-actions').removeAttribute('open'); closeSession(); };
 
-  const resetTitle = $('reset').title;
+  const resetTitle = tipOf($('reset'));
+  // The ⋯ menu is a popover like the others: opening it closes the rest,
+  // and a click anywhere else closes it.
+  popover.register('actions', () => $('write-actions').removeAttribute('open'),
+    t => $('write-actions').contains(t));
   $('write-actions').addEventListener('toggle', async () => {
     if (!$('write-actions').open) return;
+    popover.opened('actions');
     refreshSeedMenu();
     // don't offer a close the server will refuse — see hasNewMaterial
     let fresh = true;
@@ -310,8 +350,8 @@ export function init() {
       fresh = hasNewMaterial(r.messages);
     } catch (e) { }   // can't tell: leave the action available
     $('reset').disabled = !fresh;
-    $('reset').title = fresh ? resetTitle
-      : 'nothing new in this chat yet. Write or chat first';
+    setTip($('reset'), fresh ? resetTitle
+      : 'nothing new in this chapter yet. Write or send something first');
   });
   $('seed-download').onclick = () =>
     download('/api/seed/download?which=current', 'seed_summary.md');
@@ -333,12 +373,15 @@ export function init() {
   $('refresh-summaries').onclick = async () => {
     const b = $('refresh-summaries');
     b.disabled = true;
-    b.textContent = 'refreshing…';
+    b.innerHTML = 'refreshing <span class="dots">···</span>';
     try {
       const r = await api('/api/summaries/refresh', {});
-      if (r) b.textContent = `memory current (${r.arcs} weeks)`;
+      if (r) {
+        const n = $('session-notice');
+        if (n) n.textContent = `weekly arcs and domain documents regenerated (${r.arcs} weeks).`;
+      }
     } finally {
-      setTimeout(() => { b.textContent = 'refresh memory'; b.disabled = false; }, 4000);
+      b.textContent = 'refresh memory'; b.disabled = false;
     }
   };
 
@@ -373,6 +416,7 @@ export function init() {
             ? 'that entry was already saved, so nothing was added twice'
             : `entry saved, no reply · ${SAVED_NOTE}`;
           refreshStatus();
+          askToCloseIfLong();
         } else {
           you.remove();
           restoreDraft(text);
@@ -411,6 +455,7 @@ export function init() {
             : `entry saved · ${SAVED_NOTE}`;
         }
         refreshStatus();
+        askToCloseIfLong();
       } else {
         // not saved (or unknown) — put the draft back so nothing is lost
         restoreDraft(text);

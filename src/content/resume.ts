@@ -142,7 +142,7 @@ export const RESUME_SKILLS: ResumeSkill[] = [
   {
     label: 'Frontend & Architecture',
     items:
-      'Vue 3, Nuxt, TypeScript, Design Systems, Component Architecture, Theming Architecture, Tailwind CSS, Vite, Accessibility (WCAG 2.2, ARIA)',
+      'Vue 3, Nuxt, TypeScript, Design Systems, Component Architecture, Theming Architecture, Tailwind CSS, Storybook, Vite, Accessibility (WCAG 2.2, ARIA)',
   },
   {
     label: 'Backend & Infrastructure',
