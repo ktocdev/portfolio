@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import { $, esc, installDemo, demoBuildWait } from './core.js';
+import { busyLabel } from './categories.js';
 import { state } from './state.js';
 
 // ---- settings ----
@@ -83,6 +84,8 @@ function capField(id, key, values, live, fmt) {
   const input = document.createElement('input');
   input.type = 'text';
   input.id = id;
+  input.className = 'money';
+  input.inputMode = 'decimal';
   input.value = values[key] || '';
   input.autocomplete = 'off';
   // The *default*, not the limit in force: this is what the box would mean if
@@ -92,6 +95,32 @@ function capField(id, key, values, live, fmt) {
   input.placeholder = !live || live.limit === undefined ? ''
     : live.default ? 'default: ' + fmt(live.default) : 'no limit';
   box.appendChild(input);
+
+  // "this session: $0.03 of $10.00" and a hairline, live against whatever is
+  // typed (blank = the default, 0 = no ceiling). What the journal has spent
+  // comes from the caps status; the ceiling it is measured against is the
+  // one in the box, so typing a figure shows what it would mean.
+  if (live && live.used !== undefined) {
+    const line = document.createElement('div');
+    line.className = 'cap-line';
+    line.innerHTML = '<span></span><div class="hairline"><i></i></div>';
+    box.appendChild(line);
+    const label = key === 'MC_MAX_SESSION_SPEND' ? 'this session'
+      : 'this month' + (live.month ? ' (' + live.month + ')' : '');
+    const draw = () => {
+      const typed = input.value.trim();
+      const ceiling = typed === '' ? Number(live.default || 0) : Number(typed);
+      const ok = Number.isFinite(ceiling);
+      const used = Number(live.used || 0);
+      line.firstChild.textContent = ok && ceiling > 0
+        ? `${label}: ${fmt(used)} of ${fmt(ceiling)}`
+        : `${label}: ${fmt(used)} · no ceiling`;
+      line.querySelector('i').style.width = ok && ceiling > 0
+        ? Math.min(100, used / ceiling * 100).toFixed(1) + '%' : '0%';
+    };
+    draw();
+    input.addEventListener('input', draw);
+  }
 
   // The process read its ceilings at import, same as every other setting.
   // Comparing the file against what is actually in force is the only way to
@@ -114,16 +143,38 @@ function capField(id, key, values, live, fmt) {
   }
 }
 
-// "used of limit" for one ceiling, or "used, no limit set".
-const money = n => '$' + Number(n).toFixed(2);
-
-function usedLine(label, cap, fmt) {
-  const p = document.createElement('p');
-  p.className = 'set-help';
-  p.textContent = label + ': ' + fmt(cap.used)
-    + (cap.limit ? ' of ' + fmt(cap.limit) : ' \u2014 no limit set');
-  return p;
+// The chapter length at which the write tab asks to close. Blank means the
+// default, as with the caps, so the placeholder names it; and a saved figure
+// isn't the one in force until a restart, so say which one is. An older
+// server sends no `chapter_close`: the row then has nothing to offer.
+function chapterField(values, live) {
+  const box = $('set-chapter-control');
+  if (!box) return;
+  if (!live) {
+    box.parentElement.remove();
+    return;
+  }
+  const chars = n => Number(n).toLocaleString() + ' characters';
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.id = 'set-chapter';
+  input.inputMode = 'numeric';
+  input.autocomplete = 'off';
+  input.value = values.MC_CHAPTER_CLOSE_CHARS || '';
+  input.placeholder = 'default: ' + chars(live.default);
+  box.appendChild(input);
+  const stored = (values.MC_CHAPTER_CLOSE_CHARS || '').replace(/[,_\s]/g, '');
+  const effective = stored ? Number(stored) : Number(live.default);
+  if (effective !== Number(live.limit)) {
+    const p = document.createElement('p');
+    p.className = 'set-warn';
+    p.textContent = 'Saved. This journal is still asking at '
+      + (live.limit ? chars(live.limit) : 'no length (never)') + ' until you restart it.';
+    box.appendChild(p);
+  }
 }
+
+const money = n => '$' + Number(n).toFixed(2);
 
 export async function loadSettings() {
   const body = $('settings-body');
@@ -147,8 +198,8 @@ export async function loadSettings() {
   const v = s.values, o = s.options;
 
   body.innerHTML = `
-    <section class="set-group">
-      <h3>Journal</h3>
+    <section class="set-group" data-set="journal">
+      <div class="rule eyebrow">journal</div>
       ${fieldRow('set-date', 'Date display',
         'How dates are shown. What gets stored never changes, because entries are '
         + 'always kept in ISO form, so switching back and forth is safe.')}
@@ -159,17 +210,22 @@ export async function loadSettings() {
       ${fieldRow('set-lang', 'Language',
         'English is the only option today. The setting exists so adding '
         + 'another later is a configuration change, not a rebuild.')}
-      <div class="set-row">
-        <label>Categories</label>
-        <p class="set-help">The life-domain tags the companion suggests on new
-          entries. Turn off any that don’t fit your life, and the
-          journal will still grow its own categories from what you write. Entries
-          you’ve already tagged keep their tags either way.</p>
-        <div class="set-control" id="set-categories-control"></div>
-      </div>
+      ${fieldRow('set-chapter', 'Ask to close a chapter at',
+        'Characters of your own writing in the open chapter. Past this, the '
+        + 'write tab asks whether to close it, since nothing in it can be '
+        + 'searched until then and every reply resends all of it. Say not yet, '
+        + 'and it asks again after 10,000 more. Blank uses the default; 0 never asks.')}
     </section>
-    <section class="set-group">
-      <h3>Models &amp; cost</h3>
+    <section class="set-group" data-set="categories">
+      <div class="rule eyebrow">categories</div>
+      <p class="set-help">The life-domain tags the companion suggests on new
+        entries. Turn off any that don’t fit your life, and the
+        journal will still grow its own categories from what you write. Entries
+        you’ve already tagged keep their tags either way.</p>
+      <div class="set-row"><div class="set-control" id="set-categories-control"></div></div>
+    </section>
+    <section class="set-group" data-set="models">
+      <div class="rule eyebrow">models &amp; cost</div>
       ${fieldRow('set-companion-model', 'Companion model',
         'The voice you write to. This is the one place model quality is '
         + 'felt directly, so it is worth spending more here than anywhere '
@@ -184,19 +240,19 @@ export async function loadSettings() {
         + 'most of the spend goes, so it is the useful place to trade down.')}
       ${fieldRow('set-max-session', 'Stop after (dollars per session)',
         'A ceiling on one session, counted from when the journal last '
-        + 'started and cleared when you close a chat. '
+        + 'started and cleared when you close a chapter. '
         + capHelp((s.caps || {}).session))}
       ${fieldRow('set-max-spend', 'Stop after (dollars per month)',
         'A ceiling on the calendar month, kept in a small file so it '
         + 'survives restarts. ' + capHelp((s.caps || {}).monthly))}
       <div class="set-row" id="set-caps-control"></div>
       <div class="set-row">
-        <label>Session cost</label>
+        <span class="set-label">Session cost</span>
         <div class="set-control" id="set-cost-control"></div>
       </div>
     </section>
-    <section class="set-group">
-      <h3>API key</h3>
+    <section class="set-group" data-set="api key">
+      <div class="rule eyebrow">api key</div>
       <div class="set-row">
         <label for="set-key">Anthropic API key</label>
         <div class="set-control">
@@ -207,13 +263,13 @@ export async function loadSettings() {
           page, not even partially. Leave it blank to keep the one you have.</p>
       </div>
     </section>
-    <section class="set-group">
-      <h3>Data</h3>
+    <section class="set-group" data-set="data">
+      <div class="rule eyebrow">data</div>
       <p class="set-help">Your writing is plain markdown on this computer, and
         these do not need saving first. They act straight away on the
         journal as it is right now.</p>
       <div class="set-row">
-        <label>Export</label>
+        <span class="set-label">Export</span>
         <div class="set-control">
           <button class="quiet" id="set-export">export to a folder</button>
         </div>
@@ -222,7 +278,7 @@ export async function loadSettings() {
           in it needs this app to read.</p>
       </div>
       <div class="set-row">
-        <label>Backup</label>
+        <span class="set-label">Backup</span>
         <div class="set-control">
           <button class="quiet" id="set-backup">save a dated zip</button>
         </div>
@@ -231,7 +287,7 @@ export async function loadSettings() {
           survives this machine.</p>
       </div>
       <div class="set-row">
-        <label>Search index</label>
+        <span class="set-label">Search index</span>
         <div class="set-control">
           <button class="quiet" id="set-rebuild">rebuild from my entries</button>
         </div>
@@ -321,6 +377,8 @@ export async function loadSettings() {
     markPending('set-categories-control', 'MC_DISABLED_CATEGORIES', describeCats);
   }
 
+  chapterField(v, s.chapter_close);
+
   // ---- models ----
   // Both pickers offer the same lineup: nothing is restricted by bucket. The
   // difference between the two is the guidance beside them, not the options
@@ -345,10 +403,10 @@ export async function loadSettings() {
       const pr = (o.models.find(x => x.value === m) || {}).price;
       return pr ? '$' + pr.in + ' / $' + pr.out + ' per Mtok' : 'price unlisted';
     };
-    function modelSelect(id, current) {
+    function modelSelect(id, current, models) {
       const sel = document.createElement('select');
       sel.id = id;
-      for (const m of o.models) {
+      for (const m of models) {
         const opt = new Option(m.label + ' \u2014 ' + priceOf(m.value), m.value);
         opt.selected = m.value === current;
         sel.add(opt);
@@ -359,7 +417,7 @@ export async function loadSettings() {
       return sel;
     }
 
-    const cModel = modelSelect('set-companion-model', v.MC_COMPANION_MODEL);
+    const cModel = modelSelect('set-companion-model', v.MC_COMPANION_MODEL, o.models);
     markPending('set-companion-model-control', 'MC_COMPANION_MODEL', modelName);
 
     // The companion is the one surface where dropping a tier is felt in the
@@ -418,7 +476,10 @@ export async function loadSettings() {
     cModel.onchange = () => { fillEfforts(effort.value); showVoiceWarning(); };
     markPending('set-companion-effort-control', 'MC_COMPANION_EFFORT', a => a);
 
-    modelSelect('set-processing-model', v.MC_PROCESSING_MODEL);
+    // Processing offers a shorter list (config.PROCESSING_MODELS). An older
+    // server sends no `processing` flag, so it gets the whole lineup as before.
+    const forProcessing = o.models.filter(m => m.processing !== false);
+    modelSelect('set-processing-model', v.MC_PROCESSING_MODEL, forProcessing);
     markPending('set-processing-model-control', 'MC_PROCESSING_MODEL', modelName);
   }
 
@@ -453,9 +514,6 @@ export async function loadSettings() {
       + 'Restart it to pick up the new one.';
     caps.appendChild(note);
   } else {
-    caps.appendChild(usedLine('This session', s.caps.session, money));
-    caps.appendChild(usedLine('This month (' + s.caps.monthly.month + ')',
-                              s.caps.monthly, money));
     if (v.MC_MAX_SESSION_TOKENS) {
       // It was a token count, briefly, and nothing reads it now. Silence here
       // would leave a line in .env that looks exactly like a cap.
@@ -484,8 +542,9 @@ export async function loadSettings() {
     + 'being right is a spend limit on your Anthropic Console account.';
   caps.appendChild(backstop);
 
-  $('settings-save').disabled = false;
   $('settings-note').textContent = '';
+  setDirty(false);
+  body.oninput = body.onchange = () => setDirty(Object.keys(collectChanges()).length > 0);
   syncSeedButton();
   // Not in init(): these buttons live inside #settings-body, which this
   // function replaces wholesale every time Settings is opened, so handlers
@@ -515,7 +574,7 @@ async function instanceId() {
 // restart happened -- and a second copy of it would drift from this one.
 export async function restartServer(note, saved = true, into = 'journal') {
   note.className = 'set-note';
-  note.textContent = 'restarting to apply…';
+  note.innerHTML = 'restarting <span class="dots">···</span>';
   const before = await instanceId();
   let r;
   try {
@@ -626,16 +685,13 @@ async function renderCost() {
   box.appendChild(note);
 }
 
-async function save() {
-  if (!loaded) return;
-  const btn = $('settings-save');
-  const note = $('settings-note');
-
-  // only what actually changed, so a save never rewrites a line the user
-  // didn't touch — and an untouched key field sends nothing at all. A control
-  // that is disabled or locked is skipped outright: its value is not an
-  // answer the author gave, so sending it would be this page inventing one.
+// Only what actually changed, so a save never rewrites a line the user
+// didn't touch, and an untouched key field sends nothing at all. A control
+// that is disabled or locked is skipped outright: its value is not an answer
+// the author gave, so sending it would be this page inventing one.
+function collectChanges() {
   const values = {};
+  if (!loaded) return values;
   const pairs = [
     ['MC_DATE_FORMAT', 'set-date'],
     ['MC_TIMEZONE', 'set-tz'],
@@ -645,6 +701,7 @@ async function save() {
     ['MC_PROCESSING_MODEL', 'set-processing-model'],
     ['MC_MAX_SESSION_SPEND', 'set-max-session'],
     ['MC_MAX_MONTHLY_SPEND', 'set-max-spend'],
+    ['MC_CHAPTER_CLOSE_CHARS', 'set-chapter'],
   ];
   for (const [key, id] of pairs) {
     const el = $(id);
@@ -666,9 +723,25 @@ async function save() {
       values.MC_DISABLED_CATEGORIES = disabled;
     }
   }
-
-  const key = $('set-key').value.trim();
+  const key = ($('set-key') || {value: ''}).value.trim();
   if (key) values.ANTHROPIC_API_KEY = key;
+  return values;
+}
+
+// save is dim and outlined until something is dirty, then the filled
+// secondary primary reading `save & restart`
+function setDirty(dirty) {
+  const btn = $('settings-save');
+  btn.disabled = !dirty;
+  btn.className = dirty ? 'filled' : 'quiet';
+  btn.textContent = dirty ? 'save & restart' : 'save';
+}
+
+async function save() {
+  if (!loaded) return;
+  const btn = $('settings-save');
+  const note = $('settings-note');
+  const values = collectChanges();
 
   if (!Object.keys(values).length) {
     note.className = 'set-note';
@@ -678,7 +751,7 @@ async function save() {
 
   btn.disabled = true;
   note.className = 'set-note';
-  note.textContent = 'saving…';
+  note.innerHTML = 'saving · restarting <span class="dots">···</span>';
   let r;
   try {
     const res = await fetch('/api/settings', {
@@ -795,22 +868,22 @@ async function runData(btn, label, url, describe) {
   const all = ['set-export', 'set-backup', 'set-rebuild'].map($);
   all.forEach(b => { if (b) b.disabled = true; });
   const was = btn.textContent;
-  btn.textContent = label;
+  busyLabel(btn, label);
   // Put the answer directly under the button that was pressed. The note used to
   // sit at the foot of the whole section, so an Export confirmation surfaced
   // below Backup and Rebuild and read as unrelated help text; moving it here,
   // and drawing it as a callout (below), ties it to the action that ran.
   btn.closest('.set-row').append(note);
-  note.className = 'set-feedback working';
-  note.textContent = 'working…';
+  note.className = 'notice-card set-feedback working';
+  note.innerHTML = 'working <span class="dots">···</span>';
   try {
     const res = await fetch(url, {method: 'POST'});
     const body = await res.json();
     if (!res.ok || body.error) throw new Error(body.error || 'it did not finish');
-    note.className = 'set-feedback ok';
+    note.className = 'notice-card set-feedback ok';
     note.textContent = describe(body);
   } catch (e) {
-    note.className = 'set-feedback error';
+    note.className = 'notice-card set-feedback error';
     note.textContent = 'That did not work. ' + (e.message || e);
   } finally {
     btn.textContent = was;
@@ -822,14 +895,14 @@ const mb = n => (n / 1e6).toFixed(1) + ' MB';
 
 function wireData() {
   const exp = $('set-export'), bak = $('set-backup'), reb = $('set-rebuild');
-  if (exp) exp.onclick = () => runData(exp, 'exporting…',
+  if (exp) exp.onclick = () => runData(exp, 'exporting',
     '/api/data/export',
     b => b.entries + ' entries written to ' + b.path);
-  if (bak) bak.onclick = () => runData(bak, 'zipping…',
+  if (bak) bak.onclick = () => runData(bak, 'zipping',
     '/api/data/backup',
     b => mb(b.bytes) + ' written to ' + b.path
        + '. Move it somewhere that survives this machine.');
-  if (reb) reb.onclick = () => runData(reb, 'rebuilding…',
+  if (reb) reb.onclick = () => runData(reb, 'rebuilding',
     '/api/data/rebuild',
     b => 'search index rebuilt: '
        + Object.entries(b).filter(([k, val]) => val && val.documents !== undefined)
@@ -852,7 +925,7 @@ function applyTheme(choice) {
 }
 function markTheme(choice) {
   document.querySelectorAll('#theme-toggle button').forEach(b =>
-    b.classList.toggle('active', b.dataset.themeChoice === choice));
+    b.setAttribute('aria-pressed', String(b.dataset.themeChoice === choice)));
 }
 function themeInit() {
   const group = $('theme-toggle');
@@ -875,7 +948,26 @@ function themeInit() {
   });
 }
 
+const JUMPS = ['appearance', 'journal', 'categories', 'models', 'api key', 'data'];
+function jumpTo(id) {
+  const pane = $('settings');
+  const el = pane.querySelector(`[data-set="${id}"]`);
+  if (!el) return;
+  const top = el.getBoundingClientRect().top - pane.getBoundingClientRect().top + pane.scrollTop;
+  pane.scrollTo({top: Math.max(0, top - 64), behavior: 'smooth'});
+  document.querySelectorAll('#settings-jumps .chip').forEach(b =>
+    b.classList.toggle('on', b.dataset.jump === id));
+}
+
 export function init() {
+  for (const id of JUMPS) {
+    const b = document.createElement('button');
+    b.className = 'chip sm';
+    b.dataset.jump = id;
+    b.textContent = id;
+    b.onclick = () => jumpTo(id);
+    $('settings-jumps').appendChild(b);
+  }
   $('settings-save').onclick = save;
   $('settings-restart').onclick = restartNow;
   $('settings-seed').onclick = loadSeed;

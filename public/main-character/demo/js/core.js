@@ -42,7 +42,7 @@ export async function refreshStatus() {
   $('status').textContent = `${s.entries} entries · ${s.entities} entities`;
   const open = s.open_entries || 0;
   $('status').title = open
-    ? `${open} ${open === 1 ? 'entry' : 'entries'} in this chat, added to journal memory when you close it`
+    ? `${open} ${open === 1 ? 'entry' : 'entries'} in this chapter, added to journal memory when you close it`
     : '';
   // Canned replies only ever run against the demo, so the seed instance is
   // the whole banner condition now -- there is no mode where the replies are
@@ -54,9 +54,11 @@ export async function refreshStatus() {
   // Only the in-browser backend of the published web demo sets this: there
   // is no server, so base.css hides what only a server could do.
   document.body.classList.toggle('web-demo', !!s.web_demo);
+  // Smart replies need a real client: canned replies can't use tools
+  $('lookup-smart').hidden = !!s.mock;
   $('app-banner').textContent = s.web_demo
-    ? 'web demo... sample journal, canned replies.'
-    : 'demo journal... sample journal, canned replies.';
+    ? 'web demo — sample entries, and the replies are canned.'
+    : 'demo journal — sample entries, and the replies are canned. Restart to go back to yours.';
   // A server too old to report this sends nothing; `!== false` reads that
   // as configured rather than as a fresh clone, so the wizard cannot open
   // over a journal that has been working for months.
@@ -90,20 +92,20 @@ export async function refreshStatus() {
 // mention it can drop into their own sentence. One source, because they used
 // to disagree, and because the estimate is the part most likely to change.
 //
-// The reason there is more than one answer: chroma fetches its embedding
-// model (about 90MB) at the first embed on the machine, not at install and
-// not per journal. From the wizard that is almost always this build, since a
+// The reason there is more than one answer: the two local embedding models
+// (about 220MB together; see passages.py) are fetched at the first embed on
+// the machine, not at install and not per journal. From the wizard that is almost always this build, since a
 // fresh clone has embedded nothing yet. From Settings it usually is not,
 // because writing a single entry already paid for it. Saying which one the
 // reader is in beats listing both and leaving them to work it out.
 export function demoBuildWait() {
   if (state.embedderCached === false) {
-    return 'a few minutes, while the 90MB embedding model downloads '
+    return 'a few minutes, while the embedding models (about 220MB) download '
       + '(once per machine, not once per journal)';
   }
   if (state.embedderCached === true) return 'around twenty seconds';
-  return 'around twenty seconds, or a few minutes if the embedding model '
-    + 'still has to download';
+  return 'around twenty seconds, or a few minutes if the embedding models '
+    + 'still have to download';
 }
 
 export async function installDemo(report) {
@@ -116,7 +118,7 @@ export async function installDemo(report) {
   // no channel back, so a bar would be inventing a fraction it cannot know.
   const hold = setTimeout(() => {
     const tick = () => report('building the demo journal of 32 entries and 1 dream entry. '
-      + 'The newest 3 will open in the chat (' + Math.round((Date.now() - started) / 1000)
+      + 'The newest 3 will be in the open chapter (' + Math.round((Date.now() - started) / 1000)
       + 's). Expect ' + demoBuildWait() + '.');
     tick();
     timer = setInterval(tick, 1000);
