@@ -9,7 +9,6 @@
   --mc-text: #e8e0d5;
   --mc-text-dim: #a99f92;
   --mc-accent: #d99e5b;
-  --mc-accent-hover: #e8b377;
   --mc-accent-dim: #8a6a44;
   --mc-border: #3d362f;
 
@@ -325,14 +324,19 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* The app's link: dim at rest, amber on hover (rag-journal base.css). */
 .textLink {
-  color: var(--mc-accent);
+  color: var(--mc-text-dim);
 }
 
 .textLink:hover {
-  color: var(--mc-accent-hover);
+  color: var(--mc-accent);
 }
 
+/* Buttons follow rag-journal's components.css: primary is `button.send`
+   (no hover change), secondary is `quiet` (text to --text over --bg-raised).
+   Colours are set on :hover too, because these are links and the portfolio's
+   global a:hover would otherwise swap in its own accent. */
 .primary,
 .secondary {
   display: inline-flex;
@@ -350,16 +354,14 @@
 }
 
 .secondary:hover {
+  color: var(--mc-text);
   background: var(--mc-bg-raised);
 }
 
-.primary {
+.primary,
+.primary:hover {
   background: var(--mc-accent);
   color: var(--mc-bg);
-}
-
-.primary:hover {
-  background: var(--mc-accent-hover);
 }
 
 .footer {
