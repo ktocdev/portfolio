@@ -1,14 +1,10 @@
 import type { Metadata, Viewport } from 'next';
 import { Young_Serif, Atkinson_Hyperlegible_Next, Atkinson_Hyperlegible_Mono } from 'next/font/google';
 
-import SiteHeader from '@/components/SiteHeader';
-import SiteFooter from '@/components/SiteFooter';
 import CookieConsent from '@/components/CookieConsent';
-import PageTransition from '@/components/PageTransition';
 import { IMAGES, SITE } from '@/content/site';
 
 import './globals.css';
-import styles from './layout.module.css';
 
 /* Fonts are downloaded and self-hosted at build time — no runtime request to
    Google, and no flash of fallback text. */
@@ -121,17 +117,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
-        <div className={styles.root}>
-          <a href="#main" className={styles.skipLink}>
-            Skip to content
-          </a>
-          <SiteHeader />
-          {/* tabIndex makes the skip link actually move focus, not just scroll. */}
-          <main id="main" tabIndex={-1} className={styles.main}>
-            <PageTransition>{children}</PageTransition>
-          </main>
-          <SiteFooter />
-        </div>
+        {/* Header and footer come from SiteShell via the (site) group's layout,
+            so a page outside that group can go full-bleed. */}
+        {children}
         <CookieConsent />
       </body>
     </html>
