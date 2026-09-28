@@ -118,19 +118,22 @@ sample with a US-phone-shaped number (`555-123-4567`) will stop a deploy.
 ```
 src/
   app/
-    layout.tsx           shell: fonts, metadata, skip link, no-flash theme script
+    layout.tsx           root: fonts, metadata, no-flash theme script, cookie banner
     globals.css          the token layer: colour, type, spacing, motion
-    page.tsx             Home
-    projects/            Projects
-    resume/              Resume (the full document; also the print source for the PDF)
-    contact/             Contact
-    about/               About
-    cookies/             Cookie settings (analytics consent)
-    blog/                blog index and [slug] post pages (one shared stylesheet)
-    not-found.tsx        themed 404
+    (site)/              route group for every portfolio page; its layout adds SiteShell
+      page.tsx           Home
+      projects/          Projects
+      resume/            Resume (the full document; also the print source for the PDF)
+      contact/           Contact
+      about/             About
+      cookies/           Cookie settings (analytics consent)
+      blog/              blog index and [slug] post pages (one shared stylesheet)
+    main-character/      Main Character splash: full-bleed, outside (site), no site chrome
+    not-found.tsx        themed 404 (brings SiteShell itself)
     robots.ts            /robots.txt
     sitemap.ts           /sitemap.xml
   components/
+    SiteShell            skip link, header, main, footer: the chrome (site) pages share
     SiteHeader           wordmark + primary nav with a sliding current-page indicator
     PageTransition       page container: exit fade, page loader, zone-by-zone rise
     SiteFooter           copyright, blog and cookies links, email, theme control
@@ -145,20 +148,25 @@ src/
     CookieSettings       the On / Off control on the cookies page
     ClarityAnalytics     the Microsoft Clarity tag
     GoogleAnalytics      the GA4 tag
+    MainCharacterSplash  the splash: canvas intro, typed title card, how-it-works section
   content/
     site.ts              nav, skills, contacts, per-page copy, image alt text, analytics IDs
     projects.ts          project data, case-study notes, slide manifests
     resume.ts            resume: summary, experience, skills, projects, contact
+    mainCharacter.ts     Main Character splash copy
     blog/                blog posts, one markdown file each
   lib/
     blog.ts              reads, validates and renders the posts (build time only)
     consent.ts           shared consent storage key + change event
+    mainCharacterStage.ts  the splash's canvas intro: timeline and drawing
     motion.ts            the rise stagger: timings, zone finding, image load gate
     nowrap.tsx           keeps hyphenated names (nebula-nuxt) on one line
+  fonts/                 CMU Sans for the splash (next/font/local)
 public/
   _headers               Cloudflare response headers (CSP etc.)
   media/                 photography
   projects/              carousel media (slug-named)
+  main-character/        splash favicons (mc-circle-*)
   main-character/demo/   built Main Character demo (see below)
   Katie-OConnor-Resume.pdf
 scripts/

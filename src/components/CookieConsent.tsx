@@ -60,7 +60,7 @@ export default function CookieConsent() {
      the page: the footer, and on a phone the last rows of content too. While
      it is up, publish the space it occupies from the viewport's bottom edge
      (height plus bottom offset) as --consent-inset; the shell (.root in
-     layout.module.css) pads its bottom by that much. On a page that fits one
+     SiteShell.module.css) pads its bottom by that much. On a page that fits one
      viewport the shell's flexible middle row absorbs the padding, so the page
      still fits and the footer simply sits above the banner; on a taller page
      the end of the content scrolls clear of it. Re-measured when the banner

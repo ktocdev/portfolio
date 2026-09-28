@@ -226,6 +226,22 @@ body {
   line-height: 1.5;
 }
 
+/* The Main Character splash is always dark whatever the site theme, and it
+   runs edge to edge: without this the scrollbar gutter and overscroll show
+   the portfolio's background beside it. Smooth scrolling is for its in-page
+   nav (#how, #demo, #start). */
+html:has([data-mc-splash]),
+html:has([data-mc-splash]) body {
+  background: #100d0b;
+  color-scheme: dark;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html:has([data-mc-splash]) {
+    scroll-behavior: smooth;
+  }
+}
+
 h1,
 h2,
 h3,

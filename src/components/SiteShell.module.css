@@ -1,4 +1,4 @@
-/* Shell: header / main / footer, one viewport tall by design.
+/* Site shell: header / main / footer, one viewport tall by design.
    min-height (not height) plus overflow:auto is the escape hatch — very short
    viewports scroll rather than clip. */
 .root {
