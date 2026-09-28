@@ -8,7 +8,7 @@ import { prefersReducedMotion } from '@/lib/motion';
 
 import styles from './MainCharacterSplash.module.css';
 
-const { hero, about, features, demo, start } = MC_SPLASH;
+const { hero, about, features, how, demo, start } = MC_SPLASH;
 
 /* Typing cadence, in seconds per character, and the pause between lines. */
 const PER_CHAR_1 = 0.075;
@@ -178,7 +178,7 @@ export default function MainCharacterSplash() {
         </button>
       )}
 
-      <section id="how" className={styles.about}>
+      <section id="what" className={styles.about}>
         <div className={styles.aboutInner}>
           <div className={styles.block}>
             <h2 className={styles.eyebrow}>{about.eyebrow}</h2>
@@ -193,6 +193,29 @@ export default function MainCharacterSplash() {
                 <p className={styles.featureBody}>{f.body}</p>
               </div>
             ))}
+          </div>
+
+          <div id="how" className={styles.block}>
+            <h2 className={styles.eyebrow}>{how.eyebrow}</h2>
+            <ol className={styles.steps}>
+              {how.steps.map((step, i) => (
+                <li key={step.title} className={styles.step}>
+                  <span className={styles.stepNum} aria-hidden="true">
+                    {i + 1}
+                  </span>
+                  <div className={styles.feature}>
+                    <h3 className={styles.featureTitle}>{step.title}</h3>
+                    <p className={styles.featureBody}>{step.body}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+            <p className={styles.body}>{how.note}</p>
+            <p className={styles.body}>
+              <a href={how.link.href} className={styles.textLink}>
+                {how.link.label} <span aria-hidden="true">→</span>
+              </a>
+            </p>
           </div>
 
           <div id="demo" className={styles.block}>

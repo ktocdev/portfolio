@@ -301,6 +301,38 @@
   text-wrap: pretty;
 }
 
+/* How it works: numbered like the title card's nav. The list keeps its
+   semantics; the visible number is decoration. */
+.steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 1.4rem minmax(0, 1fr);
+  gap: 0 0.7rem;
+}
+
+.stepNum {
+  font: 1.3rem var(--mc-sans);
+  line-height: 1.5;
+  color: var(--mc-accent-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.textLink {
+  color: var(--mc-accent);
+}
+
+.textLink:hover {
+  color: var(--mc-accent-hover);
+}
+
 .primary,
 .secondary {
   display: inline-flex;

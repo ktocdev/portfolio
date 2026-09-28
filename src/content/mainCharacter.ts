@@ -15,6 +15,7 @@ export const MC_SPLASH = {
     title: 'Main Character',
     subtitle: 'Journal with RAG Memory',
     nav: [
+      { label: 'What It Is', href: '#what' },
       { label: 'How It Works', href: '#how' },
       { label: 'Try the Demo', href: '#demo' },
       { label: 'Start Writing Your Story', href: '#start' },
@@ -41,6 +42,30 @@ export const MC_SPLASH = {
       body: 'Your key, your budget, your data. Bring your own API key, set a spending ceiling per session, and export the whole journal whenever you want.',
     },
   ],
+  /* Condensed from HOW-IT-WORKS.md in the main-character repo; the full
+     write-up is linked below the steps. */
+  how: {
+    eyebrow: 'how it works',
+    steps: [
+      {
+        title: 'You write.',
+        body: 'Entries are saved on your machine. Saving costs nothing; Claude is only called when you ask for a reply.',
+      },
+      {
+        title: 'It looks back before it answers.',
+        body: 'Before each reply, the journal searches your past entries on your own machine, both by meaning and by exact words. The companion gets what the search found: about a dozen passages, a few summaries, and anyone you named. It never reads the whole journal, which is why it can tell you when you wrote something even when it doesn’t have your exact words.',
+      },
+      {
+        title: 'Closing a chapter makes it memory.',
+        body: 'When you close a chapter, the text is indexed locally. A background pass then tags it, picks out people, places and projects, and updates the summaries. It also drafts a new life summary for you to review; that draft never replaces yours on its own.',
+      },
+    ],
+    note: 'Search, indexing and export run on your machine at no cost. Every Claude call goes through your spend caps.',
+    link: {
+      label: 'read the full technical write-up',
+      href: 'https://github.com/ktocdev/main-character/blob/main/HOW-IT-WORKS.md',
+    },
+  },
   demo: {
     eyebrow: 'try the demo',
     body: 'Talk with the companion about a sample journal before you write your own.',
