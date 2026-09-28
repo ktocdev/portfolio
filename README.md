@@ -66,6 +66,53 @@ auto-load that filename. The number reaches the PDF, while a plain
 it with CSS. As a backstop, `npm run deploy` runs `scripts/check-no-phone.mjs`
 over the export and refuses to upload if a phone number shows up there.
 
+## The blog
+
+Posts are markdown files in `src/content/blog/`, rendered to static HTML at
+build time. There is no separate blog build: `npm run build` and
+`npm run deploy` cover it.
+
+```bash
+npm run new-post -- "Post title"   # scaffold a draft, dated today
+npm run dev                        # preview at /blog/<slug>/, drafts included
+npm run deploy                     # publish, once `draft: false`
+```
+
+A post is `YYYY-MM-DD-slug.md`. The URL is `/blog/<slug>/`; the date prefix
+only keeps the folder in order.
+
+```md
+---
+title: Post title
+date: 2026-09-27
+summary: One or two sentences for the index and link previews.
+tags: [ai, rag]        # optional
+draft: true            # shows in `npm run dev`, left out of production builds
+---
+```
+
+A missing title, summary or date, a misnamed file, or two posts with one slug
+fails the build rather than deploying a broken page. Put images in
+`public/blog/<slug>/` and reference them from the root,
+`![Alt text](/blog/<slug>/photo.jpg)`.
+
+Code blocks are highlighted by [rehype-pretty-code](https://rehype-pretty.pages.dev)
+(Shiki, GitHub light/dark themes that follow the site's theme switch) and get
+a copy icon, in the file-name bar when a block has one. The fence meta
+supports `title="file.ts"`, `caption="…"`, `showLineNumbers`, line
+highlights `{2,4-6}` and word highlights `/word/`; inline code takes a
+language with `` `code{:ts}` ``. `2026-09-27-markdown-reference.md`
+is a permanent draft that exercises all of it, for checking styles in
+`npm run dev`.
+
+Until the first post is published the blog is effectively hidden: the footer
+link and sitemap entries only appear once one exists. It is linked from the
+footer rather than the primary nav while there are only a few posts; add it to
+`NAV` in `src/content/site.ts` to promote it.
+
+The deploy's phone-number guard scans every page, posts included, so a code
+sample with a US-phone-shaped number (`555-123-4567`) will stop a deploy.
+
 ## Structure
 
 ```
@@ -79,13 +126,15 @@ src/
     contact/             Contact
     about/               About
     cookies/             Cookie settings (analytics consent)
+    blog/                blog index and [slug] post pages (one shared stylesheet)
     not-found.tsx        themed 404
     robots.ts            /robots.txt
     sitemap.ts           /sitemap.xml
   components/
     SiteHeader           wordmark + primary nav with a sliding current-page indicator
     PageTransition       page container: exit fade, page loader, zone-by-zone rise
-    SiteFooter           copyright, cookies link, email, theme control
+    SiteFooter           copyright, blog and cookies links, email, theme control
+    CopyCodeButtons      adds copy icon buttons to a post's code blocks after hydration
     ThemeToggle          three-state Auto / Light / Dark, persisted
     ButtonLink           the site's one filled button (internal link or download)
     Figure               the site's one imagery treatment (4 variants)
@@ -100,7 +149,9 @@ src/
     site.ts              nav, skills, contacts, per-page copy, image alt text, analytics IDs
     projects.ts          project data, case-study notes, slide manifests
     resume.ts            resume: summary, experience, skills, projects, contact
+    blog/                blog posts, one markdown file each
   lib/
+    blog.ts              reads, validates and renders the posts (build time only)
     consent.ts           shared consent storage key + change event
     motion.ts            the rise stagger: timings, zone finding, image load gate
     nowrap.tsx           keeps hyphenated names (nebula-nuxt) on one line
@@ -114,6 +165,7 @@ scripts/
   flatten-segment-files.mjs   post-build fix for a Windows-only Next export bug
   pdf.mjs, print-env.mjs      resume PDF and phone-number env loading
   check-no-phone.mjs          deploy guard
+  new-post.mjs                scaffolds a draft blog post
 ```
 
 All copy lives in `src/content/` as typed constants, never inline in a

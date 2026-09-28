@@ -1,0 +1,53 @@
+/* Icon button. Without a file-name bar it overlays the top-right corner of the
+   code: the figure is a grid whose "code" area holds both the <pre> and this
+   button (blog.module.css). With a bar it sits at the bar's right end instead,
+   where it covers nothing. It looks the same in both places: bare by default,
+   a border on hover, border and fill while pressed or showing "Copied". The
+   border is always present, just transparent, so no state shifts the layout. */
+.button {
+  grid-area: code;
+  justify-self: end;
+  align-self: start;
+  display: inline-flex;
+  align-items: center;
+  margin: 0.45rem;
+  padding: 0.3rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--muted);
+}
+
+.button:hover {
+  border-color: var(--border-control);
+  color: var(--accent);
+}
+
+.button:active,
+.button[data-copied] {
+  border-color: var(--border-control);
+  background: var(--surface-strong);
+  color: var(--accent);
+}
+
+.button svg {
+  flex: none;
+}
+
+/* In the file-name bar: flush right. The bar is flex in blog.module.css once
+   it carries a button; the negative margins keep the bar its original height. */
+:global([data-has-copy]) > .button {
+  margin: -0.3rem -0.3rem -0.3rem auto;
+}
+
+/* "Copied" beside the icon for two seconds. Always rendered, never
+   display:none, so screen readers announce it as a live region. */
+.status {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-xs);
+  letter-spacing: var(--tracking-mono);
+}
+
+.status:not(:empty) {
+  margin-right: 0.4rem;
+}
