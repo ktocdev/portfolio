@@ -197,6 +197,7 @@ export const PROJECTS: Project[] = [
       'This might be good for people who want to find patterns in their life, remember things better, gain perspective through reflection, work toward a goal, or just enjoy feeling like the main character in their own story.',
     ],
     links: [
+      { label: 'Main Character site', href: '/main-character/' },
       { label: 'Try the demo', href: '/main-character/demo/' },
       { label: 'GitHub', href: 'https://github.com/ktocdev/main-character' },
     ],

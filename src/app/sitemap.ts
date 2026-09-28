@@ -6,9 +6,10 @@ import { getAllPosts } from '@/lib/blog';
 /* Static export: emitted once at build time as /sitemap.xml. */
 export const dynamic = 'force-static';
 
-/* The primary nav plus the two pages linked only from within: the full
-   resume (from /resume) and cookies (from the footer). */
-const ROUTES = [...NAV.map((item) => item.href), '/cookies'];
+/* The primary nav plus the pages linked only from within: the full resume
+   (from /resume), cookies (from the footer) and the Main Character splash
+   (from /projects). */
+const ROUTES = [...NAV.map((item) => item.href), '/cookies', '/main-character'];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const pages: MetadataRoute.Sitemap = ROUTES.map((path) => ({
