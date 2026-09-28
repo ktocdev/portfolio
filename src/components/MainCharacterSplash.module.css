@@ -9,6 +9,7 @@
   --mc-text: #e8e0d5;
   --mc-text-dim: #a99f92;
   --mc-accent: #d99e5b;
+  --mc-accent-hover: #e8b377;
   --mc-accent-dim: #8a6a44;
   --mc-border: #3d362f;
 
@@ -333,10 +334,11 @@
   color: var(--mc-accent);
 }
 
-/* Buttons follow rag-journal's components.css: primary is `button.send`
-   (no hover change), secondary is `quiet` (text to --text over --bg-raised).
-   Colours are set on :hover too, because these are links and the portfolio's
-   global a:hover would otherwise swap in its own accent. */
+/* Buttons follow rag-journal's components.css: primary is `button.send`,
+   secondary is `quiet` (text to --text over --bg-raised). The app gives send
+   no hover, so the primary takes the splash handoff's: a lighter amber fill,
+   text unchanged. Text colour is set on :hover too, because these are links
+   and the portfolio's global a:hover would otherwise swap in its own accent. */
 .primary,
 .secondary {
   display: inline-flex;
@@ -362,6 +364,10 @@
 .primary:hover {
   background: var(--mc-accent);
   color: var(--mc-bg);
+}
+
+.primary:hover {
+  background: var(--mc-accent-hover);
 }
 
 .footer {
