@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import { $ } from './core.js';
 import { showTab } from './main.js';
+import { label } from './nav.js';
 
 // ---- help ----
 // The sections are an accordion of <details>. A jump pill (or any in-page
@@ -13,7 +14,7 @@ const JUMPS = ['write', 'chat', 'search', 'history', 'entities', 'triage', 'cate
 function reveal(id) {
   const target = document.getElementById(id);
   if (!target) return;
-  const sec = target.closest('details.help-sec');
+  const sec = target.closest('details.disclosure');
   if (sec) sec.open = true;
   const pane = $('help');
   requestAnimationFrame(() => {
@@ -28,7 +29,7 @@ function markActive(id) {
 }
 
 function updateAllLabel() {
-  const secs = [...document.querySelectorAll('#help details.help-sec')];
+  const secs = [...document.querySelectorAll('#help details.disclosure')];
   $('help-all').textContent = secs.every(s => s.open) ? 'collapse all' : 'expand all';
 }
 
@@ -39,17 +40,17 @@ export function init() {
     const b = document.createElement('button');
     b.className = 'chip sm';
     b.dataset.jump = id;
-    b.textContent = id;
+    b.textContent = label(id);
     b.onclick = () => { markActive(id); reveal('h-' + id); };
     pills.appendChild(b);
   }
   $('help-all').onclick = () => {
-    const secs = [...document.querySelectorAll('#help details.help-sec')];
+    const secs = [...document.querySelectorAll('#help details.disclosure')];
     const all = secs.every(s => s.open);
     secs.forEach(s => { s.open = !all; });
     updateAllLabel();
   };
-  document.querySelectorAll('#help details.help-sec').forEach(s =>
+  document.querySelectorAll('#help details.disclosure').forEach(s =>
     s.addEventListener('toggle', updateAllLabel));
   updateAllLabel();
   document.querySelectorAll('#help [data-tab-link]').forEach(a =>

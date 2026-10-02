@@ -45,21 +45,29 @@
   // ---- the script ----
   // Whatever a visitor types, the next scripted message is what gets sent,
   // and its reply was written for it (mock_fixtures/demo_script.json). The
-  // swap happens in the box itself, before the app's own send handler reads
-  // it, so the view code is untouched: it shows and posts the scripted text
-  // as if it had been typed. The write tab and the chat tab keep their own
-  // place in their scripts; the write script carries on across a close.
+  // page's half -- the swap, the pre-fill, the notice -- is demo-script.js,
+  // shared with the local demo journal; this is the server's half, as
+  // demo_script.py is locally: where the visitor is, and which reply a send
+  // gets. Change one, change the other. The write tab and the ask tab keep
+  // their own place in their scripts; the write script carries on across a
+  // close.
   let script = {write: [], lookup: [], chips: []};
   let writeAt = 0;             // the next write step
   let lookupAt = 0;            // the next lookup question
   const END = "That's the end of the demo script. Refresh the page to start "
     + 'again, or clone Main Character from https://github.com/ktocdev/main-character '
     + 'to run it with your own journal.';
+  // An empty box past the end says so before anything is sent.
+  const END_HINT = "that's the end of the demo script. Refresh to start again";
+  const NOTICE = 'Type anything and press send. Your text is swapped for the next '
+    + "entry in Jordan's week, and the reply was written for that entry. The box "
+    + "shows what's coming next. Nothing is saved, so refresh to start over.";
 
   // The lookup log and the write box's draft live in localStorage, so a reload
   // would bring back text from a run of the script that no longer exists.
   // Nothing is stored in the web demo; start clean.
-  for (const key of ['rag_lookup', 'rag_draft', 'rag_pending_save']) {
+  // The notice's "already seen" goes too, so it opens on every load.
+  for (const key of ['rag_lookup', 'rag_draft', 'rag_pending_save', 'rag_demo_notice']) {
     try { localStorage.removeItem(key); } catch { }
   }
 
@@ -272,51 +280,23 @@
     return unscripted(text, lookupAt, script.lookup);
   }
 
-  // ---- the swap ----
-  // A capture-phase listener on the document runs before the buttons' own
-  // handlers, so the box already holds the scripted text when they read it.
-  // An empty box is left alone: the app does nothing with it, as before.
-  const RIGHT_BUTTON = {entry: 'entry-send', chat: 'chat-send'};
-
-  function swapWrite(e, button) {
-    const box = document.getElementById('entry-text');
-    if (!box || !box.value.trim()) return;
-    const noReply = button.id === 'entry-send'
-      && document.getElementById('entry-noreply')?.checked;
-    const step = script.write[noReply ? nextEntry(writeAt) : writeAt];
-    if (!step) return;               // the script is over: sent as typed
-    box.value = step.text;
-    if (!noReply && button.id !== RIGHT_BUTTON[step.send]) {
-      // the next step is an entry and they pressed send, or the other way round
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      document.getElementById(RIGHT_BUTTON[step.send]).click();
-    }
-  }
-
-  function swapLookup() {
-    const box = document.getElementById('chat-text');
-    if (!box || !box.value.trim()) return;
-    if (script.chips.some(c => c.text === box.value.trim())) return;
-    const step = script.lookup[lookupAt];
-    if (step) box.value = step.text;
-  }
-
-  document.addEventListener('click', e => {
-    const button = e.target.closest && e.target.closest('#entry-send, #chat-send, #lookup-send');
-    if (!button || button.disabled || !rec) return;
-    if (button.id === 'lookup-send') swapLookup();
-    else swapWrite(e, button);
-  }, true);
-
-  document.addEventListener('keydown', e => {
-    if (e.key !== 'Enter' || e.shiftKey || !rec) return;
-    if (e.target && e.target.id === 'chat-text') swapLookup();
-  }, true);
-
   async function reflect() {
     const reply = await pickReply('reflect\n' + current.messages.length);
     return stream(reply, {}, () => current.messages.push({role: 'companion', text: reply, ts: nowStamp()}));
+  }
+
+  // GET /api/demo/script, as demo_script.public: the texts and where the
+  // visitor is, never the replies. The notice's key never changes, and the
+  // "seen" record is cleared on load, so the notice opens on every load.
+  function scriptState() {
+    return {
+      write: script.write.map(w => ({send: w.send, text: w.text})),
+      lookup: script.lookup.map(q => q.text),
+      chips: script.chips.map(c => c.text),
+      write_at: writeAt, lookup_at: lookupAt,
+      end_hint: END_HINT,
+      notice: {eyebrow: 'web demo', body: NOTICE, key: 'web-demo'},
+    };
   }
 
   // ---- close ----
@@ -507,6 +487,7 @@
       case '/api/seed': return seedStatus();
       case '/api/seed/download': return seedDownload(q.get('which') === 'candidate' ? 'candidate' : 'current');
       case '/api/search': return search(q.get('q') || '', q.get('mode') || 'semantic');
+      case '/api/demo/script': return json(scriptState());
       default: return fromCapture(keyOf(u));
     }
   }

@@ -105,7 +105,7 @@ function renderEmpty() {
   el.appendChild(suggestBlock('find a moment',
     'Search every entry you’ve written. It runs on this computer, so it is free and instant and never calls Claude. '
     + '<em>meaning</em> finds passages like the one you describe; <em>exact text</em> finds the literal words, newest first. '
-    + 'To ask a question and get an answer, use chat.',
+    + 'To ask a question and get an answer, use the ask tab.',
     PROMPTS.map(p => [p, () => { $('search-q').value = p; runSearch(); }])));
 }
 
@@ -167,7 +167,7 @@ function renderSearchResults(q) {
     }
     if (hit.match === 'related') {
       const rel = document.createElement('span');
-      rel.className = 'related-tag';
+      rel.className = 'badge sm outline';
       rel.textContent = 'related';
       rel.title = "close in meaning, though it doesn't contain the exact words";
       h.appendChild(rel);
