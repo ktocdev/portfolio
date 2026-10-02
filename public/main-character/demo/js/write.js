@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-import { $, api, download, esc, refreshStatus } from './core.js';
+import { $, api, download, esc, refreshStatus, storeKey } from './core.js';
 import { state } from './state.js';
 import { addMsg, streamInto, composerBusy, anchorTop } from './conversation.js';
 import { renderSessionPart, addSessionBraid, loadHistory } from './history.js';
 import * as popover from './popover.js';
 import { tipOf, setTip } from './tooltip.js';
+
+const DRAFT = storeKey('rag_draft');
 
 // ---- draft persistence + growing textarea ----
 // the write box survives an accidental refresh or tab close; it grows with
@@ -29,14 +31,20 @@ function autosizeEntry() {
   const max = Math.max(120, panelH - chrome - LOG_PEEK);
   t.style.height = Math.min(t.scrollHeight + 2, max) + 'px';
 }
+// A send has finished, whatever came of it. The demo journal's script
+// (demo-script.js) listens, to show the next scripted message; nothing
+// else does.
+function turnDone() {
+  document.dispatchEvent(new CustomEvent('mc:turn', {detail: {tab: 'write'}}));
+}
 function clearComposer() {
   $('entry-text').value = '';
-  localStorage.removeItem('rag_draft');
+  localStorage.removeItem(DRAFT);
   autosizeEntry();
 }
 function restoreDraft(text) {
   $('entry-text').value = text;
-  localStorage.setItem('rag_draft', text);
+  localStorage.setItem(DRAFT, text);
   autosizeEntry();
 }
 
@@ -46,7 +54,7 @@ function restoreDraft(text) {
 // keeps its id with the draft, so saving that same text again is recognised
 // as a retry of it -- not a second entry. Once a save is confirmed the id is
 // spent: writing the same words again later is a new entry, and counts.
-const PENDING_SAVE = 'rag_pending_save';
+const PENDING_SAVE = storeKey('rag_pending_save');
 function newSaveId() {
   if (crypto.randomUUID) return crypto.randomUUID();
   return Array.from(crypto.getRandomValues(new Uint8Array(16)),
@@ -94,6 +102,7 @@ export async function closeSession(question = 'Close this chapter?') {
   if (!r) return;
   $('write-log').innerHTML = '';
   $('entry-saved').textContent = `chapter closed and saved as "${r.title}".`;
+  document.dispatchEvent(new CustomEvent('mc:closed'));
   trackCloseProgress();
   state.sessionSel = 'current';
   if (state.activeTab === 'history') await loadHistory();
@@ -302,12 +311,12 @@ function initStamp() {
 }
 
 export function init() {
-  $('entry-text').value = localStorage.getItem('rag_draft') || '';
+  $('entry-text').value = localStorage.getItem(DRAFT) || '';
   autosizeEntry();
   initStamp();
   if ($('entry-text').value) startStamp();   // a restored draft is already begun
   $('entry-text').addEventListener('input', () => {
-    localStorage.setItem('rag_draft', $('entry-text').value);
+    localStorage.setItem(DRAFT, $('entry-text').value);
     autosizeEntry();
   });
 
@@ -320,7 +329,7 @@ export function init() {
     const el = addMsg('companion thinking', '');
     anchorTop(you);   // stay on your own message while the reply streams in
     try { await streamInto(el, '/api/chat', {message: text}); }
-    finally { composerBusy(false); $('entry-text').focus(); }
+    finally { composerBusy(false); $('entry-text').focus(); turnDone(); }
     askToCloseIfLong();
   };
 
@@ -423,7 +432,7 @@ export function init() {
           $('entry-saved').textContent = unreached ? UNREACHED
             : 'save failed, but your draft is untouched';
         }
-      } finally { composerBusy(false); $('entry-text').focus(); }
+      } finally { composerBusy(false); $('entry-text').focus(); turnDone(); }
       return;
     }
 
@@ -462,6 +471,6 @@ export function init() {
         $('entry-saved').textContent = res ? 'save failed, but your draft is untouched'
           : UNREACHED;
       }
-    } finally { composerBusy(false); $('entry-text').focus(); }
+    } finally { composerBusy(false); $('entry-text').focus(); turnDone(); }
   };
 }
