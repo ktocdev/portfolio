@@ -39,5 +39,4 @@ yarn-error.log*
 node_modules
 
 # Design-handoff files
-design_handoff_portfolio/
 design_handoff_splash/
