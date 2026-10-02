@@ -11,6 +11,33 @@ export const dynamic = 'force-static';
    (from /projects). */
 const ROUTES = [...NAV.map((item) => item.href), '/cookies', '/main-character'];
 
+/* Not a Next route — a static app dropped into public/ (see next.config.ts) —
+   so it needs its own entry rather than joining ROUTES. */
+const MAIN_CHARACTER_DEMO = '/main-character/demo';
+
+/* The design system's own pages, kept in sync with its nav list rather than
+   hand-duplicated — see public/main-character/demo/design/design.js PAGES.
+   Unlike the demo root, these are plain .html files (no directory to index),
+   so their URLs keep the extension rather than a trailing slash. */
+const DESIGN_SYSTEM_PAGES = [
+  'tokens.html',
+  'card.html',
+  'button.html',
+  'input.html',
+  'textarea.html',
+  'select.html',
+  'checkbox.html',
+  'toggle.html',
+  'badge.html',
+  'button-group.html',
+  'tooltip.html',
+  'action-menu.html',
+  'disclosure.html',
+  'search-bar.html',
+  'chat-bar.html',
+  'modal.html',
+];
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const pages: MetadataRoute.Sitemap = ROUTES.map((path) => ({
     /* trailingSlash: true — match the URLs the export actually serves. */
@@ -18,6 +45,26 @@ export default function sitemap(): MetadataRoute.Sitemap {
     changeFrequency: 'monthly',
     priority: path === '/' ? 1 : 0.7,
   }));
+
+  pages.push({
+    url: `${SITE.url}${MAIN_CHARACTER_DEMO}/`,
+    changeFrequency: 'monthly',
+    priority: 0.6,
+  });
+
+  pages.push({
+    url: `${SITE.url}${MAIN_CHARACTER_DEMO}/design/`,
+    changeFrequency: 'monthly',
+    priority: 0.5,
+  });
+
+  for (const page of DESIGN_SYSTEM_PAGES) {
+    pages.push({
+      url: `${SITE.url}${MAIN_CHARACTER_DEMO}/design/${page}`,
+      changeFrequency: 'monthly',
+      priority: 0.4,
+    });
+  }
 
   /* The blog joins once something is published (see SiteFooter). */
   const posts = getAllPosts();
