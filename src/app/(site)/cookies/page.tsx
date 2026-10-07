@@ -6,6 +6,7 @@ import styles from './page.module.css';
 
 export const metadata: Metadata = {
   title: 'Cookie settings',
+  alternates: { canonical: '/cookies/' },
   description: 'Choose whether this site uses analytics cookies.',
 };
 

@@ -6,6 +6,7 @@ import styles from './page.module.css';
 
 export const metadata: Metadata = {
   title: 'Contact',
+  alternates: { canonical: '/contact/' },
   description:
     'Based in Chicago. Open to senior and staff roles, design-system architecture, and conversations about AI-augmented engineering.',
 };

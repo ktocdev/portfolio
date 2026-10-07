@@ -6,6 +6,7 @@ import styles from './blog.module.css';
 
 export const metadata: Metadata = {
   title: 'Blog',
+  alternates: { canonical: '/blog/' },
   description: "Notes from Katie O'Connor on design systems, AI engineering, and side projects.",
 };
 

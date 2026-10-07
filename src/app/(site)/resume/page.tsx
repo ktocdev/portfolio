@@ -23,6 +23,7 @@ export const metadata: Metadata = {
      the title the PDF should carry. */
   title: { absolute: `${SITE.name} - Resume` },
   description: RESUME_SUMMARY,
+  alternates: { canonical: '/resume/' },
 };
 
 /* Decorative separator between header items; hidden from assistive tech. */

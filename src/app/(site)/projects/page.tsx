@@ -5,6 +5,7 @@ import { PROJECTS } from '@/content/projects';
 
 export const metadata: Metadata = {
   title: 'Projects',
+  alternates: { canonical: '/projects/' },
   description:
     'Personal work on GitHub plus one design-system case study spanning three generations of a component library.',
 };
