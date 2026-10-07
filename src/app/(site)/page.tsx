@@ -1,7 +1,14 @@
+import type { Metadata } from 'next';
+
 import ButtonLink from '@/components/ButtonLink';
 import Figure from '@/components/Figure';
 import { COPY, IMAGES } from '@/content/site';
 import styles from './page.module.css';
+
+/* Title and description come from the root layout's defaults. */
+export const metadata: Metadata = {
+  alternates: { canonical: '/' },
+};
 
 export default function HomePage() {
   return (

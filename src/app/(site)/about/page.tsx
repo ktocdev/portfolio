@@ -6,6 +6,7 @@ import styles from './page.module.css';
 
 export const metadata: Metadata = {
   title: 'About',
+  alternates: { canonical: '/about/' },
   description:
     "Katie O'Connor lives in Avondale, Chicago, with two cats and a guinea pig, and builds AI-native side projects.",
 };

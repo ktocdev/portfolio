@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import type { MetadataRoute } from 'next';
 
 import { NAV, SITE } from '@/content/site';
@@ -15,28 +18,20 @@ const ROUTES = [...NAV.map((item) => item.href), '/cookies', '/main-character'];
    so it needs its own entry rather than joining ROUTES. */
 const MAIN_CHARACTER_DEMO = '/main-character/demo';
 
-/* The design system's own pages, kept in sync with its nav list rather than
-   hand-duplicated — see public/main-character/demo/design/design.js PAGES.
-   Unlike the demo root, these are plain .html files (no directory to index),
-   so their URLs keep the extension rather than a trailing slash. */
-const DESIGN_SYSTEM_PAGES = [
-  'tokens.html',
-  'card.html',
-  'button.html',
-  'input.html',
-  'textarea.html',
-  'select.html',
-  'checkbox.html',
-  'toggle.html',
-  'badge.html',
-  'button-group.html',
-  'tooltip.html',
-  'action-menu.html',
-  'disclosure.html',
-  'search-bar.html',
-  'chat-bar.html',
-  'modal.html',
-];
+/* The design system's own pages, read from its nav list (PAGES in
+   public/main-character/demo/design/design.js) so a page added upstream joins
+   the sitemap on the next refresh. Cloudflare serves each foo.html at /foo and
+   307s the .html form there, so the sitemap lists the extensionless URL — a
+   redirecting URL can't be indexed. */
+const DESIGN_JS = join(process.cwd(), 'public/main-character/demo/design/design.js');
+
+function designSystemPages(): string[] {
+  const source = readFileSync(DESIGN_JS, 'utf8');
+  const list = source.split('export const PAGES = [')[1]?.split('];')[0] ?? '';
+  const pages = [...list.matchAll(/'([\w-]+)\.html'/g)].map((match) => match[1]);
+  if (pages.length === 0) throw new Error(`sitemap: no design pages found in ${DESIGN_JS}`);
+  return pages;
+}
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const pages: MetadataRoute.Sitemap = ROUTES.map((path) => ({
@@ -58,7 +53,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.5,
   });
 
-  for (const page of DESIGN_SYSTEM_PAGES) {
+  for (const page of designSystemPages()) {
     pages.push({
       url: `${SITE.url}${MAIN_CHARACTER_DEMO}/design/${page}`,
       changeFrequency: 'monthly',
