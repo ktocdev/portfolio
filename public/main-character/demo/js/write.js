@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-import { $, api, download, esc, refreshStatus, storeKey } from './core.js';
+import { $, api, busy, download, esc, refreshStatus, storeKey } from './core.js';
 import { state } from './state.js';
 import { addMsg, streamInto, composerBusy, anchorTop } from './conversation.js';
 import { renderSessionPart, addSessionBraid, loadHistory } from './history.js';
@@ -85,7 +85,9 @@ export function hasNewMaterial(messages) {
 // `question` opens the one confirm the close asks: the menu's plain one, or
 // askToCloseIfLong's. Returns false when the author says no, so that caller
 // can tell a "not yet" from a close that failed.
-export async function closeSession(question = 'Close this chapter?') {
+// `btn`, when given, spins until the server has the chapter; the progress
+// line takes over from there.
+export async function closeSession(question = 'Close this chapter?', btn = null) {
   // A pending candidate is retired, not carried: generate_candidate folds the
   // new archive into the *live* seed, so an unuploaded candidate's integration
   // is backed up and then skipped in the seed's lineage. Say so before the
@@ -98,12 +100,17 @@ export async function closeSession(question = 'Close this chapter?') {
       + 'but drops out of the summary. Download and upload it first to keep it.\n'
     : '';
   if (!confirm(question + pending + '\n\nYour side of it becomes a journal entry, and tagging, entities, summaries, dream extraction, and the life summary candidate run in the background. The next chapter starts empty.')) return false;
-  const r = await api('/api/sessions/close', {});
+  // Watched from the click, not from the answer: saving the chapter (a title
+  // call, embedding its chunks) is the first step and takes seconds itself.
+  const watch = trackCloseProgress();
+  let r = null;
+  try { r = await busy(btn, () => api('/api/sessions/close', {})); }
+  finally { if (!r) watch.cancel(); }
   if (!r) return;
+  watch.answered();
   $('write-log').innerHTML = '';
   $('entry-saved').textContent = `chapter closed and saved as "${r.title}".`;
   document.dispatchEvent(new CustomEvent('mc:closed'));
-  trackCloseProgress();
   state.sessionSel = 'current';
   if (state.activeTab === 'history') await loadHistory();
   refreshStatus();
@@ -140,10 +147,23 @@ export function askToCloseIfLong() {
 // After a close, the memory pipeline runs as background tasks — so the close
 // response returns before any of it has happened (item 1). Poll the server's
 // progress record and show which stage is running instead of one static line.
+// Polling starts as the close is sent, since saving the chapter is the first
+// stage; until it answers, a record that isn't active is the previous close's
+// (this one isn't armed yet) and is skipped.
 // The per-call delays mock mode adds are what make each stage visible without
 // a real key; against a live key the stages are genuinely long. When the seed
 // stage lands, its candidate banner appears the way watching /api/seed used to.
 let closePoll = null;
+let closeWatch = 0;   // which close the box belongs to, for late ticks
+// The finished list stays up until the next entry is sent, so a close that
+// ran while the author looked away still says it's done when they look back.
+let closeFinished = false;
+function clearFinishedClose() {
+  if (!closeFinished) return;
+  closeFinished = false;
+  const b = $('close-progress');
+  if (b) b.hidden = true;
+}
 const CP_GLYPH = {done: '·', running: '…', failed: '✕', pending: '·'};
 function renderCloseProgress(steps, done) {
   const box = $('close-progress');
@@ -158,35 +178,47 @@ function renderCloseProgress(steps, done) {
 }
 function trackCloseProgress() {
   clearInterval(closePoll);
+  const mine = ++closeWatch;
+  const live = () => mine === closeWatch;
   let seedShown = false;
   let tries = 0;
+  let answered = false;
+  closeFinished = false;
+  renderCloseProgress([{label: 'saving the chapter as a journal entry', status: 'running'}], false);
+  const hide = () => { const b = $('close-progress'); if (b) b.hidden = true; };
   const stop = () => {
     clearInterval(closePoll);
     refreshSeedMenu();
     refreshStatus();  // entity counts change after the background refresh
-    setTimeout(() => { const b = $('close-progress'); if (b) b.hidden = true; }, 8000);
+    if (live()) closeFinished = true;
   };
   const tick = async () => {
     let p;
     try { p = await (await fetch('/api/sessions/close/progress')).json(); }
     catch {
       // transient — the next tick tries again, but a run of failures still
-      // has to hit the same ~120 s ceiling normal polling does, or a
-      // persistently erroring endpoint polls forever.
-      if (++tries > 120) stop();
+      // has to hit the same ceiling normal polling does, or a persistently
+      // erroring endpoint polls forever.
+      if (live() && ++tries > 600) stop();
       return;
     }
+    if (!live() || (!answered && !p.active)) return;
     renderCloseProgress(p.steps, p.done);
     if (!seedShown && p.steps.some(s => s.key === 'seed' && s.status === 'done')) {
       seedShown = true;
       refreshSeedMenu();
     }
-    // ~120 s ceiling so a stuck pipeline can't poll forever; the pipeline is
-    // seconds in mock mode and well under this against a real key.
-    if (p.done || ++tries > 120) stop();
+    // a ~10 minute ceiling so a stuck pipeline can't poll forever; the server
+    // clears `active` however each stage ends, and in mock mode the whole
+    // close runs close to two minutes.
+    if ((answered && p.done) || ++tries > 600) stop();
   };
   closePoll = setInterval(tick, 1000);
   tick();
+  return {
+    answered() { answered = true; },
+    cancel() { if (live()) { clearInterval(closePoll); closeWatch++; hide(); } },
+  };
 }
 
 // ---- the seed ritual (close → download candidate → edit in VS Code → upload) ----
@@ -324,7 +356,7 @@ export function init() {
     const text = $('entry-text').value.trim();
     if (!text) return;
     clearComposer();
-    composerBusy(true);
+    composerBusy(true, $('chat-send'));
     const you = addMsg('you', text);
     const el = addMsg('companion thinking', '');
     anchorTop(you);   // stay on your own message while the reply streams in
@@ -334,7 +366,7 @@ export function init() {
   };
 
   $('reflect-btn').onclick = async () => {
-    composerBusy(true);
+    composerBusy(true, $('reflect-btn'));
     const el = addMsg('companion thinking', '');
     anchorTop(el);   // no message of your own here — hold on the reply itself
     try { await streamInto(el, '/api/reflect', {}); }
@@ -372,7 +404,7 @@ export function init() {
     const f = $('seed-upload-file').files[0];
     if (!f) return;
     const text = await f.text();
-    const r = await api('/api/seed/upload', {text});
+    const r = await busy($('seed-upload-btn'), () => api('/api/seed/upload', {text}), $('seed-banner-upload'));
     if (r) $('entry-saved').textContent = `life summary updated from ${f.name}. Every new turn opens with it`;
     $('seed-upload-file').value = '';
     refreshSeedMenu();
@@ -397,6 +429,7 @@ export function init() {
   $('entry-send').onclick = async () => {
     const text = $('entry-text').value.trim();
     if (!text) return;
+    clearFinishedClose();
     const ts = entryStamp ? stampString(entryStamp) : null;
 
     // No-reply mode (item 3): save the entry and skip the companion call
@@ -406,7 +439,7 @@ export function init() {
 
     if ($('entry-noreply').checked) {
       clearComposer();
-      composerBusy(true);
+      composerBusy(true, $('entry-send'));
       $('entry-saved').textContent = 'saving…';
       const you = addMsg('you', text);
       anchorTop(you);
@@ -437,7 +470,7 @@ export function init() {
     }
 
     clearComposer();            // shrink the box back to default size right away
-    composerBusy(true);
+    composerBusy(true, $('entry-send'));
     $('entry-saved').textContent = 'saving…';
     const you = addMsg('you', text);
     const el = addMsg('companion thinking', '');
