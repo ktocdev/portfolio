@@ -13,7 +13,7 @@
   --mc-accent-dim: #8a6a44;
   --mc-border: #3d362f;
 
-  --mc-paper: #f1ece4;
+  --mc-paper: #fef5ea; /* amber-50: cream stock, not grey-white */
   --mc-paper-text: #38322b;
   --mc-paper-text-dim: #6b6258;
   --mc-paper-accent: #9c6021;
@@ -74,9 +74,16 @@
 .card {
   position: relative;
   box-sizing: border-box;
-  width: 100%;
-  max-width: 34rem;
-  padding: clamp(2rem, 5vw, 3.2rem) clamp(1.6rem, 5vw, 3rem);
+  /* A sheet of loose leaf: portrait, 8.5 by 11, narrow enough that its full
+     height fits the stage. Content taller than the ratio (a very narrow
+     phone) still grows the card, since aspect-ratio yields to content. */
+  width: min(100%, 25rem, (100svh - 4rem) * 8.5 / 11);
+  aspect-ratio: 8.5 / 11;
+  /* Title-page layout: eyebrow at the head, contents at the foot, and the
+     title centred in the space between (auto margins on .title). */
+  display: flex;
+  flex-direction: column;
+  padding: clamp(2rem, 5vw, 2.8rem) clamp(1.6rem, 4vw, 2.4rem) 3.4rem;
   background: var(--mc-paper);
   color: var(--mc-paper-text);
   box-shadow:
@@ -107,8 +114,37 @@
   pointer-events: none;
 }
 
+/* Gutter: the card is a right-hand page, so the spine shadow falls along
+   its left edge and fades out across the first few centimetres. */
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3rem;
+  background: linear-gradient(
+    to right,
+    rgba(56, 50, 43, 0.22),
+    rgba(56, 50, 43, 0.06) 40%,
+    rgba(56, 50, 43, 0)
+  );
+  pointer-events: none;
+}
+
+/* Page number, centred at the foot as in front matter. */
+.folio {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 1.5rem;
+  margin: 0;
+  text-align: center;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--mc-paper-text-dim);
+}
+
 .cardEyebrow {
-  margin: 0 0 1.4rem;
+  margin: 0 0 2rem;
   font: 0.72rem var(--mc-sans);
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -116,21 +152,23 @@
 }
 
 .title {
-  margin: 0;
+  margin: auto 0;
   min-height: 1.1em;
-  font-size: clamp(2rem, 6vw, 3rem);
+  font-size: clamp(1.8rem, 5vw, 2.3rem);
   font-style: italic;
   font-weight: 400;
   line-height: 1.1;
   color: var(--mc-paper-accent);
 }
 
-.subtitle {
-  margin: 0.7rem 0 0;
-  min-height: 1.35em;
-  font-size: clamp(1.05rem, 2.4vw, 1.35rem);
-  line-height: 1.35;
-  color: var(--mc-paper-text);
+/* The app's circle mark beside the title, there from the start while the
+   name types in after it. */
+.titleMark {
+  display: inline-block;
+  width: 1.1em;
+  height: 1.1em;
+  margin-right: 0.35em;
+  vertical-align: -0.2em;
 }
 
 .caret {
@@ -156,17 +194,24 @@
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
-  margin-top: 1.8rem;
+  margin-top: 2rem;
   padding-top: 1.1rem;
   border-top: 1px solid var(--mc-paper-border);
   font: 0.95rem var(--mc-sans);
 }
 
+/* Laid out like a book's contents: title, dot leader, page number. Baseline
+   alignment puts the empty leader's dotted bottom edge on the text baseline. */
 .cardLink {
   display: flex;
-  align-items: center;
-  gap: 0.7rem;
+  align-items: baseline;
+  gap: 0.5rem;
+  /* Padding, not centering, sizes the 44px tap target: baseline alignment
+     would otherwise pin the text to the top of a min-height box. */
+  box-sizing: border-box;
   min-height: 44px;
+  padding-block: calc((44px - 1.2em) / 2);
+  line-height: 1.2;
   color: var(--mc-paper-text-dim);
   text-decoration: none;
 }
@@ -177,6 +222,16 @@
 
 .cardLink:focus-visible {
   outline-color: var(--mc-paper-accent);
+}
+
+/* Round, evenly spaced dots sitting on the baseline like printed periods;
+   a dotted border renders too fine at this size to read as a leader. */
+.cardLeader {
+  flex: 1;
+  min-width: 1.5rem;
+  height: 2px;
+  background: radial-gradient(circle, currentColor 0.9px, transparent 1.3px) 0 0 / 7px 2px repeat-x;
+  opacity: 0.55;
 }
 
 .cardNum {
@@ -231,14 +286,29 @@
 .about {
   background: var(--mc-bg);
   border-top: 1px solid var(--mc-border);
-  padding: clamp(3rem, 8vw, 6rem) clamp(1rem, 4vw, 2rem);
+  padding-top: clamp(3rem, 8vw, 6rem);
   /* Keeps the footer scrollable clear of the cookie banner while it is up. */
   padding-bottom: calc(clamp(3rem, 8vw, 6rem) + var(--consent-inset, 0px));
 }
 
+/* ---------- Interludes ---------- */
+
+/* Full-width bands of stage between the text columns, shorter than the hero
+   so each fits the viewport whole: they play once fully in view. */
+.interlude {
+  position: relative;
+  height: clamp(14rem, 42svh, 22rem);
+  margin: 3.2rem 0;
+  background: var(--mc-stage);
+  border-block: 1px solid var(--mc-border);
+}
+
+/* The section's side padding lives here so the interludes run edge to edge;
+   max-width is the content box, so the text column stays 46rem. */
 .aboutInner {
   max-width: 46rem;
   margin: 0 auto;
+  padding: 0 clamp(1rem, 4vw, 2rem);
   display: flex;
   flex-direction: column;
   gap: 2.6rem;
@@ -323,6 +393,70 @@
   line-height: 1.5;
   color: var(--mc-accent-dim);
   font-variant-numeric: tabular-nums;
+}
+
+/* Try the demo: a raised card, so it reads as something to do rather than
+   a second how-it-works. The steps are a grid of actions, each tagged with
+   the app control it uses, instead of a numbered sequence. */
+.demoCard {
+  padding: clamp(1.4rem, 4vw, 2.2rem);
+  background: var(--mc-bg-raised);
+  border: 1px solid var(--mc-border);
+  border-radius: 14px;
+  gap: 1.2rem;
+}
+
+.demoFacts {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.demoFacts li {
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--mc-border);
+  border-radius: 999px;
+  font: 0.8rem var(--mc-sans);
+  color: var(--mc-text-dim);
+}
+
+.demoSteps {
+  margin: 0.4rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 1rem;
+}
+
+.demoStep {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 1.1rem 1.2rem 1.2rem;
+  background: var(--mc-bg);
+  border: 1px solid var(--mc-border);
+  border-radius: 10px;
+}
+
+/* The control's label, drawn like the app's quiet button. */
+.demoUi {
+  padding: 0.15rem 0.6rem;
+  border: 1px solid var(--mc-accent-dim);
+  border-radius: 999px;
+  font: 0.75rem var(--mc-sans);
+  color: var(--mc-accent);
+}
+
+.demoStepTitle {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: var(--mc-text);
 }
 
 /* The app's link: dim at rest, amber on hover (rag-journal base.css). */

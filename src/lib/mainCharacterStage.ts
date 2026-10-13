@@ -4,6 +4,8 @@
  * the handoff's `class Component` (design_handoff_splash/, local only) with
  * its production defaults baked in: the "distance" entrance and no walk cycle.
  * Colours, timings and geometry are final from the design; keep them exact.
+ * The interludes lower on the page reuse it with other subjects, a quicker
+ * timeline and, on alternate rows, the scene mirrored.
  */
 
 /** Seconds from the start of the intro. */
@@ -15,8 +17,45 @@ export const TIMELINE = {
   figEnd: 4.6,
   pageStart: 4.9,
   typeStart: 5.7,
-  end: 9.6,
+  end: 7.8,
 } as const;
+
+/** The beats a stage itself draws; the hero's page and typing are DOM. */
+export type StageTimeline = Record<
+  'beamOn' | 'sweepStart' | 'sweepEnd' | 'figStart' | 'figEnd',
+  number
+>;
+
+/** A quicker run of the same beats for the interludes lower on the page. */
+export const INTERLUDE_TIMELINE = {
+  beamOn: 0.2,
+  sweepStart: 0.6,
+  sweepEnd: 1.9,
+  figStart: 2.1,
+  figEnd: 3.6,
+} as const;
+
+/** What walks into the light: a shape standing on (0, 0), `h` tall. */
+export type Subject = {
+  draw: (c: CanvasRenderingContext2D, h: number) => void;
+  /** Full height on a stage `H` tall. */
+  height: (H: number) => number;
+  /** Where the shadow starts, in px from the base: back (away from the
+      light) and down. The figure's feet hide a gap that a wide or round
+      base shows, so objects tuck theirs up under the base, where the body
+      drawn over it hides the overlap. Defaults to the figure's. */
+  shadowOffset?: { back: number; down: number };
+  /** A soft contact shadow on the floor under the base, in units of the
+      height: centre `x` and width `w`. Grounds objects whose base is too
+      thin to cast a visible shadow of its own (a keyboard, a curved body). */
+  contact?: { x: number; w: number };
+  /** A faint second pass over the silhouette, such as a lit screen. */
+  detail?: {
+    color: string;
+    alpha: number;
+    draw: (c: CanvasRenderingContext2D, h: number) => void;
+  };
+};
 
 /** Smoothstep of t across [a, b], clamped. */
 function sm(t: number, a: number, b: number) {
@@ -70,7 +109,148 @@ function figure(ctx: CanvasRenderingContext2D, fh: number) {
   ctx.stroke();
 }
 
-export function createStage(canvas: HTMLCanvasElement) {
+/** Runs `fn` in unit space: (0, 0) on the floor, 1 tall, up is negative y. */
+function unit(c: CanvasRenderingContext2D, h: number, fn: () => void) {
+  c.save();
+  c.scale(h, h);
+  c.lineCap = 'round';
+  c.lineJoin = 'round';
+  fn();
+  c.restore();
+}
+
+function fillRound(c: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+  c.beginPath();
+  c.roundRect(x, y, w, h, r);
+  c.fill();
+}
+
+export const PERSON: Subject = {
+  draw: figure,
+  height: (H) => Math.min(380, Math.max(160, H * 0.36)),
+};
+
+/** A cat sitting side-on, tail swept out along the floor and curling up. */
+export const CAT: Subject = {
+  shadowOffset: { back: 0, down: -2 },
+  contact: { x: 0.14, w: 0.95 },
+  height: (H) => H * 0.27,
+  draw: (c, h) =>
+    unit(c, h, () => {
+      // body: floor forward to a rounded front paw, up the full chest, over
+      // the back and round the haunch
+      c.beginPath();
+      c.moveTo(0.26, 0);
+      c.lineTo(-0.14, 0);
+      c.bezierCurveTo(-0.22, 0.004, -0.31, 0, -0.31, -0.04);
+      c.bezierCurveTo(-0.31, -0.085, -0.27, -0.095, -0.23, -0.085);
+      c.bezierCurveTo(-0.19, -0.17, -0.2, -0.27, -0.24, -0.36);
+      c.bezierCurveTo(-0.29, -0.47, -0.25, -0.6, -0.17, -0.64);
+      c.lineTo(0, -0.66);
+      c.bezierCurveTo(0.1, -0.52, 0.42, -0.42, 0.39, -0.15);
+      c.bezierCurveTo(0.38, -0.05, 0.33, 0, 0.26, 0);
+      c.closePath();
+      c.fill();
+      // head, with a little muzzle and two broad ears
+      c.beginPath();
+      c.ellipse(-0.1, -0.74, 0.16, 0.135, 0, 0, 6.2832);
+      c.fill();
+      c.beginPath();
+      c.ellipse(-0.22, -0.7, 0.07, 0.055, 0, 0, 6.2832);
+      c.fill();
+      c.beginPath();
+      c.moveTo(-0.25, -0.77);
+      c.lineTo(-0.23, -0.99);
+      c.lineTo(-0.1, -0.86);
+      c.closePath();
+      c.moveTo(-0.07, -0.86);
+      c.lineTo(0.03, -0.99);
+      c.lineTo(0.05, -0.78);
+      c.closePath();
+      c.fill();
+      // tail out from under the haunch, along the floor, tip curling up
+      c.lineWidth = 0.06;
+      c.beginPath();
+      c.moveTo(0.26, -0.06);
+      c.bezierCurveTo(0.4, -0.01, 0.58, -0.02, 0.66, -0.09);
+      c.bezierCurveTo(0.72, -0.15, 0.68, -0.23, 0.61, -0.22);
+      c.stroke();
+    }),
+};
+
+/** An acoustic guitar stood on its end, leaning a little. */
+export const GUITAR: Subject = {
+  shadowOffset: { back: 0, down: -2 },
+  contact: { x: 0, w: 0.42 },
+  height: (H) => H * 0.48,
+  draw: (c, h) =>
+    unit(c, h, () => {
+      c.rotate(-0.1);
+      c.beginPath();
+      c.moveTo(0, 0);
+      c.bezierCurveTo(0.26, 0, 0.27, -0.3, 0.13, -0.34);
+      c.bezierCurveTo(0.22, -0.4, 0.2, -0.6, 0, -0.6);
+      c.bezierCurveTo(-0.2, -0.6, -0.22, -0.4, -0.13, -0.34);
+      c.bezierCurveTo(-0.27, -0.3, -0.26, 0, 0, 0);
+      c.fill();
+      c.fillRect(-0.034, -0.91, 0.068, 0.33);
+      c.beginPath();
+      c.moveTo(-0.045, -0.9);
+      c.lineTo(-0.055, -0.99);
+      c.quadraticCurveTo(0, -1.02, 0.055, -0.99);
+      c.lineTo(0.045, -0.9);
+      c.closePath();
+      c.fill();
+      for (const y of [-0.92, -0.95, -0.98]) {
+        c.fillRect(-0.08, y - 0.007, 0.03, 0.014);
+        c.fillRect(0.05, y - 0.007, 0.03, 0.014);
+      }
+    }),
+};
+
+/** A desktop monitor on its stand, keyboard in front. */
+export const COMPUTER: Subject = {
+  shadowOffset: { back: 0, down: -2 },
+  contact: { x: 0, w: 1.05 },
+  height: (H) => H * 0.33,
+  draw: (c, h) =>
+    unit(c, h, () => {
+      fillRound(c, -0.5, -1, 1, 0.66, 0.04);
+      c.fillRect(-0.06, -0.36, 0.12, 0.28);
+      c.beginPath();
+      c.ellipse(0, -0.07, 0.24, 0.04, 0, 0, 6.2832);
+      c.fill();
+      fillRound(c, -0.34, -0.06, 0.68, 0.06, 0.02);
+    }),
+  /* The screen, faintly lit. */
+  detail: {
+    color: '#d99e5b',
+    alpha: 0.14,
+    draw: (c, h) => unit(c, h, () => fillRound(c, -0.45, -0.95, 0.9, 0.56, 0.02)),
+  },
+};
+
+type StageOptions = {
+  subject?: Subject;
+  timeline?: StageTimeline;
+  /** Flips the scene so the beam comes in from the left. */
+  mirror?: boolean;
+  /** Where the pool settles, as a fraction of the width from the far side. */
+  poolX?: number;
+  /** Scales the beam and pool width. */
+  beamScale?: number;
+};
+
+export function createStage(
+  canvas: HTMLCanvasElement,
+  {
+    subject = PERSON,
+    timeline = TIMELINE,
+    mirror = false,
+    poolX = 0.19,
+    beamScale = 1,
+  }: StageOptions = {},
+) {
   const ctx = canvas.getContext('2d');
   /* Each figure pass is drawn opaque here, then blitted once at its alpha, so
      overlapping limbs never double up. */
@@ -94,6 +274,11 @@ export function createStage(canvas: HTMLCanvasElement) {
     canvas.height = height * dpr;
   }
 
+  /** Device-pixel transform, flipped when the beam comes from the left. */
+  function toDevice(c: CanvasRenderingContext2D) {
+    c.setTransform(mirror ? -dpr : dpr, 0, 0, dpr, mirror ? W * dpr : 0, 0);
+  }
+
   function layer(
     alpha: number,
     color: string,
@@ -110,7 +295,7 @@ export function createStage(canvas: HTMLCanvasElement) {
     if (!c) return;
     c.setTransform(1, 0, 0, 1, 0, 0);
     c.clearRect(0, 0, cw, ch);
-    c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    toDevice(c);
     c.fillStyle = c.strokeStyle = color;
     drawFn(c);
     ctx.save();
@@ -124,8 +309,8 @@ export function createStage(canvas: HTMLCanvasElement) {
   /** Paints the scene at intro time `t`; `dt` advances the dust. */
   function draw(t: number, dt: number) {
     if (!ctx || !W) return;
-    const T = TIMELINE;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const T = timeline;
+    toDevice(ctx);
     ctx.globalCompositeOperation = 'source-over';
     ctx.fillStyle = '#100d0b';
     ctx.fillRect(0, 0, W, H);
@@ -133,9 +318,9 @@ export function createStage(canvas: HTMLCanvasElement) {
     ctx.fillStyle = '#15110e';
     ctx.fillRect(0, floorY, W, H - floorY);
 
-    const wP = Math.min(300, Math.max(100, W * 0.15));
+    const wP = Math.min(300, Math.max(100, W * 0.15)) * beamScale;
     const S = { x: W + 80, y: -80 };
-    const pxFinal = Math.max(wP * 1.1 + 12, W * 0.19);
+    const pxFinal = Math.max(wP * 1.1 + 12, W * poolX);
     const sweep = sm(t, T.sweepStart, T.sweepEnd);
     const poolY = floorY + (H - floorY) * 0.275;
     const P = { x: W * 0.78 + (pxFinal - W * 0.78) * sweep, y: poolY };
@@ -212,28 +397,55 @@ export function createStage(canvas: HTMLCanvasElement) {
     // figure walking from the horizon down into the light, at an even pace
     const s = sm(t, T.figStart, T.figEnd);
     if (s > 0) {
-      const fhFull = Math.min(380, Math.max(160, H * 0.36));
+      const fhFull = subject.height(H);
       const fh = fhFull * (0.78 + 0.22 * s);
       const fx = P.x - wP * 0.12 + wP * 0.12 * (1 - s);
-      const feetY = floorY + (H - floorY) * 0.275 * s;
+      const walk = (H - floorY) * 0.275;
+      const feetY = floorY + walk * s;
       // transparent until the feet are 20px past the horizon, then fades in
-      // over the next ~50px of walking
-      const alpha = sm(feetY - floorY, 20, 70) * poolI;
+      // over the next ~50px of walking; capped by the walk itself so the
+      // figure always lands fully opaque on short stages
+      const fadeEnd = Math.min(70, walk);
+      const alpha = sm(feetY - floorY, Math.min(20, fadeEnd / 2), fadeEnd) * poolI;
       ctx.globalCompositeOperation = 'source-over';
       // shadow thrown away from the source
+      const { back, down } = subject.shadowOffset ?? { back: 13, down: 12 };
       layer(0.55 * alpha, '#040302', (c) => {
-        c.translate(fx - 13, feetY + 12);
+        c.translate(fx - back, feetY + down);
         c.transform(1, 0, 1.15, -0.22, 0, 0);
-        figure(c, fh);
+        subject.draw(c, fh);
       });
+      const { contact } = subject;
+      if (contact) {
+        const r = (contact.w * fh) / 2;
+        ctx.save();
+        ctx.translate(fx + contact.x * fh, feetY);
+        ctx.scale(1, 0.1);
+        const cg = ctx.createRadialGradient(0, 0, 0, 0, 0, r);
+        cg.addColorStop(0, `rgba(38,20,6,${0.75 * alpha})`);
+        cg.addColorStop(0.6, `rgba(38,20,6,${0.35 * alpha})`);
+        cg.addColorStop(1, 'rgba(38,20,6,0)');
+        ctx.fillStyle = cg;
+        ctx.beginPath();
+        ctx.arc(0, 0, r, 0, 6.2832);
+        ctx.fill();
+        ctx.restore();
+      }
       layer(0.45 * alpha * alpha * alpha, '#f5cd96', (c) => {
         c.translate(fx + fh * 0.012, feetY - fh * 0.008);
-        figure(c, fh);
+        subject.draw(c, fh);
       });
-      layer(alpha, '#0a0806', (c) => {
+      layer(alpha, '#17130e', (c) => {
         c.translate(fx, feetY);
-        figure(c, fh);
+        subject.draw(c, fh);
       });
+      const { detail } = subject;
+      if (detail) {
+        layer(detail.alpha * alpha, detail.color, (c) => {
+          c.translate(fx, feetY);
+          detail.draw(c, fh);
+        });
+      }
     }
 
     // dust in the beam
