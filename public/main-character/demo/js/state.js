@@ -6,10 +6,17 @@
 export const state = {
   entities: {},          // entity index (entities.js owns; triage reads)
   selected: null,        // selected entity name (entities.js owns; groups reads)
+  thingKinds: [],        // every kind a thing can be, [{name, description, icon,
+                         // custom}], built-ins first and other last (entities.js
+                         // loads it with the index; triage reads)
+  thingKindIcons: [],    // the icons a kind of the author's own can take
+  thingKindMax: 6,       // how many of the author's own there can be
   activeTab: 'write',    // main.js owns; write + triage read
   triageReturn: false,   // an entity opened from triage (e): its detail
                          // pane shows the way back. Triage sets, main clears.
   sessionSel: 'current', // history selection; write's closeSession resets it
+  historyMode: 'chapters', // history's list: 'chapters' or 'weeks' (the weekly arcs)
+  weekSel: null,         // the week open in history's weeks mode ('2026-W33')
   dateStyle: 'long',     // MC_DATE_FORMAT, via /api/status; write renders stamps with it
   clockSkewMs: 0,        // server clock − browser clock, via /api/status; write stamps against it
   tz: '',                // the server's zone name; shown on the entry stamp
@@ -25,4 +32,4 @@ export const state = {
                          // already on this machine. null = couldn't tell, and
                          // the wait wording hedges rather than guessing.
 };
-export const filters = {unreviewed: false, single: false, retired: false, mixup: false, group: null, types: new Set()};
+export const filters = {unreviewed: false, single: false, retired: false, mixup: false, group: null, types: new Set(), thingCats: new Set()};
