@@ -3,23 +3,27 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { MC_SPLASH } from '@/content/mainCharacter';
-import { createStage, TIMELINE } from '@/lib/mainCharacterStage';
+import {
+  CAT,
+  COMPUTER,
+  createStage,
+  GUITAR,
+  INTERLUDE_TIMELINE,
+  type Subject,
+  TIMELINE,
+} from '@/lib/mainCharacterStage';
 import { prefersReducedMotion } from '@/lib/motion';
 
 import styles from './MainCharacterSplash.module.css';
 
 const { hero, about, features, how, demo, start } = MC_SPLASH;
 
-/* Typing cadence, in seconds per character, and the pause between lines. */
-const PER_CHAR_1 = 0.075;
-const PER_CHAR_2 = 0.06;
-const LINE_GAP = 0.4;
+/* Typing cadence, in seconds per character. */
+const PER_CHAR = 0.075;
 
 type View = {
-  line1: string;
-  line2: string;
-  /** Which line the caret sits on; 0 hides it. */
-  caret: 0 | 1 | 2;
+  typed: string;
+  caret: boolean;
   pageOn: boolean;
   done: boolean;
 };
@@ -27,14 +31,10 @@ type View = {
 /** Everything the DOM shows, derived from the intro clock. */
 function viewAt(t: number): View {
   const T = TIMELINE;
-  const n1 = Math.min(hero.title.length, Math.max(0, Math.floor((t - T.typeStart) / PER_CHAR_1)));
-  const t2 = T.typeStart + hero.title.length * PER_CHAR_1 + LINE_GAP;
-  const n2 = Math.min(hero.subtitle.length, Math.max(0, Math.floor((t - t2) / PER_CHAR_2)));
-  const caretOn = t >= T.pageStart && t < T.end;
+  const n = Math.min(hero.title.length, Math.max(0, Math.floor((t - T.typeStart) / PER_CHAR)));
   return {
-    line1: hero.title.slice(0, n1),
-    line2: hero.subtitle.slice(0, n2),
-    caret: caretOn ? (n2 === 0 && t < t2 ? 1 : 2) : 0,
+    typed: hero.title.slice(0, n),
+    caret: t >= T.pageStart && t < T.end,
     pageOn: t >= T.pageStart,
     done: t >= T.end,
   };
@@ -42,8 +42,7 @@ function viewAt(t: number): View {
 
 function sameView(a: View, b: View) {
   return (
-    a.line1 === b.line1 &&
-    a.line2 === b.line2 &&
+    a.typed === b.typed &&
     a.caret === b.caret &&
     a.pageOn === b.pageOn &&
     a.done === b.done
@@ -51,6 +50,86 @@ function sameView(a: View, b: View) {
 }
 
 const blockScroll = (e: Event) => e.preventDefault();
+
+/* Counts as fully in view: a hair under 1 so subpixel layout still fires. */
+const FULL = 0.98;
+
+/**
+ * A short stage between the lower sections: the same beam and pool as the
+ * intro, with another subject walking in. It waits in the dark until the
+ * whole row is on screen, then plays once. The hero's beam comes from the
+ * right, so the rows alternate starting from the left.
+ */
+function Interlude({ subject, from }: { subject: Subject; from: 'left' | 'right' }) {
+  const rowRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const row = rowRef.current;
+    const canvas = canvasRef.current;
+    if (!row || !canvas) return;
+
+    const stage = createStage(canvas, {
+      subject,
+      timeline: INTERLUDE_TIMELINE,
+      mirror: from === 'left',
+      poolX: 0.24,
+      beamScale: 0.75,
+    });
+    const ro = new ResizeObserver(() => {
+      const r = row.getBoundingClientRect();
+      stage.resize(r.width, r.height);
+    });
+    ro.observe(row);
+
+    /* Reduced motion starts at the end state, but still waits to be seen. */
+    const reduced = prefersReducedMotion();
+    let start: number | null = null;
+    let raf = 0;
+    let last = 0;
+    const frame = (now: number) => {
+      raf = requestAnimationFrame(frame);
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      const t = start === null ? -1 : reduced ? INTERLUDE_TIMELINE.figEnd + 1 : (now - start) / 1000;
+      stage.draw(t, dt);
+    };
+
+    /* Paint only while on screen. A row taller than the viewport counts as
+       fully in view once it fills it. */
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        const fills =
+          entry.rootBounds !== null &&
+          entry.intersectionRect.height >= entry.rootBounds.height * FULL;
+        if (start === null && (entry.intersectionRatio >= FULL || fills)) {
+          start = performance.now();
+        }
+        if (entry.isIntersecting && !raf) {
+          last = performance.now();
+          raf = requestAnimationFrame(frame);
+        } else if (!entry.isIntersecting && raf) {
+          cancelAnimationFrame(raf);
+          raf = 0;
+        }
+      },
+      { threshold: [0, 0.5, FULL, 1] },
+    );
+    io.observe(row);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+      io.disconnect();
+    };
+  }, [subject, from]);
+
+  return (
+    <div ref={rowRef} className={styles.interlude} aria-hidden="true">
+      <canvas ref={canvasRef} className={styles.canvas} />
+    </div>
+  );
+}
 
 /**
  * The Main Character landing page: a cinematic canvas intro (spotlight,
@@ -126,8 +205,6 @@ export default function MainCharacterSplash() {
     };
   }, [unlock]);
 
-  const caret = <span className={styles.caret}>▍</span>;
-
   return (
     <div className={styles.splash} data-mc-splash="">
       <section ref={heroRef} className={styles.stage}>
@@ -139,31 +216,27 @@ export default function MainCharacterSplash() {
             {/* The full text is there for assistive tech and search from the
                 start; the typed copy is decoration over it. */}
             <h1 className={styles.title}>
+              <img src="/main-character/mc-circle.svg" className={styles.titleMark} alt="" />
               <span className="visuallyHidden" data-mc-full="">
                 {hero.title}
               </span>
               <span aria-hidden="true" data-mc-typed="">
-                {view.line1}
-                {view.caret === 1 && caret}
+                {view.typed}
+                {view.caret && <span className={styles.caret}>▍</span>}
               </span>
             </h1>
-            <p className={styles.subtitle}>
-              <span className="visuallyHidden" data-mc-full="">
-                {hero.subtitle}
-              </span>
-              <span aria-hidden="true" data-mc-typed="">
-                {view.line2}
-                {view.caret === 2 && caret}
-              </span>
-            </p>
             <nav className={styles.cardNav} aria-label="Main Character">
               {hero.nav.map((item, i) => (
                 <a key={item.href} href={item.href} className={styles.cardLink}>
-                  <span className={styles.cardNum}>{i + 1}</span>
                   {item.label}
+                  <span className={styles.cardLeader} aria-hidden="true" />
+                  <span className={styles.cardNum}>{i + 1}</span>
                 </a>
               ))}
             </nav>
+            <p className={styles.folio} aria-hidden="true">
+              {hero.folio}
+            </p>
           </div>
         </div>
 
@@ -194,7 +267,11 @@ export default function MainCharacterSplash() {
               </div>
             ))}
           </div>
+        </div>
 
+        <Interlude subject={CAT} from="left" />
+
+        <div className={styles.aboutInner}>
           <div id="how" className={styles.block}>
             <h2 className={styles.eyebrow}>{how.eyebrow}</h2>
             <ol className={styles.steps}>
@@ -217,10 +294,30 @@ export default function MainCharacterSplash() {
               </a>
             </p>
           </div>
+        </div>
 
-          <div id="demo" className={styles.block}>
+        <Interlude subject={GUITAR} from="right" />
+
+        <div className={styles.aboutInner}>
+          <div id="demo" className={`${styles.block} ${styles.demoCard}`}>
             <h2 className={styles.eyebrow}>{demo.eyebrow}</h2>
-            <p className={styles.body}>{demo.body}</p>
+            <p className={styles.lead}>{demo.body}</p>
+            <ul className={styles.demoFacts}>
+              {demo.facts.map((fact) => (
+                <li key={fact}>{fact}</li>
+              ))}
+            </ul>
+            {/* Things to try, not a sequence to learn: a grid of actions,
+                each tagged with the control it uses. */}
+            <ol className={styles.demoSteps}>
+              {demo.steps.map((step) => (
+                <li key={step.title} className={styles.demoStep}>
+                  <span className={styles.demoUi}>{step.ui}</span>
+                  <h3 className={styles.demoStepTitle}>{step.title}</h3>
+                  <p className={styles.featureBody}>{step.body}</p>
+                </li>
+              ))}
+            </ol>
             <div>
               {/* The demo is a separate static app, not a Next route, so a
                   plain link (full page load) rather than next/link. */}
@@ -229,7 +326,11 @@ export default function MainCharacterSplash() {
               </a>
             </div>
           </div>
+        </div>
 
+        <Interlude subject={COMPUTER} from="left" />
+
+        <div className={styles.aboutInner}>
           <div id="start" className={styles.block}>
             <h2 className={styles.eyebrow}>{start.eyebrow}</h2>
             <p className={styles.body}>{start.body}</p>

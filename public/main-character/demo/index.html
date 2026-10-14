@@ -7,6 +7,9 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
 <link rel="icon" href="favicon-16.png" sizes="16x16" type="image/png">
+<link rel="icon" href="favicon-light.svg" type="image/svg+xml" media="(prefers-color-scheme: light)">
+<link rel="icon" href="favicon-light-32.png" sizes="32x32" type="image/png" media="(prefers-color-scheme: light)">
+<link rel="icon" href="favicon-light-16.png" sizes="16x16" type="image/png" media="(prefers-color-scheme: light)">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="stylesheet" href="css/tokens.css">
 <link rel="stylesheet" href="css/base.css">
@@ -43,7 +46,18 @@
 <div id="app-banner"></div>
 <header>
   <div class="masthead">
-    <h1>main character</h1>
+    <h1><svg class="masthead-mark" viewBox="0 0 64 64" aria-hidden="true">
+      <defs>
+        <linearGradient id="mark-beam" x1="57" y1="7" x2="9.37" y2="54.63" gradientUnits="userSpaceOnUse">
+          <stop offset="0"></stop><stop offset=".45" stop-opacity=".75"></stop><stop offset="1" stop-opacity=".06"></stop>
+        </linearGradient>
+        <clipPath id="mark-clip"><circle cx="32" cy="32" r="32"></circle></clipPath>
+      </defs>
+      <g clip-path="url(#mark-clip)">
+        <circle class="ground" cx="32" cy="32" r="32"></circle>
+        <path d="M57.00,7.00 L0.49,37.56 A32,32 0 0 0 26.44,63.51 Z" fill="url(#mark-beam)" transform="rotate(-10 32 32)"></path>
+      </g>
+    </svg>main character</h1>
     <span class="status" id="status"></span>
   </div>
   <nav aria-label="screens">
@@ -169,10 +183,6 @@
         <aside id="cat-list">
           <div class="side-tools" id="cat-tools">
             <div class="row">
-              <span id="cat-status"></span>
-            </div>
-            <div class="row">
-              <button class="quiet sm" id="cat-build" title="tag any untagged entries with Claude. Already-tagged entries are skipped, so they cost nothing">tag new entries</button>
               <button class="quiet sm" id="cat-scan" title="cluster places, projects and things by what happened around them and propose new categories. Nothing is created without your confirm">scan for new categories</button>
             </div>
           </div>
@@ -238,6 +248,10 @@
   <section class="tab" id="tab-history">
     <div id="history-pane" class="split">
       <aside id="session-list">
+        <div id="history-mode" class="segmented" role="group" aria-label="history view">
+          <button type="button" data-mode="chapters" aria-pressed="true" title="every chapter, one at a time">chapters</button>
+          <button type="button" data-mode="weeks" aria-pressed="false" title="every week's arc: the story of that week, written when a chapter closes">weeks</button>
+        </div>
         <div id="session-list-items"></div>
       </aside>
       <section id="session-view" class="detail">
@@ -247,14 +261,6 @@
             <h2 class="title" id="session-title"></h2>
             <span id="session-dates"></span>
           </div>
-          <div class="session-actions">
-            <button class="filled" id="session-close-btn" hidden
-              title="this is the summarize point. Your side of this chapter becomes a journal entry and the next chapter opens">close chapter &amp; start the next</button>
-            <button class="quiet" id="refresh-summaries"
-              title="regenerate the weekly arcs + domain docs by hand. Closing a chapter already does this automatically">refresh memory</button>
-            <button class="quiet" id="session-continue" hidden>continue in write ›</button>
-          </div>
-          <div id="session-notice" class="notice-line"></div>
           <div id="session-jumps"></div>
           <div id="session-loading" hidden>reading <span class="dots">···</span></div>
           <div id="session-body"></div>
@@ -303,14 +309,8 @@
         </div>
         <div id="triage-cat-row" hidden>
           <span class="lbl">which kind of thing</span>
-          <span class="btns">
-            <button class="quiet" data-cat="music" title="bands, artists, albums (1)"><span class="key">1</span>music</button>
-            <button class="quiet" data-cat="game" title="(2)"><span class="key">2</span>game</button>
-            <button class="quiet" data-cat="show" title="TV and film (3)"><span class="key">3</span>show</button>
-            <button class="quiet" data-cat="book" title="(4)"><span class="key">4</span>book</button>
-            <button class="quiet" data-cat="event" title="a recurring event, like a yearly festival (5)"><span class="key">5</span>event</button>
-            <button class="quiet" data-cat="other" title="(6)"><span class="key">6</span>other</button>
-          </span>
+          <!-- one button per kind of thing, built when asked (triage.js askCategory) -->
+          <span class="btns"></span>
           <button class="text" id="triage-cat-cancel">cancel <span class="hint">esc</span></button>
         </div>
         <div id="triage-mixed-row" hidden>
@@ -377,6 +377,16 @@
             </div>
             <p class="set-help">Saved in this browser and applied instantly. It is not part of your <code>.env</code> and is not shared with other devices. Auto follows the device.</p>
           </div>
+          <div class="set-row">
+            <span class="set-label" id="set-accent-label">Accent</span>
+            <div id="accent-toggle" class="segmented" role="group" aria-labelledby="set-accent-label">
+              <button type="button" data-accent-choice="gold" aria-pressed="false"><span class="accent-swatch" aria-hidden="true"></span>Gold</button>
+              <button type="button" data-accent-choice="slate" aria-pressed="false"><span class="accent-swatch" aria-hidden="true"></span>Slate</button>
+              <button type="button" data-accent-choice="sage" aria-pressed="false"><span class="accent-swatch" aria-hidden="true"></span>Sage</button>
+              <button type="button" data-accent-choice="rose" aria-pressed="false"><span class="accent-swatch" aria-hidden="true"></span>Rose</button>
+            </div>
+            <p class="set-help">The colour of headings, buttons, highlights and the lamp in the masthead. Saved in this browser the same way as the theme.</p>
+          </div>
         </section>
         <p id="settings-intro">Everything below lives in your <code>.env</code> file.
           Saving rewrites that file and leaves the rest of it alone. The
@@ -424,10 +434,10 @@
       join the same chapter and both become journal memory at close. Your draft autosaves as you type
       and survives a refresh or closed tab. Enter just makes a new line, and only the buttons send.</p>
       <p>When the chapter feels finished, open the <b>⋯</b> menu next to the composer and hit
-      <b>close chapter</b> (also available on the history tab). That's the
-      <em>summarize point</em>. Your side of the chapter becomes a journal entry, the same shape as
-      your imported conversations, and tagging, entity extraction, summaries, and dream scanning
-      all run in the background. A new, empty chapter opens. Until then, new entries live in the
+      <b>close chapter</b>. That's the
+      <em>summarize point</em>. Your side of the chapter becomes journal entries, one for each day
+      you wrote, and tagging, entity extraction, summaries, dream scanning, and a life summary
+      candidate all run in the background. A new, empty chapter opens. Until then, new entries live in the
       conversation (and their markdown backups), not yet in long-term memory.
       Once your own writing in a chapter passes about 30,000 characters (Settings changes the
       figure), the write screen asks whether you're ready to close. Say not yet, and it asks again
@@ -464,10 +474,8 @@
       result to read the full entry in place. This is the exhaustive counterpart to the ask
       screen. Ask retrieves a handful of excerpts and reasons about them, while search shows you
       <em>everything</em>. Dreams never appear here because they live in their own realm (dreams tab).</p>
-      <p>There are two honest limits. Highlighting is literal (a typo'd word won't light up even though
-      meaning-search still finds the right passages), and dates are the <em>conversation's</em>
-      date, so a passage written mid-week inside a week-long chapter shows that chapter's date until
-      the per-day split lands.</p>
+      <p>One honest limit: highlighting is literal, so a typo'd word won't light up even though
+      meaning-search still finds the right passages.</p>
       </div>
       </details>
 
@@ -478,6 +486,9 @@
       backfilled from your export), your entries, and the live thread. Every closed chapter sits in
       the list, and you can pick one to read it in full. Closed chapters keep both sides for reading, but
       only your side is journal memory.</p>
+      <p><b>weeks</b>, at the top of the list, switches to the weekly arcs: the story of each week,
+      written when a chapter closes. Arcs follow the calendar, not chapters, so a week can span two
+      chapters, and its arc links to both.</p>
       </div>
       </details>
 
@@ -517,7 +528,7 @@
           <span class="k">a</span><span class="d"><span class="n">alias</span> <span class="t">— add another name this entity goes by (matchable by both)</span></span>
           <span class="k">1–9, n</span><span class="d"><span class="n">sort</span> <span class="t">— once a name is split (Dev · work, Dev · friend), a new mention that doesn't say which waits in "Dev · ?". Its card shows one entry at a time: a number says which Dev, n names someone new.</span></span>
           <span class="k">p</span><span class="d"><span class="n">part of</span> <span class="t">— a piece of something bigger (Tabs of a project, a beach in a town). It stays its own entity, shown as Parent / Name, so an unrelated Tabs isn't folded in the way a merge would. The merge field offers it too.</span></span>
-          <span class="k">t then 1–5</span><span class="d"><span class="n">retype</span> <span class="t">— to person / project / place / thing / animal. A thing then asks which kind: 1 music, 2 game, 3 show, 4 book, 5 event, 6 other</span></span>
+          <span class="k">t then 1–5</span><span class="d"><span class="n">retype</span> <span class="t">— to person / project / place / thing / animal. A thing then asks which kind: 1–9 down the list (music, podcast, game, show, movie, book, event, then kinds of your own), 0 other</span></span>
           <span class="k">x</span><span class="d"><span class="n">retire</span> <span class="t">— someone from a chapter that's over. Out of the list and triage; the companion still knows them when you name them, but won't bring them up. Nothing is deleted; u undoes. A later entry that names them without saying it's them waits in "Name · ?": 1 keeps it with the retired one, n is someone new, x un-retires.</span></span>
           <span class="k">s</span><span class="d"><span class="n">skip</span> <span class="t">— decide later, stays in queue for next time</span></span>
           <span class="k">e</span><span class="d"><span class="n">edit in entities</span> <span class="t">— open it on the entities screen for a deeper fix; "back to triage" there returns you to the same spot</span></span>
@@ -575,9 +586,11 @@
         <div class="row"><span class="when">Right entity, wrong spelling or capitalization</span><span class="fix"><b>rename</b></span></div>
         <div class="row"><span class="when">Right entity, wrong kind (person vs place)</span><span class="fix"><b>retype</b></span></div>
         <div class="row"><span class="when">A game, show or band filed as a project or place</span><span class="fix"><b>retype to thing</b> <span class="t">or the <em>things review</em> on the entities screen, for all of them at once</span></span></div>
+        <div class="row"><span class="when">A kind of thing the built-in kinds don't cover (songs you're learning, food you love)</span><span class="fix"><b>add a kind</b> <span class="t">things filter → + kind, with a description Claude reads when it sorts new entries</span></span></div>
         <div class="row"><span class="when">A pet filed as a person</span><span class="fix"><b>retype to animal</b> <span class="t">or the <em>animals review</em> on the entities screen, for all of them at once</span></span></div>
         <div class="row"><span class="when">Entries from before a prompt change missed something</span><span class="fix"><b>re-extract</b> <span class="t">entities → clean up → re-extract: only the entries that mention it, with a cost estimate first</span></span></div>
         <div class="row"><span class="when">One wrong memory inside a right entity</span><span class="fix"><b>observation edit / move / ×</b></span></div>
+        <div class="row"><span class="when">Someone from a chapter of life that's over</span><span class="fix"><b>retire</b> <span class="t">the companion still knows them when you name them, but won't bring them up</span></span></div>
         <div class="row"><span class="when">Shouldn't exist at all</span><span class="fix"><b>delete</b></span></div>
       </div>
       </div>
@@ -587,9 +600,8 @@
       <summary id="h-categories"><span class="mark"></span><span>categories</span></summary>
       <div class="disclosure-body">
       <p>Every entry gets tagged with categories (work, relationships, health…) automatically when a
-      chapter closes, and <em>tag new entries</em> re-runs it manually for anything untagged (already-tagged
-      entries are cached and free). Pick a category to browse its entries and read its
-      <em>domain document</em>, a living ~500-word summary of that area of life. × a wrong tag or
+      chapter closes (if that step fails, the close's progress list offers a retry). Pick a category
+      to browse its entries and read its <em>domain document</em>, a living ~500-word summary of that area of life. × a wrong tag or
       + a missing one, and your fixes become permanent overrides. <em>scan for new categories</em> clusters
       your places, projects and things and proposes organic categories, but nothing is created without your
       confirm. You can also hand-seed a category with keywords. Entry categories are deliberately
@@ -602,8 +614,9 @@
       <div class="disclosure-body">
       <p><em>detect patterns</em> re-reads the weekly arcs + domain documents and names recurring
       shapes (emotional cycles, behavioral pipelines, relationship dynamics), each with dated
-      instances and a confidence level. Patterns are injected into the companion's context only
-      when the conversation genuinely rhymes with one. <em>dismiss</em> hides a pattern
+      instances and a confidence level. It runs only when you ask. The companion sees the whole
+      library, one line per pattern, on every turn, and is told to bring one up only when the
+      conversation genuinely rhymes with it. <em>dismiss</em> hides a pattern
       until new evidence shows up.</p>
       </div>
       </details>
@@ -630,8 +643,10 @@
       which rebuilds the raw memory files and would discard <em>observation-level</em> edits. Merges, renames and
       the rest survive even that. Removed aliases keep their historical "as ‘name’" data, because removal only
       stops name-matching.</p>
-      <p>Your journal is just the local folders <code>chroma_data</code>,
-      <code>journal_entries</code>, <code>entity_graph</code> and <code>summaries</code>, so back them up.</p>
+      <p>Your journal is just local folders (<code>journal_entries</code>, <code>entity_graph</code>,
+      <code>summaries</code>, <code>categories</code>, <code>patterns</code>, <code>dreams</code>,
+      <code>sessions</code>, and the rebuildable <code>chroma_data</code> index), so back them up.
+      Settings → data has <em>export to a folder</em> and <em>save a dated zip</em>; both work without a key.</p>
       </div>
       </details>
     </div>
@@ -671,8 +686,33 @@
             <button class="chip-toggle" data-type="person" aria-pressed="false" title="show only people; pick several to combine">people</button>
             <button class="chip-toggle" data-type="project" aria-pressed="false" title="show only projects; pick several to combine">projects</button>
             <button class="chip-toggle" data-type="place" aria-pressed="false" title="show only places; pick several to combine">places</button>
-            <button class="chip-toggle" data-type="thing" aria-pressed="false" title="show only things: bands, games, shows, books, events; pick several to combine">things</button>
+            <button class="chip-toggle" data-type="thing" aria-pressed="false" title="show only things: bands, games, shows, books, events; pick several to combine, then a kind below to narrow">things</button>
             <button class="chip-toggle" data-type="animal" aria-pressed="false" title="show only animals: pets, and other people's; pick several to combine">animals</button>
+          </div>
+          <!-- with things on, narrow them to some kinds; none picked is all of them.
+               "+ kind" at its end opens the kinds of your own -->
+          <div id="thing-kinds-wrap">
+            <div id="thing-cats" class="side-row" hidden></div>
+            <div class="popover" id="thing-kinds-menu" hidden>
+              <div class="menu-top">
+                <div class="menu-head">your kinds of thing</div>
+                <button class="x" id="thing-kinds-close" aria-label="close" title="close">×</button>
+              </div>
+              <p class="note" id="thing-kinds-none">None yet. Add one for what the built-in kinds don't cover, like songs you're learning or food you love.</p>
+              <div id="thing-kinds-list"></div>
+              <p class="note" id="thing-kinds-full" hidden>That's the most you can have. Remove one to add another.</p>
+              <div id="thing-kind-form">
+                <div class="menu-head ruled" id="thing-kind-head">add a kind</div>
+                <input type="text" id="thing-kind-name" class="input-2xs" maxlength="24" placeholder="name, like songs" autocomplete="off" aria-label="name of the kind">
+                <input type="text" id="thing-kind-desc" class="input-2xs" maxlength="200" placeholder="what it covers, like songs I'm learning to play" autocomplete="off" aria-label="what the kind covers">
+                <div id="thing-kind-icons" role="radiogroup" aria-label="icon"></div>
+                <div class="row">
+                  <button class="quiet sm" id="thing-kind-save">add</button>
+                  <button class="text" id="thing-kind-cancel" hidden>cancel</button>
+                </div>
+                <p class="note">Claude reads the description when it sorts new entries, so say what belongs.</p>
+              </div>
+            </div>
           </div>
           <div class="side-row">
             <span class="side-lbl">sort</span>
@@ -753,14 +793,8 @@
                 <option value="thing">thing</option>
                 <option value="animal">animal</option>
               </select>
-              <select id="thing-category" class="quiet-select" title="which kind of thing" hidden>
-                <option value="music">music</option>
-                <option value="game">game</option>
-                <option value="show">show</option>
-                <option value="book">book</option>
-                <option value="event">event</option>
-                <option value="other">other</option>
-              </select>
+              <!-- filled from the journal's kinds of thing (entities.js fillKindSelect) -->
+              <select id="thing-category" class="quiet-select" title="which kind of thing" hidden></select>
               <button class="quiet danger" id="delete-btn" title="delete the mentions it has now. The name stays free, so a new entry can bring it back. Undo restores them">delete</button>
               <button class="quiet" id="retire-btn" title="a past chapter: out of the list and triage, and the companion only brings them up when you do. Nothing is deleted">retire</button>
               <button class="quiet danger" id="never-btn" title="for generic terms and junk: ignore this name in every entry, now and future">never track</button>
