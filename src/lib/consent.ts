@@ -38,6 +38,43 @@ export function writeConsent(choice: ConsentChoice): void {
   }
 }
 
+/* Per-device opt-out for the owner's own browsers. Visit any page with
+   ?notrack=1 once on a device to stop it being counted; ?notrack=0 undoes it. */
+const NOTRACK_KEY = 'notrack';
+
+/**
+ * True when this visit should never load the tags, whatever the consent choice:
+ * a local or dev host, or a device opted out with ?notrack=1. Also applies the
+ * ?notrack param, so call it once on mount. The banner still works here, so
+ * local dev can exercise it; only the tags stay unmounted.
+ */
+export function trackingSuppressed(): boolean {
+  const host = location.hostname;
+  const isLocal =
+    host === 'localhost' ||
+    host === '127.0.0.1' ||
+    host === '[::1]' ||
+    host.endsWith('.local') ||
+    host.endsWith('.test');
+
+  try {
+    const param = new URLSearchParams(location.search).get(NOTRACK_KEY);
+    if (param === '1') localStorage.setItem(NOTRACK_KEY, '1');
+    if (param === '0') localStorage.removeItem(NOTRACK_KEY);
+  } catch {
+    /* Blocked storage: the opt-out can't persist, nothing else to do. */
+  }
+
+  let optedOut = false;
+  try {
+    optedOut = localStorage.getItem(NOTRACK_KEY) === '1';
+  } catch {
+    /* Blocked storage reads as not opted out. */
+  }
+
+  return isLocal || optedOut;
+}
+
 /**
  * The analytics tools that are actually configured, named for the consent copy.
  * Drop an ID in site.ts and the banner, the settings legend, and the tags

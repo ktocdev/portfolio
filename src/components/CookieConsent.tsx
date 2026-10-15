@@ -8,6 +8,7 @@ import {
   CONSENT_EVENT,
   VENDOR_LIST,
   readConsent,
+  trackingSuppressed,
   writeConsent,
 } from '@/lib/consent';
 import ClarityAnalytics from './ClarityAnalytics';
@@ -31,12 +32,17 @@ type Consent = 'loading' | 'undecided' | 'granted' | 'denied';
  */
 export default function CookieConsent() {
   const [consent, setConsent] = useState<Consent>('loading');
+  /* Starts true so nothing loads before the host/opt-out check has run. */
+  const [suppressed, setSuppressed] = useState(true);
   const dialog = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!ANALYTICS_CONFIGURED) return;
 
-    const sync = () => setConsent(readConsent() ?? 'undecided');
+    const sync = () => {
+      setSuppressed(trackingSuppressed());
+      setConsent(readConsent() ?? 'undecided');
+    };
     sync();
 
     /* Live updates: our own event for same-tab changes (settings page),
@@ -90,8 +96,9 @@ export default function CookieConsent() {
   return (
     <>
       {/* Each tag no-ops on its own if its ID is unset, so one switch here
-          covers however many are configured. */}
-      {consent === 'granted' && (
+          covers however many are configured. Never on localhost or an
+          opted-out device (see trackingSuppressed). */}
+      {consent === 'granted' && !suppressed && (
         <>
           <ClarityAnalytics />
           <GoogleAnalytics />
