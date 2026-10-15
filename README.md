@@ -287,6 +287,13 @@ either. The tags mount only after the visitor accepts, so no analytics cookies
 are set before consent. The choice is stored in `localStorage` under
 `portfolio-consent` and can be changed on `/cookies`.
 
+The tags never load on `localhost`, `127.0.0.1`, `[::1]`, `*.local` or
+`*.test` (so `npm run dev` and `npm run preview` stay untracked), even after
+Accept; the banner still shows there so it can be tested. To keep your own
+devices out of the production numbers, visit any page with `?notrack=1` once
+on each device; `?notrack=0` opts it back in. The flag lives in
+`localStorage` under `notrack`, so clearing site data resets it.
+
 ## Response headers
 
 `public/_headers` is copied into `out/` and applied by Cloudflare Workers
