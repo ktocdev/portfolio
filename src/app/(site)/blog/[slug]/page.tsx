@@ -64,6 +64,36 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
           user-submitted content anywhere on this site. */}
       <div className={styles.prose} dangerouslySetInnerHTML={{ __html: post.html }} />
       <CopyCodeButtons />
+      <EndMark />
     </article>
+  );
+}
+
+/* The page loader's petal angles (see PageLoader), drawn still. */
+const PETALS = [0, 1, 2, 3, 4, 5, 6];
+
+/**
+ * The end of a post: the page loader's zinnia, every petal lit. The same
+ * 48-unit geometry as the loader, drawn as SVG so it can sit smaller.
+ */
+function EndMark() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 48 48" className={styles.endMark}>
+      {PETALS.map((i) => (
+        <rect
+          key={i}
+          x="20"
+          y="20"
+          width="8"
+          height="8"
+          className={styles.endPetal}
+          transform={`rotate(${(i * 360) / 7} 24 24) translate(0 -14)`}
+        />
+      ))}
+      <polygon
+        className={styles.endCenter}
+        points="21.93,19 26.07,19 29,21.93 29,26.07 26.07,29 21.93,29 19,26.07 19,21.93"
+      />
+    </svg>
   );
 }
