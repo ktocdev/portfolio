@@ -209,9 +209,15 @@ export const PROJECTS: Project[] = [
         alt: 'On the write screen, the user saves an example entry. The companion response is a fixed demo response, taken from a real conversation.',
       },
       {
+        label: 'Ask',
+        src: '/projects/mc-ask.mp4',
+        type: 'video',
+        alt: 'TODO: describe the Ask screen video.',
+      },
+      {
         label: 'Search',
-        src: '/projects/mc-search.png',
-        type: 'image',
+        src: '/projects/mc-search.mp4',
+        type: 'video',
         alt: 'The search screen shows a query for \"Mom\" and a list of entries that mention Mom, sorted by best match.',
       },
       {
@@ -222,8 +228,8 @@ export const PROJECTS: Project[] = [
       },
       {
         label: 'History',
-        src: '/projects/mc-history.png',
-        type: 'image',
+        src: '/projects/mc-history.mp4',
+        type: 'video',
         alt: 'The history screen shows all entry groups in the left sidebar. The middle panel orders them by most recent date. The right panel lists individual entries in the group, with links to both entry and summary.',
       },
       {
@@ -240,14 +246,14 @@ export const PROJECTS: Project[] = [
       },
       {
         label: 'Dreams',
-        src: '/projects/mc-dreams.png',
-        type: 'image',
+        src: '/projects/mc-dreams.mp4',
+        type: 'video',
         alt: 'The dreams screen shows a list of dreams. Each dream displays date, dream categories, dream descriptions, and \"your read\".',
       },
       {
         label: 'Triage',
-        src: '/projects/mc-triage.png',
-        type: 'image',
+        src: '/projects/mc-triage.mp4',
+        type: 'video',
         alt: 'The triage screen shows entities that need to be reviewed for accuracy. \"Meridian\" is listed as a place, with options to accept, edit, delete, skip, and more.',
       },
       {
