@@ -155,8 +155,12 @@
 
   /* The published web demo has no server behind it (static/js/web-demo/).
      Restarting, installing the demo, the API key and the data folder all
-     mean nothing in a browser tab, so their controls go. The design system
-     stays: the build publishes it (scripts/build_web_demo.py). */
+     mean nothing in a browser tab, so their controls go, and so do the
+     entity summaries' writes: edit, rewrite and the clean up menu's batch,
+     which only ever get the read-only refusal. The design system stays:
+     the build publishes it (scripts/build_web_demo.py). */
+  body.web-demo #summaries-open,
+  body.web-demo .summary-meta button,
   body.web-demo #settings-restart,
   body.web-demo #settings-seed,
   body.web-demo #settings-restart-info,
