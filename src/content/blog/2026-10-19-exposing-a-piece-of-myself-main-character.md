@@ -1,9 +1,9 @@
 ---
 title: "Exposing a Piece of Myself: Main Character RAG Journal"
-date: 2026-10-15
+date: 2026-10-19
 summary: Looking back at the process of creating the Main Character RAG-powered journal app, as I plan to release it to a wider audience.
 tags: [main character, projects, releases, journal, writing]
-draft: true
+draft: false
 ---
 
 _As I look down into my cup of coffee, I can see myself looking back._
