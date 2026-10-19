@@ -94,6 +94,23 @@
   align-content: start;
 }
 
+/* The still zinnia that closes a post, two-thirds the loader's size, with
+   room above it from the prose and below it to the footer rule. */
+.endMark {
+  align-self: center;
+  width: 32px;
+  height: 32px;
+  margin-block: clamp(2rem, 6vh, 4rem) clamp(2.5rem, 8vh, 5rem);
+}
+
+.endPetal {
+  fill: var(--accent);
+}
+
+.endCenter {
+  fill: var(--text);
+}
+
 .postHeader {
   display: flex;
   flex-direction: column;
