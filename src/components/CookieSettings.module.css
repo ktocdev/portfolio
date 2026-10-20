@@ -76,3 +76,21 @@
   /* Reserve a line so the layout doesn't jump when the message appears. */
   min-height: 1.5em;
 }
+
+/* One fieldset per consent category, spaced like the page's own stack. */
+.groups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-stack);
+}
+
+.vendor {
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.description {
+  font-size: var(--type-body-sm);
+  color: var(--muted);
+}
+

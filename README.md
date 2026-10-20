@@ -30,6 +30,7 @@ npm run dev        # http://localhost:3000
 npm run build      # static export to ./out
 npm run typecheck
 npm run lint
+npm test           # consent + analytics unit tests (node --test, no extra deps)
 npm run preview    # build, then serve ./out through wrangler dev
 ```
 
@@ -144,10 +145,8 @@ src/
     ProjectsBrowser      project selector + detail panel
     Carousel             stepping media carousel
     FactsGrid            case-study facts + measured filler
-    CookieConsent        consent banner; mounts the analytics tags once accepted
-    CookieSettings       the On / Off control on the cookies page
-    ClarityAnalytics     the Microsoft Clarity tag
-    GoogleAnalytics      the GA4 tag
+    CookieConsent        consent banner; applies each category's choice to the tags
+    CookieSettings       the per-category On / Off controls on the cookies page
     MainCharacterSplash  the splash: canvas intro, typed title card, how-it-works section
   content/
     site.ts              nav, skills, contacts, per-page copy, image alt text, analytics IDs
@@ -157,7 +156,8 @@ src/
     blog/                blog posts, one markdown file each
   lib/
     blog.ts              reads, validates and renders the posts (build time only)
-    consent.ts           shared consent storage key + change event
+    consent.ts           consent categories, storage shape + migration, change events
+    analytics.ts         loads, stops and cleans up GA and Clarity to match consent
     mainCharacterStage.ts  the splash's canvas intro: timeline and drawing
     motion.ts            the rise stagger: timings, zone finding, image load gate
     nowrap.tsx           keeps hyphenated names (nebula-nuxt) on one line
@@ -271,8 +271,11 @@ Accessibility is part of the spec, not an afterthought:
 - `aria-current="page"` on the active nav item
 - Project list is a vertical `tablist` with roving tabindex and arrow-key
   selection; the detail panel is its `tabpanel`, named by the selected tab
-- Theme control is a `radiogroup` with roving tabindex; the consent control
-  uses native radios inside a `fieldset`
+- Theme control is a `radiogroup` with roving tabindex; the consent controls
+  on /cookies use native radios, one `fieldset` per category, and the
+  banner's per-category choices are native checkboxes with `role="switch"`
+  behind an `aria-expanded` disclosure. Focus returns to where it was (or
+  `main#main`) when the banner closes
 - Carousel step changes are announced through a `role="status"` counter
 - 44×44px minimum hit targets, except the documented compact footer toggle
 - Every transition sits inside a `prefers-reduced-motion: no-preference` guard
@@ -281,11 +284,31 @@ Accessibility is part of the spec, not an afterthought:
 ## Analytics and consent
 
 Microsoft Clarity and Google Analytics 4 are the only third-party scripts.
-Their IDs live in `SITE.clarityId` and `SITE.gaId`. Each tag renders nothing
-when its ID is empty, and with both empty the consent banner doesn't render
-either. The tags mount only after the visitor accepts, so no analytics cookies
-are set before consent. The choice is stored in `localStorage` under
-`portfolio-consent` and can be changed on `/cookies`.
+Their IDs live in `SITE.clarityId` and `SITE.gaId`. Consent is per category:
+**Analytics** (GA) and **Session recording** (Clarity). A category only appears,
+on the banner and on `/cookies`, when its ID is set; with both empty the
+banner doesn't render at all.
+
+Strict blocking: `src/lib/analytics.ts` injects a tag only once its category
+is granted, so nothing downloads and no cookie is set before consent. GA also
+gets Consent Mode signals — a `default` with everything denied before
+`config`, then an `update` granting `analytics_storage` (the ad signals stay
+denied) — and Clarity gets an explicit `consentv2` grant.
+
+Switching a category off applies live, for the rest of the page session, in
+every open tab: GA gets `ga-disable-<ID>` and a denied consent update; Clarity
+gets a denied `consentv2` and `stop` (denied consent alone keeps it recording
+in no-consent mode). Their first-party cookies (`_ga`, `_ga_*`, `_clck`,
+`_clsk`) are deleted on the host and every parent domain, dotted and not.
+Clarity's third-party cookies (CLID, MUID and friends, on clarity.ms and
+bing.com) are out of the page's reach. Switching back on resumes in place.
+`stop` and `start` are clarity-js commands missing from Clarity's published
+API table, so recheck them after a Clarity tag change.
+
+The choice is stored in `localStorage` under `portfolio-consent` as
+`{"v":2,"analytics":"granted"|"denied","recording":"granted"|"denied"}`. The
+original bare `"granted"` / `"denied"` value is migrated on first read to the
+same choice for both categories.
 
 The tags never load on `localhost`, `127.0.0.1`, `[::1]`, `*.local` or
 `*.test` (so `npm run dev` and `npm run preview` stay untracked), even after

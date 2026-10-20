@@ -3,65 +3,96 @@
 import { useEffect, useState } from 'react';
 
 import {
-  CONSENT_EVENT,
-  VENDOR_LIST,
-  readConsent,
+  CATEGORIES,
+  currentConsent,
+  subscribeConsent,
   writeConsent,
+  type CategoryInfo,
   type ConsentChoice,
+  type ConsentState,
 } from '@/lib/consent';
 import styles from './CookieSettings.module.css';
 
-type State = 'loading' | 'undecided' | ConsentChoice;
+const STATUS: Record<CategoryInfo['id'], Record<ConsentChoice | 'undecided', string>> = {
+  analytics: {
+    granted: 'Analytics are on. Thank you — this helps me see how the site is used.',
+    denied: 'Analytics are off. No Google Analytics cookies will be set.',
+    undecided: "You haven't chosen yet, so analytics are off by default.",
+  },
+  recording: {
+    granted: 'Session recording is on. Thank you — this shows me where the site is confusing.',
+    denied: 'Session recording is off. No Clarity cookies will be set.',
+    undecided: "You haven't chosen yet, so session recording is off by default.",
+  },
+};
 
 /**
- * The control on the /cookies page. Reflects the stored choice and lets the
- * visitor change it; writing through the shared helper updates the banner and
- * the analytics tags live, without a reload.
+ * The controls on the /cookies page, one per configured category. Reflects
+ * the stored choices and lets the visitor change them; writing through the
+ * shared helper updates the banner and the analytics tags live, without a
+ * reload.
  *
- * Native radios keep the group fully keyboard- and screen-reader-operable for
+ * Native radios keep each group fully keyboard- and screen-reader-operable for
  * free (arrow keys, roving focus, group semantics from the fieldset).
  */
 export default function CookieSettings() {
-  const [state, setState] = useState<State>('loading');
+  /* null until the stored choice loads: neither radio is checked, so there's
+     no flash of the wrong state before the effect runs. */
+  const [state, setState] = useState<ConsentState | null>(null);
 
   useEffect(() => {
-    const sync = () => setState(readConsent() ?? 'undecided');
+    const sync = () => setState(currentConsent());
     sync();
     /* Reflect changes made elsewhere — the banner, or another tab. */
-    window.addEventListener(CONSENT_EVENT, sync);
-    window.addEventListener('storage', sync);
-    return () => {
-      window.removeEventListener(CONSENT_EVENT, sync);
-      window.removeEventListener('storage', sync);
-    };
+    return subscribeConsent(sync);
   }, []);
 
-  function choose(choice: ConsentChoice) {
-    setState(choice);
-    writeConsent(choice);
-  }
+  return (
+    <div className={styles.groups}>
+      {CATEGORIES.map((category) => (
+        <CategoryControl
+          key={category.id}
+          category={category}
+          choice={state ? (state[category.id] ?? 'undecided') : null}
+          onChoose={(choice) => {
+            setState((s) => ({ ...s, [category.id]: choice }));
+            writeConsent({ [category.id]: choice });
+          }}
+        />
+      ))}
+    </div>
+  );
+}
 
-  const status =
-    state === 'granted'
-      ? 'Analytics are on. Thank you — this helps me see how the site is used.'
-      : state === 'denied'
-        ? 'Analytics are off. No analytics cookies will be set.'
-        : "You haven't chosen yet, so analytics are off by default.";
+function CategoryControl({
+  category,
+  choice,
+  onChoose,
+}: {
+  category: CategoryInfo;
+  choice: ConsentChoice | 'undecided' | null;
+  onChoose: (choice: ConsentChoice) => void;
+}) {
+  const name = `consent-${category.id}`;
+  const descId = `${name}-desc`;
 
   return (
-    <fieldset className={styles.fieldset}>
-      <legend className={styles.legend}>{VENDOR_LIST}</legend>
+    <fieldset className={styles.fieldset} aria-describedby={descId}>
+      <legend className={styles.legend}>
+        {category.label} <span className={styles.vendor}>· {category.vendor}</span>
+      </legend>
+      <p id={descId} className={styles.description}>
+        {category.description}
+      </p>
 
       <div className={styles.options}>
         <label className={styles.option}>
           <input
             type="radio"
-            name="consent"
+            name={name}
             className={styles.input}
-            checked={state === 'granted'}
-            /* Until the stored choice loads, neither is checked — avoids a flash
-               of the wrong state before the effect runs. */
-            onChange={() => choose('granted')}
+            checked={choice === 'granted'}
+            onChange={() => onChoose('granted')}
           />
           <span>On</span>
         </label>
@@ -69,10 +100,10 @@ export default function CookieSettings() {
         <label className={styles.option}>
           <input
             type="radio"
-            name="consent"
+            name={name}
             className={styles.input}
-            checked={state === 'denied'}
-            onChange={() => choose('denied')}
+            checked={choice === 'denied'}
+            onChange={() => onChoose('denied')}
           />
           <span>Off</span>
         </label>
@@ -80,7 +111,7 @@ export default function CookieSettings() {
 
       {/* Announced on change without moving focus. */}
       <p role="status" aria-live="polite" className={styles.status}>
-        {state === 'loading' ? '' : status}
+        {choice === null ? '' : STATUS[category.id][choice]}
       </p>
     </fieldset>
   );
