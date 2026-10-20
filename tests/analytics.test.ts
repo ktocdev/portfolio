@@ -5,6 +5,7 @@ import {
   applyConsent,
   cookieDomains,
   resetAnalyticsForTests,
+  trackEvent,
   type AnalyticsConfig,
 } from '@/lib/analytics';
 import { calls, installBrowser, type FakeBrowser } from './fakeBrowser';
@@ -146,6 +147,32 @@ describe('opting out', () => {
       ['consentv2', { ad_Storage: 'denied', analytics_Storage: 'granted' }],
       ['start'],
     ]);
+  });
+});
+
+describe('events', () => {
+  test('nothing is sent while no tool is running', () => {
+    trackEvent('demo_write');
+    applyConsent({ analytics: 'denied', recording: 'denied' }, config);
+    trackEvent('demo_write');
+    assert.equal(browser.win.dataLayer, undefined);
+    assert.equal(browser.win.clarity, undefined);
+  });
+
+  test('each running tool gets the event: GA with params, Clarity by name', () => {
+    applyConsent({ analytics: 'granted', recording: 'granted' }, config);
+    trackEvent('demo_tab', { tab: 'entities' });
+    assert.deepEqual(dataLayer().at(-1), ['event', 'demo_tab', { tab: 'entities' }]);
+    assert.deepEqual(clarityQueue().at(-1), ['event', 'demo_tab']);
+  });
+
+  test('a tool switched off stops getting events; the other carries on', () => {
+    applyConsent({ analytics: 'granted', recording: 'granted' }, config);
+    applyConsent({ analytics: 'granted', recording: 'denied' }, config);
+    const clarityBefore = clarityQueue().length;
+    trackEvent('demo_close_chapter');
+    assert.deepEqual(dataLayer().at(-1), ['event', 'demo_close_chapter', {}]);
+    assert.equal(clarityQueue().length, clarityBefore);
   });
 });
 

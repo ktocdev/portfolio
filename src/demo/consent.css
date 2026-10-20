@@ -1,0 +1,194 @@
+/* The Main Character demo's cookie banner (src/demo/consent.ts), copied into
+   the built demo by scripts/demo-consent.mjs. Built only from the demo's own
+   role tokens (css/tokens.css), so it follows the demo's light and dark
+   themes and its accent setting. The splash page's banner
+   (CookieConsent.module.css, .mc) draws the same thing in the demo's dark
+   palette; keep the two in step. */
+
+#mc-consent {
+  box-sizing: border-box;
+  font: var(--font-sm) var(--font-ui);
+  color: var(--text-default);
+  background: var(--bg-raised);
+  outline-offset: -2px;
+}
+
+/* Docked: the app is a one-screen flex column, so the banner takes the last
+   row and the app's main area gives up the room — nothing is covered. Capped
+   so the open choices can't squeeze the app away on a short phone. */
+#mc-consent[data-dock='flow'] {
+  flex: none;
+  max-height: 55dvh;
+  overflow-y: auto;
+  border-top: 1px solid var(--border-default);
+}
+
+/* Floating: the design system's scrolling pages, like the site's card. */
+#mc-consent[data-dock='float'] {
+  position: fixed;
+  left: var(--space-6);
+  right: var(--space-6);
+  bottom: var(--space-6);
+  z-index: 50;
+  max-width: 38rem;
+  max-height: calc(100dvh - 2 * var(--space-6));
+  overflow-y: auto;
+  margin-inline: auto;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+/* The write column's width and padding, so the docked banner lines up with
+   the composer above it. */
+.mc-consent-inner {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: var(--space-6) clamp(1rem, 3vw, 1.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* The demo's Eyebrow. */
+.mc-consent-eyebrow {
+  margin: 0;
+  font: var(--font-2xs) var(--font-ui);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-accent-muted);
+}
+
+/* The demo's body face, as its modal's copy is. */
+.mc-consent-message {
+  margin: 0;
+  font: var(--font-base) / 1.55 var(--font-body);
+  text-wrap: pretty;
+}
+
+.mc-consent-message a {
+  color: var(--text-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.mc-consent-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* The demo's quiet button... */
+.mc-consent-btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.2rem;
+  padding: 0.3rem 0.9rem;
+  font: var(--font-sm) var(--font-ui);
+  color: var(--text-muted);
+  white-space: nowrap;
+  background: transparent;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-base);
+  cursor: pointer;
+}
+
+.mc-consent-btn:hover {
+  color: var(--text-default);
+  background: var(--bg-muted);
+}
+
+/* ...and its send button, the one filled primary. */
+.mc-consent-primary {
+  color: var(--text-on-accent);
+  background: var(--fill-accent);
+  border-color: transparent;
+  border-radius: var(--radius-lg);
+}
+
+.mc-consent-primary:hover {
+  color: var(--text-on-accent);
+  background: var(--fill-accent-hover);
+}
+
+.mc-consent-rule {
+  width: 100%;
+  margin: var(--space-1) 0;
+  border: 0;
+  border-top: 1px solid var(--border-default);
+}
+
+.mc-consent-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.mc-consent-panel[hidden],
+.mc-consent-rule[hidden],
+.mc-consent-btn[hidden] {
+  display: none;
+}
+
+.mc-consent-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+/* Italic accent serif, the demo's modal title voice. */
+.mc-consent-panel-title {
+  margin: 0;
+  font: italic var(--font-md) var(--font-body);
+  color: var(--text-accent);
+}
+
+.mc-consent-close {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-base);
+  cursor: pointer;
+}
+
+.mc-consent-close:hover {
+  color: var(--text-default);
+  border-color: var(--border-default);
+}
+
+.mc-consent-choice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.mc-consent-choice input {
+  margin-top: 0.15rem;
+  flex-shrink: 0;
+}
+
+.mc-consent-choice label {
+  color: var(--text-default);
+  cursor: pointer;
+}
+
+.mc-consent-vendor,
+.mc-consent-hint {
+  color: var(--text-muted);
+}
+
+.mc-consent-hint {
+  margin: 0.1rem 0 0;
+  font-size: var(--font-xs);
+}

@@ -158,6 +158,9 @@ src/
     blog.ts              reads, validates and renders the posts (build time only)
     consent.ts           consent categories, storage shape + migration, change events
     analytics.ts         loads, stops and cleans up GA and Clarity to match consent
+  demo/
+    consent.ts           the demo's banner, masks and events (bundled into out/ by the build)
+    consent.css          its styles, on the demo's own tokens
     mainCharacterStage.ts  the splash's canvas intro: timeline and drawing
     motion.ts            the rise stagger: timings, zone finding, image load gate
     nowrap.tsx           keeps hyphenated names (nebula-nuxt) on one line
@@ -171,6 +174,7 @@ public/
   Katie-OConnor-Resume.pdf
 scripts/
   flatten-segment-files.mjs   post-build fix for a Windows-only Next export bug
+  demo-consent.mjs            post-build: cookie banner + analytics into the demo
   pdf.mjs, print-env.mjs      resume PDF and phone-number env loading
   check-no-phone.mjs          deploy guard
   new-post.mjs                scaffolds a draft blog post
@@ -183,6 +187,8 @@ The Main Character demo is a self-contained static app built by the
 rag-journal repo straight into `public/main-character/demo/`. It has no Next
 route. Cloudflare resolves the folder URL to its `index.html`, and
 `next.config.ts` adds a dev-only rewrite so `next dev` does the same.
+Nothing in that folder is edited by hand; the build adds what the site needs
+to the copies in `out/` (canonical links, and the cookie banner below).
 
 ## Design tokens
 
@@ -309,6 +315,33 @@ The choice is stored in `localStorage` under `portfolio-consent` as
 `{"v":2,"analytics":"granted"|"denied","recording":"granted"|"denied"}`. The
 original bare `"granted"` / `"denied"` value is migrated on first read to the
 same choice for both categories.
+
+### The Main Character demo
+
+The demo gets the same banner and tags, stamped into its built pages by
+`scripts/demo-consent.mjs` after `next build`: it bundles
+`src/demo/consent.ts` (plain DOM, on the same `consent.ts` and
+`analytics.ts`) with `src/demo/consent.css` into
+`out/main-character/demo/site-consent/` and links both from every demo page.
+One stored choice covers the site and the demo. The banner wears the demo's
+own tokens, so it follows the demo's theme and accent; in the app it docks as
+the layout's last row so it never covers the write box, and on the design
+system's scrolling pages it floats. The splash at `/main-character` draws the
+site's banner in the same look, from the demo's dark palette.
+
+Clarity masks (`data-clarity-mask`) go on everywhere a visitor's own text can
+reach the page — past the end of the script a send goes through as typed, an
+uploaded life summary is shown, search echoes its query — listed in `MASKED`.
+GA gets `demo_write`, `demo_lookup`, `demo_close_chapter` and
+`demo_tab` (`tab` param) events from the demo's own `mc:turn` and
+`mc:closed` events and its tab switches. The build fails if a demo refresh
+renames a mask target or hook; `node scripts/demo-consent.mjs --check` runs
+that check on `public/` without building. The demo has no banner under
+`next dev`, which serves it untouched.
+
+GA sends events in batches. Events recorded while analytics was allowed can
+still go out in the batch after an opt-out, a few seconds later or when the
+page is hidden; nothing recorded after the opt-out is sent.
 
 The tags never load on `localhost`, `127.0.0.1`, `[::1]`, `*.local` or
 `*.test` (so `npm run dev` and `npm run preview` stay untracked), even after

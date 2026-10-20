@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useEffect, useId, useRef, useState } from 'react';
 
 import { SITE } from '@/content/site';
@@ -45,6 +46,9 @@ export default function CookieConsent() {
   /* Where focus was before the banner took it, to hand it back on close. */
   const returnFocus = useRef<HTMLElement | null>(null);
   const panelId = useId();
+  /* On the Main Character splash the banner wears the app's look, matching
+     the one stamped into the demo itself (src/demo/consent.css). */
+  const onSplash = usePathname()?.startsWith('/main-character') ?? false;
   const chooseButton = useRef<HTMLButtonElement>(null);
   const firstSwitch = useRef<HTMLInputElement>(null);
   /* Skips the focus move on first render; only an open or close moves it. */
@@ -148,7 +152,7 @@ export default function CookieConsent() {
       aria-labelledby="cookie-title"
       aria-describedby="cookie-desc"
       tabIndex={-1}
-      className={styles.banner}
+      className={onSplash ? `${styles.banner} ${styles.mc}` : styles.banner}
       data-choosing={choosing || undefined}
     >
       <div>
