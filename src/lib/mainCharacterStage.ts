@@ -3,21 +3,23 @@
  * onto a dark stage and a silhouette walks into the pool of light. A port of
  * the handoff's `class Component` (design_handoff_splash/, local only) with
  * its production defaults baked in: the "distance" entrance and no walk cycle.
- * Colours, timings and geometry are final from the design; keep them exact.
+ * Colours and geometry are final from the design; keep them exact. The hero
+ * timings were tightened from the design's after mobile visitors kept
+ * skipping it.
  * The interludes lower on the page reuse it with other subjects, a quicker
  * timeline and, on alternate rows, the scene mirrored.
  */
 
 /** Seconds from the start of the intro. */
 export const TIMELINE = {
-  beamOn: 0.4,
-  sweepStart: 0.9,
-  sweepEnd: 2.4,
-  figStart: 2.8,
-  figEnd: 4.6,
-  pageStart: 4.9,
-  typeStart: 5.7,
-  end: 7.8,
+  beamOn: 0.2,
+  sweepStart: 0.6,
+  sweepEnd: 1.9,
+  figStart: 2.1,
+  figEnd: 3.6,
+  pageStart: 3.9,
+  typeStart: 4.5,
+  end: 6.6,
 } as const;
 
 /** The beats a stage itself draws; the hero's page and typing are DOM. */
@@ -28,11 +30,13 @@ export type StageTimeline = Record<
 
 /** A quicker run of the same beats for the interludes lower on the page. */
 export const INTERLUDE_TIMELINE = {
-  beamOn: 0.2,
-  sweepStart: 0.6,
-  sweepEnd: 1.9,
-  figStart: 2.1,
-  figEnd: 3.6,
+  beamOn: 0,
+  sweepStart: 0.4,
+  sweepEnd: 1.7,
+  /* The subject sets off while the beam is still settling; its walk keeps
+     the full 1.5s. */
+  figStart: 1.0,
+  figEnd: 2.5,
 } as const;
 
 /** What walks into the light: a shape standing on (0, 0), `h` tall. */
