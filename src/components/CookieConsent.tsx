@@ -1,66 +1,92 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 
+import { SITE } from '@/content/site';
+import { applyConsent } from '@/lib/analytics';
 import {
   ANALYTICS_CONFIGURED,
-  CONSENT_EVENT,
+  CATEGORIES,
   VENDOR_LIST,
-  readConsent,
+  allCategories,
+  currentConsent,
+  isDecided,
+  subscribeConsent,
   trackingSuppressed,
   writeConsent,
+  type Category,
+  type ConsentState,
 } from '@/lib/consent';
-import ClarityAnalytics from './ClarityAnalytics';
-import GoogleAnalytics from './GoogleAnalytics';
 import styles from './CookieConsent.module.css';
 
-/* 'loading' until the stored choice is read on mount, so the server render and
-   the first client render agree (no hydration flash of the banner). */
-type Consent = 'loading' | 'undecided' | 'granted' | 'denied';
-
 /**
- * A one-time consent gate for the analytics tags. They only mount after the
- * visitor accepts, so no analytics cookies are set until then. The choice is
- * remembered, and the banner never reappears once made.
+ * The consent gate for the analytics tags. Nothing loads until the visitor
+ * accepts a category, and each category loads only its own tool (see
+ * applyConsent). The banner stays until every configured category has a
+ * choice, then never reappears.
  *
  * Stays in sync with the settings page: a change there (or in another tab)
- * updates this component live, mounting or unmounting the tags to match.
+ * is applied here live, loading or stopping the tags to match.
  *
  * Renders nothing when no analytics IDs are configured — there is nothing to
  * consent to, so there is no banner.
  */
 export default function CookieConsent() {
-  const [consent, setConsent] = useState<Consent>('loading');
-  /* Starts true so nothing loads before the host/opt-out check has run. */
-  const [suppressed, setSuppressed] = useState(true);
+  /* null until the stored choice is read on mount, so the server render and
+     the first client render agree (no hydration flash of the banner). */
+  const [consent, setConsent] = useState<ConsentState | null>(null);
+  const [choosing, setChoosing] = useState(false);
+  const [picks, setPicks] = useState<Record<Category, boolean>>({
+    analytics: false,
+    recording: false,
+  });
   const dialog = useRef<HTMLDivElement>(null);
+  /* Where focus was before the banner took it, to hand it back on close. */
+  const returnFocus = useRef<HTMLElement | null>(null);
+  const panelId = useId();
+  const chooseButton = useRef<HTMLButtonElement>(null);
+  const firstSwitch = useRef<HTMLInputElement>(null);
+  /* Skips the focus move on first render; only an open or close moves it. */
+  const choosingChanged = useRef(false);
 
   useEffect(() => {
     if (!ANALYTICS_CONFIGURED) return;
 
+    /* Apply straight from the event, not from a render, so a tag stops the
+       moment its category is switched off. Never on localhost or an
+       opted-out device (see trackingSuppressed). */
     const sync = () => {
-      setSuppressed(trackingSuppressed());
-      setConsent(readConsent() ?? 'undecided');
+      const state = currentConsent();
+      applyConsent(state, {
+        gaId: SITE.gaId,
+        clarityId: SITE.clarityId,
+        suppressed: trackingSuppressed(),
+      });
+      setConsent(state);
     };
     sync();
-
-    /* Live updates: our own event for same-tab changes (settings page),
-       'storage' for changes made in another tab. */
-    window.addEventListener(CONSENT_EVENT, sync);
-    window.addEventListener('storage', sync);
-    return () => {
-      window.removeEventListener(CONSENT_EVENT, sync);
-      window.removeEventListener('storage', sync);
-    };
+    return subscribeConsent(sync);
   }, []);
+
+  const open = consent !== null && !isDecided(consent);
 
   /* Move focus to the banner when it appears so keyboard and screen-reader
      users meet the choice immediately, rather than tabbing past the whole page
-     to reach it. Non-modal: the page stays usable if they'd rather ignore it. */
+     to reach it. Non-modal: the page stays usable if they'd rather ignore it.
+     When it goes, focus returns to where it was, or to <main>, rather than
+     falling back to <body> along with the removed button. */
   useEffect(() => {
-    if (consent === 'undecided') dialog.current?.focus();
-  }, [consent]);
+    if (!open) return;
+    const active = document.activeElement;
+    returnFocus.current = active instanceof HTMLElement && active !== document.body ? active : null;
+    dialog.current?.focus();
+    return () => {
+      const target = returnFocus.current;
+      if (target?.isConnected) target.focus();
+      else document.getElementById('main')?.focus();
+    };
+  }, [open]);
 
   /* The banner is fixed, so it would sit over whatever ends at the bottom of
      the page: the footer, and on a phone the last rows of content too. While
@@ -74,7 +100,7 @@ export default function CookieConsent() {
   useEffect(() => {
     const el = dialog.current;
     const root = document.documentElement;
-    if (consent !== 'undecided' || !el) {
+    if (!open || !el) {
       root.style.removeProperty('--consent-inset');
       return;
     }
@@ -89,60 +115,151 @@ export default function CookieConsent() {
       observer.disconnect();
       root.style.removeProperty('--consent-inset');
     };
-  }, [consent]);
+  }, [open]);
 
-  if (!ANALYTICS_CONFIGURED) return null;
+  /* The Choose… button hides while the panel is open, and the panel's close
+     button goes with it on close, so focus is handed over each way rather than
+     dropped: into the first switch on open, back to Choose… on close. */
+  useEffect(() => {
+    if (!choosingChanged.current) {
+      choosingChanged.current = true;
+      return;
+    }
+    if (choosing) firstSwitch.current?.focus();
+    else chooseButton.current?.focus();
+  }, [choosing]);
+
+  if (!open) return null;
+
+  /* Choosing per category only means something with more than one. */
+  const canChoose = CATEGORIES.length > 1;
+
+  function saveChoices() {
+    writeConsent(
+      Object.fromEntries(CATEGORIES.map((c) => [c.id, picks[c.id] ? 'granted' : 'denied'])),
+    );
+  }
 
   return (
-    <>
-      {/* Each tag no-ops on its own if its ID is unset, so one switch here
-          covers however many are configured. Never on localhost or an
-          opted-out device (see trackingSuppressed). */}
-      {consent === 'granted' && !suppressed && (
+    <div
+      ref={dialog}
+      role="dialog"
+      aria-modal="false"
+      aria-labelledby="cookie-title"
+      aria-describedby="cookie-desc"
+      tabIndex={-1}
+      className={styles.banner}
+      data-choosing={choosing || undefined}
+    >
+      <div>
+        <p id="cookie-title" className={styles.title}>
+          Cookies
+        </p>
+        <p id="cookie-desc" className={styles.message}>
+          This site uses {VENDOR_LIST} to understand how visitors use it
+          {SITE.clarityId ? ', including anonymized session recordings' : ''}. Analytics cookies
+          are set only if you accept, and you can change your choice on the{' '}
+          <Link href="/cookies">Cookies page</Link>.
+        </p>
+      </div>
+
+      <div className={styles.actions}>
+        <button
+          type="button"
+          onClick={() => writeConsent(allCategories('granted'))}
+          className={`${styles.button} ${styles.accept}`}
+        >
+          Accept all
+        </button>
+        <button
+          type="button"
+          onClick={() => writeConsent(allCategories('denied'))}
+          className={`${styles.button} ${styles.decline}`}
+        >
+          Decline all
+        </button>
+        {canChoose && !choosing && (
+          <button
+            ref={chooseButton}
+            type="button"
+            aria-expanded={false}
+            onClick={() => setChoosing(true)}
+            className={`${styles.button} ${styles.decline}`}
+          >
+            Choose…
+          </button>
+        )}
+      </div>
+
+      {/* After its Choose… trigger, so the disclosure reads in order. A group
+          named by its heading rather than a fieldset: a legend can't share a
+          row with the close button, and the button inside it would end up in
+          the group's name. */}
+      {canChoose && choosing && (
         <>
-          <ClarityAnalytics />
-          <GoogleAnalytics />
+          <hr className={styles.rule} />
+          <div
+            id={panelId}
+            role="group"
+            aria-labelledby={`${panelId}-title`}
+            className={styles.choices}
+          >
+            <div className={styles.choicesHead}>
+              <p id={`${panelId}-title`} className={styles.legend}>
+                Choose what to allow
+              </p>
+              <button
+                type="button"
+                aria-label="Close choices"
+                onClick={() => setChoosing(false)}
+                className={styles.close}
+              >
+                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
+                  <path
+                    d="M6 6l12 12M18 6L6 18"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </button>
+            </div>
+            {CATEGORIES.map((c, i) => (
+              /* The label names the switch ("Analytics (Google Analytics)");
+                 the hint describes it, so the name stays short when read out. */
+              <div key={c.id} className={styles.choice}>
+                <input
+                  ref={i === 0 ? firstSwitch : undefined}
+                  id={`${panelId}-${c.id}`}
+                  type="checkbox"
+                  role="switch"
+                  aria-describedby={`${panelId}-${c.id}-hint`}
+                  className={styles.switch}
+                  checked={picks[c.id]}
+                  onChange={(e) => setPicks((p) => ({ ...p, [c.id]: e.target.checked }))}
+                />
+                <div>
+                  <label htmlFor={`${panelId}-${c.id}`} className={styles.choiceLabel}>
+                    {c.label} <span className={styles.vendor}>({c.vendor})</span>
+                  </label>
+                  <p id={`${panelId}-${c.id}-hint`} className={styles.choiceHint}>
+                    {c.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+            <div className={styles.actions}>
+              <button
+                type="button"
+                onClick={saveChoices}
+                className={`${styles.button} ${styles.accept}`}
+              >
+                Save choices
+              </button>
+            </div>
+          </div>
         </>
       )}
-
-      {consent === 'undecided' && (
-        <div
-          ref={dialog}
-          role="dialog"
-          aria-modal="false"
-          aria-labelledby="cookie-title"
-          aria-describedby="cookie-desc"
-          tabIndex={-1}
-          className={styles.banner}
-        >
-          <div>
-            <p id="cookie-title" className={styles.title}>
-              Cookies
-            </p>
-            <p id="cookie-desc" className={styles.message}>
-              This site uses {VENDOR_LIST} to understand how visitors use it, including
-              anonymized session recordings. Analytics cookies are set only if you accept, and
-              you can change your choice on the <Link href="/cookies">Cookies page</Link>.
-            </p>
-          </div>
-          <div className={styles.actions}>
-            <button
-              type="button"
-              onClick={() => writeConsent('granted')}
-              className={`${styles.button} ${styles.accept}`}
-            >
-              Accept
-            </button>
-            <button
-              type="button"
-              onClick={() => writeConsent('denied')}
-              className={`${styles.button} ${styles.decline}`}
-            >
-              Decline
-            </button>
-          </div>
-        </div>
-      )}
-    </>
+    </div>
   );
 }

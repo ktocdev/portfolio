@@ -12,12 +12,14 @@ export const SITE = {
   /* Evaluated at build time (static export), so it tracks the last deploy. */
   copyright: `© ${new Date().getFullYear()} Katie O'Connor`,
   /* Microsoft Clarity project ID (Settings → Overview). Public value, not a
-     secret. Leave empty to disable analytics — the script won't load. */
+     secret. Leave empty to disable session recording — the script won't load
+     and its consent category disappears from the banner and /cookies. */
   clarityId: 'yhyf2x1l6v',
   /* GA4 measurement ID (Admin → Data streams → your web stream), shaped
      G-XXXXXXXXXX. Public value, not a secret. Leave empty to disable — the
-     script won't load and the banner stops naming it, but COPY.cookies.intro
-     below is hand-written prose, so edit that too if you drop a tool. */
+     script won't load and its "Analytics" consent category disappears, but
+     COPY.cookies.intro below is hand-written prose, so edit that too if you
+     drop a tool. */
   gaId: 'G-G8J5PP2S3F',
 } as const;
 
