@@ -59,6 +59,12 @@ export const viewport: Viewport = {
 
 /* Without script the intro never runs, so show its end state: the card up,
    the full title text in place of the typed copy, and no skip button. */
+/* next/font sets the two family variables on the wrapper below, which the
+   cookie banner (a root-layout sibling of the page) can't see. Published on
+   :root too, for as long as this page is mounted, so the banner's splash
+   variant can use the app's faces. */
+const fontRoot = `:root{--font-old-standard:${oldStandard.style.fontFamily};--font-cmu-sans:${cmuSans.style.fontFamily}}`;
+
 const noscriptStyle = `[data-mc-card]{opacity:1;transform:none;visibility:visible}[data-mc-full]{position:static;width:auto;height:auto;margin:0;overflow:visible;clip:auto;white-space:normal}[data-mc-typed],[data-mc-skip]{display:none}`;
 
 /**
@@ -69,6 +75,7 @@ const noscriptStyle = `[data-mc-card]{opacity:1;transform:none;visibility:visibl
 export default function MainCharacterPage() {
   return (
     <div className={`${oldStandard.variable} ${cmuSans.variable}`}>
+      <style dangerouslySetInnerHTML={{ __html: fontRoot }} />
       <noscript dangerouslySetInnerHTML={{ __html: `<style>${noscriptStyle}</style>` }} />
       <MainCharacterSplash />
     </div>

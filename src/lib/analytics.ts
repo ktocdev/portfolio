@@ -212,6 +212,16 @@ export function applyConsent(state: ConsentState, config: AnalyticsConfig): void
   }
 }
 
+/**
+ * A named event, sent to whichever tools are running: a GA event with its
+ * params, and a Clarity custom event (name only — Clarity takes no params),
+ * which also makes the matching recordings filterable. Does nothing for a
+ * tool that is off, stopped, or never loaded, so callers needn't check.
+ */
+export function trackEvent(name: string, params?: Record<string, string>): void {
+  if (gaStatus === 'on') win().gtag?.('event', name, params ?? {});
+  if (clarityStatus === 'on') clarity('event', name);
+}
 
 /** Test hook: forget what this page session has loaded. */
 export function resetAnalyticsForTests(): void {

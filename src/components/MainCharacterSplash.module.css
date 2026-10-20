@@ -1,8 +1,12 @@
 /* Main Character splash. Its own palette, not the portfolio's: the page is
    always the app's dark theme, and the title card is the app's light theme
    (design tokens from the splash handoff). Font families are injected by
-   next/font in app/main-character/page.tsx. */
-.splash {
+   next/font in app/main-character/page.tsx.
+
+   The palette sits on <html> while the splash is mounted, not on .splash,
+   so the cookie banner — rendered by the root layout, outside the splash —
+   can draw itself in the same colours (CookieConsent.module.css, .mc). */
+:global(html):has(.splash) {
   --mc-stage: #100d0b;
   --mc-bg: #211d19;
   --mc-bg-raised: #2a2521;
@@ -22,7 +26,9 @@
 
   --mc-serif: var(--font-old-standard), Georgia, serif;
   --mc-sans: var(--font-cmu-sans), sans-serif;
+}
 
+.splash {
   color-scheme: dark;
   background: var(--mc-stage);
   color: var(--mc-text);

@@ -53,6 +53,21 @@ Files that show as modified in `git status` but are missing from the
 `--ignore-cr-at-eol` stat differ only in line endings. Git normalizes them to
 LF on commit, so they'll drop out; mention it, don't act on it.
 
+## 3. Check the analytics hooks still fit
+
+The build stamps the site's cookie banner and analytics into the demo
+(`scripts/demo-consent.mjs`), masking the elements where a visitor's own text
+can appear in Clarity recordings and listening for the demo's own events.
+Check the refreshed demo still has all of them:
+
+```
+node scripts/demo-consent.mjs --check
+```
+
+If it names something missing, the demo renamed or dropped it: report which,
+and say `MASKED` (or the hook) in `src/demo/consent.ts` needs updating
+before the next build, which would otherwise fail on it.
+
 ## Stop here
 
 Don't run `npm run build`, `npm run deploy`, or commit. Hand back the change

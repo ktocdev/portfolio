@@ -5,7 +5,7 @@
   "description": "Katie O'Connor — portfolio",
   "scripts": {
     "dev": "next dev",
-    "build": "next build && node scripts/flatten-segment-files.mjs && node scripts/demo-canonicals.mjs",
+    "build": "next build && node scripts/flatten-segment-files.mjs && node scripts/demo-canonicals.mjs && node scripts/demo-consent.mjs",
     "dev:print": "node scripts/print-env.mjs dev",
     "build:print": "node scripts/print-env.mjs build",
     "pdf": "node scripts/pdf.mjs",
@@ -26,6 +26,7 @@
     "@types/node": "^24.9.2",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "esbuild": "^0.28.1",
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.3.5",
     "gray-matter": "^4.0.3",

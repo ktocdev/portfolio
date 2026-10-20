@@ -222,3 +222,119 @@
     flex-shrink: 0;
   }
 }
+
+/* ---------- Main Character splash ----------
+   The demo's banner (src/demo/consent.css) in the app's dark palette, which
+   the splash publishes on <html> (MainCharacterSplash.module.css): its
+   raised surface and hairlines, the eyebrow, body copy in Old Standard, the
+   quiet and send buttons, the italic accent title. Keep the two in step. */
+.mc {
+  color: var(--mc-text);
+  background: var(--mc-bg-raised);
+  border-color: var(--mc-border);
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  font-family: var(--mc-sans);
+  color-scheme: dark;
+}
+
+.mc:focus-visible {
+  outline: 2px solid var(--mc-accent);
+  outline-offset: 2px;
+}
+
+.mc .title {
+  font-family: var(--mc-sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: var(--mc-accent-dim);
+}
+
+.mc .message {
+  font: 0.95rem / 1.55 var(--mc-serif);
+  color: var(--mc-text);
+}
+
+.mc .message a {
+  color: var(--mc-accent);
+  text-underline-offset: 2px;
+}
+
+/* The app's buttons are lower-case; its quiet button by default... */
+.mc .button {
+  min-height: 2.2rem;
+  padding: 0.3rem 0.9rem;
+  font: 0.85rem var(--mc-sans);
+  text-transform: lowercase;
+  color: var(--mc-text-dim);
+  background: transparent;
+  border: 1px solid var(--mc-border);
+  border-radius: 8px;
+}
+
+.mc .button:hover {
+  color: var(--mc-text);
+  background: var(--mc-bg);
+  border-color: var(--mc-border);
+}
+
+/* ...and its filled send button for the primary. */
+.mc .accept {
+  color: var(--mc-bg);
+  background: var(--mc-accent);
+  border-color: transparent;
+  border-radius: 10px;
+}
+
+.mc .accept:hover {
+  color: var(--mc-bg);
+  background: var(--mc-accent-hover);
+  border-color: transparent;
+}
+
+.mc .button:focus-visible,
+.mc .close:focus-visible,
+.mc .switch:focus-visible,
+.mc .message a:focus-visible {
+  outline: 2px solid var(--mc-accent);
+  outline-offset: 2px;
+}
+
+.mc .rule {
+  border-top-color: var(--mc-border);
+}
+
+.mc .legend {
+  font: italic 1.05rem var(--mc-serif);
+  color: var(--mc-accent);
+}
+
+.mc .close {
+  color: var(--mc-text-dim);
+  border-radius: 8px;
+}
+
+.mc .close:hover {
+  color: var(--mc-text);
+  border-color: var(--mc-border);
+}
+
+.mc .choice {
+  font-size: 0.85rem;
+}
+
+.mc .switch {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--mc-accent);
+}
+
+.mc .choiceLabel {
+  font-weight: 400;
+  color: var(--mc-text);
+}
+
+.mc .vendor,
+.mc .choiceHint {
+  color: var(--mc-text-dim);
+}
