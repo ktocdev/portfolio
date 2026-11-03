@@ -7,6 +7,7 @@ import {
   EDUCATION,
   EXPERIENCE,
   RESUME_CONTACT,
+  RESUME_DESCRIPTION,
   RESUME_PROJECTS,
   RESUME_SKILLS,
   RESUME_SUMMARY,
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
      browser copies document.title into the file's Title field, and this is
      the title the PDF should carry. */
   title: { absolute: `${SITE.name} - Resume` },
-  description: RESUME_SUMMARY,
+  description: RESUME_DESCRIPTION,
   alternates: { canonical: '/resume/' },
 };
 
@@ -164,7 +165,18 @@ export default function ResumePage() {
             <div key={project.title} className={styles.entry}>
               <div className={styles.entryHeader}>
                 <h3 className={styles.role}>{project.title}</h3>
-                <p className={styles.org}>{project.stack}</p>
+                {project.years ? <span className={styles.years}>{project.years}</span> : null}
+                <p className={styles.org}>
+                  {project.stack}
+                  {project.link ? (
+                    <>
+                      {' · '}
+                      <a href={project.link.href} className={styles.contactLink}>
+                        {project.link.text}
+                      </a>
+                    </>
+                  ) : null}
+                </p>
               </div>
               <ul className={styles.bullets}>
                 {project.items.map((item) => (
@@ -180,10 +192,7 @@ export default function ResumePage() {
         <h2 id="resume-earlier" className={styles.sectionHeading}>
           Earlier Experience
         </h2>
-        <div className={styles.entry}>
-          <EntryHeader entry={EARLIER_ROLES} />
-          <p className={styles.note}>{EARLIER_ROLES.note}</p>
-        </div>
+        <p className={styles.note}>{EARLIER_ROLES}</p>
       </section>
 
       <section className={styles.section} aria-labelledby="resume-education">

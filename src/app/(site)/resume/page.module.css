@@ -1,5 +1,5 @@
 /* The resume: one reading column, centred in the shell. Unlike every
-   other page this one is meant to scroll (a two-page document can't fit
+   other page this one is meant to scroll (a multi-page document can't fit
    100dvh) and it is the print source for the PDF, so it deliberately opts
    out of the site's viewport-keyed type scale. Sizes come from the resume's
    own document scale (a 14px base with em steps, carried over from the
@@ -208,8 +208,7 @@
   margin-top: 1em;
 }
 
-.entryHeader + .bullets,
-.entryHeader + .note {
+.entryHeader + .bullets {
   margin-top: 0.5em;
 }
 
@@ -320,8 +319,8 @@
 
 /* --- Print -------------------------------------------------------------- */
 /* Type is already the document scale (14px = 10.5pt), so print only fixes
-   the sheet, tightens the vertical rhythm to fit two US Letter pages, and
-   controls page breaks. globals.css handles the shell and colours. */
+   the sheet, tightens the vertical rhythm for US Letter pages, and controls
+   page breaks. globals.css handles the shell and colours. */
 @page {
   size: letter;
   margin: 0.5in;
