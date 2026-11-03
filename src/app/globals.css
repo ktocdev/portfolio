@@ -354,6 +354,15 @@ a:hover {
   }
 }
 
+/* A flipping heading's section on first load, until enterPage() takes over.
+   Visibility, so its images still load and the layout doesn't move. See
+   firstLoadScript in layout.tsx. */
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-entrance-hold] section:has([data-flip-heading]) {
+    visibility: hidden;
+  }
+}
+
 /* --- Shared primitives -------------------------------------------------- */
 
 /* Button reset — the system has exactly one filled button (Resume download);

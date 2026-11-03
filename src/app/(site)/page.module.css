@@ -38,6 +38,11 @@
   color: var(--text);
 }
 
+/* Inline boxes can't take the flip's transform. */
+.word {
+  display: inline-block;
+}
+
 .lead {
   font-size: var(--type-lead);
   line-height: 1.6;

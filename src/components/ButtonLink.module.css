@@ -26,3 +26,27 @@
 .glyph {
   font-family: var(--font-mono);
 }
+
+/* A light band parked just off the left edge, like the glint on a blade: a
+   narrow bright core with soft edges. SHIMMER in motion.ts moves it across. */
+.button[data-shimmer] {
+  position: relative;
+  overflow: hidden;
+}
+
+.button[data-shimmer]::after {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 40%;
+  background: linear-gradient(
+    105deg,
+    transparent 15%,
+    rgb(255 255 255 / 0.15) 38%,
+    rgb(255 255 255 / 0.7) 50%,
+    rgb(255 255 255 / 0.15) 62%,
+    transparent 85%
+  );
+  transform: translateX(-100%);
+  pointer-events: none;
+}

@@ -107,8 +107,8 @@ export const EXPERIENCE: Entry[] = [
         items: [
           'Embedded with the AI team to build the frontend of a human-in-the-loop review dashboard where people evaluate and correct AI output; completed a partial design, made the UX calls it left open, and tested it with real users to make the review workflow efficient.',
           "Defined the dashboard's REST contract with the backend engineer, writing a detailed spec on data shapes, request semantics (PATCH vs. POST), and full schema trees so both sides could build in parallel.",
-          'Made the design system agent-ready with custom Claude skills for planning and release, automating end-to-end component delivery (build, docs page, release) at about $3 in AI spend per component versus one to two days of hands-on work, with human review at each step.',
-          "Cut team AI spend by roughly two-thirds by matching tasks to the right model and introducing prompt caching, without losing output quality; co-hosted the company's AI Office Hours to help engineers adopt AI-assisted development.",
+          'Made the design system agent-ready with custom Claude skills for planning and release, automating end-to-end component delivery (build, docs page, release) that used to take one to two days of hands-on work, with human review at each step.',
+          "Co-hosted the company's AI Office Hours to help engineers adopt AI-assisted development.",
           'Automated repetitive setup before agentic tools existed, writing Python scripts with GitHub Copilot that generated code template files for new work.',
         ],
       },
@@ -168,7 +168,7 @@ export const RESUME_SKILLS: ResumeSkill[] = [
   {
     label: 'AI-Native UI & LLM Systems',
     items:
-      'Anthropic Claude API, Streaming & Conversational UI, Human-in-the-Loop Review, Tool Use, Embeddings & Semantic Retrieval, Vector Databases (ChromaDB), Prompt & Context Engineering, Prompt Caching, Model Selection & Cost Optimization, Agent Skills',
+      'Anthropic Claude API, Streaming & Conversational UI, Human-in-the-Loop Review, Tool Use, Embeddings & Semantic Retrieval, Vector Databases (ChromaDB), Prompt & Context Engineering, Prompt Caching, Model Selection, Agent Skills',
   },
   {
     label: 'Design & Figma',

@@ -214,7 +214,8 @@ first paint. Without it the page renders in the system scheme and then snaps.
 ## Motion
 
 Motion uses imperative WAAPI (`Element.animate`), since the content it moves
-is freshly mounted each time.
+is freshly mounted each time. The one exception is Home's heading flip, which
+uses GSAP.
 
 - **Page change:** clicking an internal link fades the page out (150ms)
   before the route commits. The new page's section then rises zone by zone
@@ -229,6 +230,16 @@ is freshly mounted each time.
 - **Image gate:** a zone whose image hasn't loaded is held at opacity 0 and
   rises on `load` (or `error`, so a broken image still ends up visible). This
   is invisible on a warm cache, so test with the network throttled.
+- **Home heading:** a `[data-flip-heading]`'s words flip in on the horizontal
+  axis, timed like speech ("Hi," 700ms, "I'm" 450ms starting 610ms into "Hi,",
+  "Katie." 600ms starting 200ms into "I'm"; `CUES` in `flipHeading.ts`). As the last word
+  lands, the page's other zones all rise together, with no stagger. Once they
+  have, a light band sweeps across the `shimmer` button (900ms).
+  It plays on first load too, unlike every other page's entrance, so an inline
+  script holds the section hidden until the app can start it. The hold lifts
+  2s after the loader, so a slow bundle loses the animation, not the page. GSAP
+  is a separate chunk, fetched only for a page that flips, and the loader
+  covers that fetch.
 - **Project switch** re-runs the rise on the detail column only, faster
   (320ms / 45ms). It skips first mount, which the page rise already covers.
 - **Nav:** the current item is marked by one indicator that slides between

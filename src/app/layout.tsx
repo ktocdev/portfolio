@@ -97,8 +97,13 @@ const themeScript = `(function(){try{var t=localStorage.getItem('portfolio-theme
  * the app's own script can arrive long after the page is ready, and the
  * loader would sit over a finished page until it did. Mirrors whenReady()
  * in PageTransition, which takes over for route changes; a 15s cap as there.
+ *
+ * It also sets the hold that keeps a flipping heading's section hidden until
+ * the app can play its entrance. The hold lifts 2s after the loader, so a slow
+ * app bundle costs the animation rather than leaving the page blank. Script
+ * off, it is never set.
  */
-const firstLoadScript = `(function(){var d=document,done=function(){d.documentElement.setAttribute('data-first-ready','')};setTimeout(done,15000);function check(){var w=[].slice.call(d.querySelectorAll('main img')).filter(function(i){if(i.complete)return false;var r=i.getClientRects();if(!r.length)return false;return!(i.loading==='lazy'&&r[0].top>innerHeight*1.5)}).map(function(i){return new Promise(function(res){i.addEventListener('load',res,{once:true});i.addEventListener('error',res,{once:true})})});if(d.fonts)w.push(d.fonts.ready);Promise.all(w).then(done,done)}if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',check);else check()})();`;
+const firstLoadScript = `(function(){var d=document,h=d.documentElement,done=function(){h.setAttribute('data-first-ready','');setTimeout(function(){h.removeAttribute('data-entrance-hold')},2000)};h.setAttribute('data-entrance-hold','');setTimeout(done,15000);function check(){var w=[].slice.call(d.querySelectorAll('main img')).filter(function(i){if(i.complete)return false;var r=i.getClientRects();if(!r.length)return false;return!(i.loading==='lazy'&&r[0].top>innerHeight*1.5)}).map(function(i){return new Promise(function(res){i.addEventListener('load',res,{once:true});i.addEventListener('error',res,{once:true})})});if(d.fonts)w.push(d.fonts.ready);Promise.all(w).then(done,done)}if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',check);else check()})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

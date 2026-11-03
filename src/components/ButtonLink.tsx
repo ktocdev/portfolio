@@ -8,14 +8,24 @@ type ButtonLinkProps = {
   /** Filename to download as. Renders a plain `<a>` instead of a `next/link`. */
   download?: string;
   className?: string;
+  /** Carries the light band that enterPage() sweeps across it. */
+  shimmer?: boolean;
 };
 
 /**
  * The site's one filled button, used for internal navigation (Home) and for
  * a downloadable asset (Resume). Same look either way.
  */
-export default function ButtonLink({ href, glyph, children, download, className }: ButtonLinkProps) {
+export default function ButtonLink({
+  href,
+  glyph,
+  children,
+  download,
+  className,
+  shimmer,
+}: ButtonLinkProps) {
   const classes = [styles.button, className].filter(Boolean).join(' ');
+  const dataShimmer = shimmer ? '' : undefined;
 
   const content = (
     <>
@@ -29,14 +39,14 @@ export default function ButtonLink({ href, glyph, children, download, className 
 
   if (download !== undefined) {
     return (
-      <a href={href} download={download} className={classes}>
+      <a href={href} download={download} className={classes} data-shimmer={dataShimmer}>
         {content}
       </a>
     );
   }
 
   return (
-    <Link href={href} className={classes}>
+    <Link href={href} className={classes} data-shimmer={dataShimmer}>
       {content}
     </Link>
   );
