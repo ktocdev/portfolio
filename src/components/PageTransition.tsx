@@ -3,7 +3,15 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
-import { EASE, PAGE_ENTER, PAGE_EXIT_MS, prefersReducedMotion, staggerZones, zonesOf } from '@/lib/motion';
+import {
+  EASE,
+  enterPage,
+  entranceHeld,
+  PAGE_ENTER,
+  PAGE_EXIT_MS,
+  preloadEntrance,
+  prefersReducedMotion,
+} from '@/lib/motion';
 import { useHydrated } from '@/lib/useHydrated';
 import styles from './PageTransition.module.css';
 
@@ -56,6 +64,7 @@ function whenReady(page: HTMLElement): Promise<unknown> {
 
   return Promise.all([
     document.fonts.ready,
+    preloadEntrance(page),
     ...pending.map(
       (img) =>
         new Promise((resolve) => {
@@ -108,7 +117,7 @@ export default function PageTransition({ children }: { children: React.ReactNode
     cancelEnter.current = null;
     const section = page.current?.firstElementChild;
     if (!section || prefersReducedMotion()) return;
-    cancelEnter.current = staggerZones(zonesOf(section), PAGE_ENTER);
+    cancelEnter.current = enterPage(section, PAGE_ENTER);
   }, []);
 
   /* A token guards each check, so a slow check left over from the previous
@@ -125,8 +134,9 @@ export default function PageTransition({ children }: { children: React.ReactNode
         setReadyPath(path);
 
         /* The new page was held hidden until now, so this is its first
-           visible frame: rise from here. */
-        if (afterRouteChange) rise();
+           visible frame: rise from here. A first load only enters if it was
+           held for a flip; every other first load is already on screen. */
+        if (afterRouteChange || entranceHeld(page.current?.firstElementChild)) rise();
 
         /* Focus follows the route change only once there is a page to land on. */
         if (afterRouteChange) {

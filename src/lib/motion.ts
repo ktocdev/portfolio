@@ -1,7 +1,8 @@
 /**
- * The site's one motion recipe: a zone-by-zone rise, imperative WAAPI rather
- * than CSS classes because the content it animates is freshly mounted on
- * every route or project change. Everything here is a no-op under
+ * The site's motion recipe: a zone-by-zone rise, imperative WAAPI rather than
+ * CSS classes because the content it animates is freshly mounted on every
+ * route or project change. A page with a [data-flip-heading] flips that in
+ * first (GSAP, see flipHeading.ts). Everything here is a no-op under
  * prefers-reduced-motion — callers check `prefersReducedMotion()` first.
  */
 
@@ -103,5 +104,93 @@ export function staggerZones(
   return () => {
     pending.forEach((release) => release());
     animations.forEach((animation) => animation.cancel());
+  };
+}
+
+const FLIP_HEADING = '[data-flip-heading]';
+/* Set by firstLoadScript in layout.tsx; hides the section in globals.css. */
+const ENTRANCE_HOLD = 'data-entrance-hold';
+
+const loadFlip = () => import('./flipHeading');
+
+/* The band is 40% of the button's width (ButtonLink.module.css), so 250% of its
+   own width takes it from just off the left edge to just off the right. */
+const SHIMMER: Keyframe[] = [{ transform: 'translateX(-100%)' }, { transform: 'translateX(250%)' }];
+const SHIMMER_MS = 900;
+
+/**
+ * Fetches GSAP for a page that will flip, so the page loader covers the wait.
+ * Never rejects: enterPage() falls back to a plain rise if the chunk failed.
+ */
+export function preloadEntrance(page: Element): Promise<unknown> | null {
+  if (!page.querySelector(FLIP_HEADING) || prefersReducedMotion()) return null;
+  return loadFlip().catch(() => null);
+}
+
+/**
+ * True when a first load's flip can still play. Other pages have no first-load
+ * entrance, and once the hold has timed out the page is already on screen.
+ */
+export function entranceHeld(section: Element | null | undefined): boolean {
+  return (
+    document.documentElement.hasAttribute(ENTRANCE_HOLD) && !!section?.querySelector(FLIP_HEADING)
+  );
+}
+
+/**
+ * Enters a page: its heading's flip when it has one, then its other zones rise
+ * together. Without one, just the staggered rise. Returns a cancel function.
+ */
+export function enterPage(
+  section: Element,
+  timing: { duration: number; step: number },
+): () => void {
+  const zones = zonesOf(section);
+  const heading = section.querySelector<HTMLElement>(FLIP_HEADING);
+  if (!heading) return staggerZones(zones, timing);
+
+  const rest = zones.filter((zone) => zone !== heading);
+  const held = [heading, ...rest] as HTMLElement[];
+  const show = () => held.forEach((zone) => zone.style.removeProperty('opacity'));
+
+  /* Inline holds take over in this same frame, ahead of the first-load one. */
+  held.forEach((zone) => {
+    zone.style.opacity = '0';
+  });
+  document.documentElement.removeAttribute(ENTRANCE_HOLD);
+
+  let cancelled = false;
+  let cancelRunning: (() => void) | null = null;
+
+  loadFlip()
+    .then(({ flipHeading }) => {
+      if (cancelled) return;
+      cancelRunning = flipHeading(heading, () => {
+        show();
+        const cancelRise = staggerZones(rest, { duration: timing.duration, step: 0 });
+        /* Waits out the rise, so the band crosses a button at full strength. */
+        const shimmer = section.querySelector('[data-shimmer]')?.animate(SHIMMER, {
+          pseudoElement: '::after',
+          duration: SHIMMER_MS,
+          delay: timing.duration,
+          easing: 'ease-in-out',
+        });
+        cancelRunning = () => {
+          cancelRise();
+          shimmer?.cancel();
+        };
+      });
+      heading.style.removeProperty('opacity');
+    })
+    .catch(() => {
+      if (cancelled) return;
+      show();
+      cancelRunning = staggerZones(zones, timing);
+    });
+
+  return () => {
+    cancelled = true;
+    cancelRunning?.();
+    show();
   };
 }
