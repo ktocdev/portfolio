@@ -18,7 +18,6 @@ export type Entry = {
   org?: string;
   location?: string;
   groups?: BulletGroup[];
-  note?: string;
 };
 
 export type ResumeSkill = {
@@ -28,7 +27,10 @@ export type ResumeSkill = {
 
 export type ResumeProject = {
   title: string;
+  years?: string;
   stack: string;
+  /** Shown after the stack, where the project has a public page. */
+  link?: { text: string; href: string };
   items: string[];
 };
 
@@ -41,9 +43,9 @@ export type ResumeContact = {
 
 /** Job titles in the document header, in reading order. */
 export const RESUME_TITLES = [
-  'Senior Software Engineer',
-  'Design System Architect',
-  'AI Engineer',
+  'Senior Frontend & Design Engineer',
+  'Design Systems in Code',
+  'AI-Native Product UI',
 ] as const;
 
 const contact = (label: string): ResumeContact => {
@@ -74,8 +76,12 @@ export const RESUME_CONTACT: ResumeContact[] = [
   contact('LinkedIn'),
 ];
 
+/** The page's meta description: the summary is too long to serve as one. */
+export const RESUME_DESCRIPTION =
+  "Resume of Katie O'Connor, senior frontend and design engineer in Chicago: design systems, AI-native product UI, accessibility.";
+
 export const RESUME_SUMMARY =
-  "Senior software engineer and design-systems architect. 11+ years at Discovery Education on products reaching 45M students and 4.5M educators across 100 countries, architecting three successive generations of the company's component library. Now building AI-native applications end-to-end, from local vector-search retrieval systems to full 3D game architecture, pairing deep design-systems and accessibility expertise with daily AI-assisted engineering.";
+  "Senior frontend and design engineer with 11+ years at Discovery Education building web experiences used by 45M students and 4.5M educators across 100 countries. Architect and de facto technical lead of the company's design system across three generations, setting the component, token, documentation, testing, and release standards every product built on, and a product engineer on 12+ teams working hand in hand with product, design, analytics, backend, and QA. Embedded with the AI team to take a human-in-the-loop review product from a partial design to a user-tested frontend, and made the design system agent-ready so AI workflows could ship components end to end. Outside work, designs and builds full-stack products on the Claude API and Supabase, including a streaming, retrieval-grounded AI journal and a role-secured maintenance app for a Chicago restaurant group. Accessibility subject matter expert, mentor, and AI-first developer; six years fully remote with distributed teams, and open to hybrid work in Chicago.";
 
 /** Detailed roles — each renders as grouped bullet sets. */
 export const EXPERIENCE: Entry[] = [
@@ -86,34 +92,52 @@ export const EXPERIENCE: Entry[] = [
     location: 'Chicago, IL',
     groups: [
       {
-        label: 'Design Systems',
+        label: 'Design System Architecture & Leadership',
         items: [
-          "Architected nebula-nuxt, a themed component system letting teams replace legacy UI incrementally while migrating to Nuxt, separating visual-language changes from component rebuilds; selected over competing proposals as the quarter's committed deliverable.",
-          'Led the migration audit and stakeholder roadmap for 46 legacy component replacements; personally built 25 of the 26 components delivered in the new system and released nebula-nuxt for platform-layer consumption.',
-          "Founding team for Comet (2016), build team for its successor Nebula (2020), and owner and primary contributor for nebula-nuxt (2026); managed 124 components and utilities across Nebula and nebula-nuxt simultaneously, consumed by every product in Discovery Education's app ecosystem.",
-          'Built the nebula-nuxt doc site with searchable documentation (Nuxt Content) and a theme editor that switches themes and customizes them down to semantic tokens and font choice.',
-          'Architected and shipped MegaMenu for a Back-to-School product deliverable in 3 days, then delivered a refactored production version in another 3; detects at runtime when to collapse into a linked drill-down list rather than relying on fixed breakpoints.',
-          'Developed custom Claude skills to support migration: a planning skill that determines the right build approach (themed primitive, wrapped primitive, or fully custom component) for each legacy component, and a release-automation skill.',
+          "Architected and led nebula-nuxt, the company's TypeScript component library for its server-rendered Nuxt apps, built on Nuxt UI so product teams could replace legacy UI incrementally during a framework migration without coupling visual changes to component rebuilds.",
+          'Owned the platform end to end: component APIs, semantic design tokens and theming, shared workspace packages with versioned releases optimized for tree-shaking so apps shipped only the components they used, a separately published icon package, and GitHub Actions CI.',
+          'Published guidelines, component patterns, and styling conventions on a searchable documentation site with a live theme editor: users start from a theme and customize it down to individual semantic tokens and fonts, with edits reflected live across every component.',
+          'Maintained 124 production components and utilities consumed by every product across three generations of the design system: founding team for Comet (2016), build team for Nebula (2020), and owner and primary contributor for nebula-nuxt (2026).',
+          'Led the migration audit for 46 legacy components, mapping what to deprecate and breaking the work into deliverable units before sprint planning; personally built 25 of the 26 delivered and partnered with 9 product teams on integration.',
+          "Authored a position paper and presented at a company AMA to win organization-wide agreement on the platform direction over competing proposals, without formal authority over the teams involved; it became the quarter's committed deliverable.",
         ],
       },
       {
-        label: 'Product Engineering',
+        label: 'AI-Native Interfaces & AI-Augmented Engineering',
         items: [
-          'Contributed as a product engineer to 12+ product teams across the app ecosystem, including Techbook, Search, Assessments, Admin Tools, and User Onboarding; architected layouts, interfaces, and components across varied product domains.',
-          'Embedded with the AI team for a quarter; built the frontend for a human-in-the-loop dashboard for reviewing and approving AI-generated metadata, completing the partial design and presenting it to real users for feedback.',
-          'Specified the data shape for the API feeding the dashboard view and the POST contract for saving reviews, documenting both for the engineer who built the API.',
-          'Integrated nebula-nuxt into the platform layer with ten production components, including Global Nav, Page Shell, and Modal; validated theming through a live-switcher playground.',
-          'Designed production-ready interfaces directly in code with Claude and existing design-system components when designs were incomplete or unavailable, bridging design and engineering to keep product work moving.',
-          'Advised engineers on theming architecture, component placement, and accessibility best practices; redirected in-progress work into the shared library.',
-          'Served as accessibility subject matter expert, performing audits, bug fixes, and code review to enforce accessible implementation across products and shared components.',
+          'Embedded with the AI team to build the frontend of a human-in-the-loop review dashboard where people evaluate and correct AI output; completed a partial design, made the UX calls it left open, and tested it with real users to make the review workflow efficient.',
+          "Defined the dashboard's REST contract with the backend engineer, writing a detailed spec on data shapes, request semantics (PATCH vs. POST), and full schema trees so both sides could build in parallel.",
+          'Made the design system agent-ready with custom Claude skills for planning and release, automating end-to-end component delivery (build, docs page, release) at about $3 in AI spend per component versus one to two days of hands-on work, with human review at each step.',
+          "Cut team AI spend by roughly two-thirds by matching tasks to the right model and introducing prompt caching, without losing output quality; co-hosted the company's AI Office Hours to help engineers adopt AI-assisted development.",
+          'Automated repetitive setup before agentic tools existed, writing Python scripts with GitHub Copilot that generated code template files for new work.',
         ],
       },
       {
-        label: 'AI-Assisted Engineering',
+        label: 'Product Delivery, Performance & Reliability',
         items: [
-          'Automated end-to-end component delivery (build, doc page, and release) through spec-driven development and skill-based automation; $3.05 in AI spend per component, replacing roughly a day or two of hands-on engineering.',
-          'Developed model-selection and prompt-caching strategies that reduced daily AI spend by roughly two-thirds, from $40–$50 to $10–$20, while preserving output quality; shared the cost-efficiency approach across the team.',
-          "Co-hosted the company's AI Office Hours, and designed and presented a cost-efficient stacked-PR strategy there, structuring PRs in advance to reduce rebasing.",
+          "Built the Video Onboarding Modal and a new performance- and accessibility-optimized video player that introduced new features to teachers on their first back-to-school login, the year's biggest launch window, with autoplay, skip, hard dismiss, and dismiss-for-session controls; reused two years running.",
+          "Implemented the modal's engagement tracking for the analytics team, mapping user data IDs to backend actions to show whether teachers watched some, all, or none of the videos, and advised on video compression so playback held up on slow networks.",
+          'Shipped MegaMenu to production in 3 days for a hard Back-to-School deadline, later extending it for a redesign with new features; it detects at runtime when to collapse into a drill-down list instead of relying on fixed breakpoints.',
+          'Delivered feature-flagged releases across multiple projects, rendering from backend flag data to expose new features to targeted audiences first while keeping tracking metrics intact, so engagement data could decide wider rollout.',
+          'Monitored JavaScript errors in New Relic while on call for biweekly migrations, triaging and troubleshooting production issues across a multi-team platform.',
+          'Contributed as a product engineer to 12+ product teams, including Techbook, Search, Assessments, Atlas (in-house CMS), Admin Tools, and User Onboarding, in two-week Agile sprints with product, design, analytics, backend, and QA from planning through launch.',
+        ],
+      },
+      {
+        label: 'Design Partnership & Figma',
+        items: [
+          "Kept design and code in sync with the design team: maintained the design system's Figma files, used Dev Mode for implementation requirements, brought coded components into Figma with plugins, implemented slots on cards, and advised on auto layout so prototypes translated cleanly into responsive components.",
+          "Filled design gaps directly: designed MegaMenu's mobile solution, a single panel that keeps the top-level menu in view and opens the selected section beneath it, and the Video Onboarding Modal's mobile experience, a fullscreen scrolling view with the player scaled to its aspect ratio and the videos stacked below.",
+          'Integrated design system components into Atlas, the in-house CMS, so they could be used in Atlas-built pages, and built features for its authoring interface.',
+        ],
+      },
+      {
+        label: 'Engineering Standards, Quality & Mentorship',
+        items: [
+          'Owned code quality for the shared library: reviewed PRs and caught issues before release, and backed changes with Vitest and Playwright so they shipped safely to every consumer.',
+          'Built a Storybook site for legacy components while converting them to TypeScript, navigating years of code written by other engineers and fixing the defects it surfaced.',
+          'Served as accessibility subject matter expert, running audits and translating WCAG, ARIA, keyboard, and focus requirements into practical guidance for designers and engineers through design and code review.',
+          'Designed and presented a stacked-PR strategy that reduces rebasing and review friction for engineers working asynchronously across US and UK time zones; mentored engineers across teams on theming, component placement, and accessible implementation.',
         ],
       },
     ],
@@ -121,11 +145,8 @@ export const EXPERIENCE: Entry[] = [
 ];
 
 /** Pre-2015 roles, summarised as one line. */
-export const EARLIER_ROLES: Entry = {
-  role: 'Front-end & Production Roles',
-  location: 'Chicago, IL',
-  note: 'Sears Holdings Corporation, Razorfish, AlphaZeta Interactive, Elevation, Hewitt Associates, Bankers Life and Casualty, iPort Media, WGN-TV.',
-};
+export const EARLIER_ROLES =
+  'Front-end, interactive, and production roles at Sears Holdings Corporation, Razorfish, AlphaZeta Interactive, Elevation, Hewitt Associates, Bankers Life and Casualty, iPort Media, and WGN-TV.';
 
 export const EDUCATION: Entry = {
   role: 'BA, Interactive Art and Media',
@@ -135,41 +156,98 @@ export const EDUCATION: Entry = {
 /** The resume's skills table. The home page keeps its own, broader list in site.ts. */
 export const RESUME_SKILLS: ResumeSkill[] = [
   {
-    label: 'AI Engineering',
+    label: 'Languages & Frameworks',
     items:
-      'Prompt Engineering, Spec-Driven Development, LLM Cost/Model Strategy, Prompt Caching, RAG, Vector Databases, Anthropic Claude API, Claude Design',
+      'TypeScript, JavaScript (ES6+), React, Next.js, Vue 3, Nuxt, HTML, CSS, Tailwind CSS, Node.js, Python, FastAPI, Supabase, PostgreSQL',
   },
   {
-    label: 'Frontend & Architecture',
+    label: 'Design Systems in Code',
     items:
-      'Vue 3, Nuxt, TypeScript, Design Systems, Component Architecture, Theming Architecture, Tailwind CSS, Storybook, Vite, Accessibility (WCAG 2.2, ARIA)',
+      'Component Libraries & Component APIs, Design Tokens & Semantic Theming, Live Theme Editor, Documentation Sites, Storybook, Workspace Packages, Versioned Releases, Tree-Shaking & Bundle Optimization, Legacy UI Audits & Incremental Migration',
   },
   {
-    label: 'Backend & Infrastructure',
-    items: 'Python, FastAPI, ChromaDB, Node.js, Docker',
+    label: 'AI-Native UI & LLM Systems',
+    items:
+      'Anthropic Claude API, Streaming & Conversational UI, Human-in-the-Loop Review, Tool Use, Embeddings & Semantic Retrieval, Vector Databases (ChromaDB), Prompt & Context Engineering, Prompt Caching, Model Selection & Cost Optimization, Agent Skills',
   },
   {
-    label: 'Other',
+    label: 'Design & Figma',
     items:
-      'User Experience Patterns, Cross-Team Technical Leadership, Figma, Git, GitHub, VS Code, Cloudflare',
+      'Figma Dev Mode, Figma Variables & Code Token Sync, Libraries, Auto Layout, Component Slots, Figma Plugins, Claude Design, Design-to-Code Handoff, User Testing, Responsive & Mobile Design',
+  },
+  {
+    label: 'Interaction & Motion',
+    items:
+      'Web Animations API, Page Transitions, Three.js, Video Playback & Media Performance, Keyboard Interaction & Focus Management',
+  },
+  {
+    label: 'Accessibility & Quality',
+    items:
+      'WCAG 2.2, ARIA, Accessibility Audits, Vitest, Playwright (E2E), Code Review & PR Standards, Cross-Browser Compatibility, Performance Optimization',
+  },
+  {
+    label: 'Integration & Security',
+    items:
+      'RESTful API Contract Design, Authentication (Supabase Auth, JWT Sessions, Two-Factor), Role-Based Access Control & Row-Level Security, Feature Flags & Staged Rollouts, Server-Side Rendering (SSR), PWAs',
+  },
+  {
+    label: 'Analytics & Privacy',
+    items:
+      'Google Analytics (Custom Events), Google Consent Mode, Microsoft Clarity (Masked Session Replay), Google Search Console, Consent Management & Strict Tag Blocking, Engagement Tracking',
+  },
+  {
+    label: 'Delivery & Operations',
+    items:
+      'Git, GitHub, GitHub Actions (CI/CD), Jenkins, Docker, Cloudflare, Vite, New Relic, On-Call Release Support, Stacked PR Workflows, Agile / Scrum',
+  },
+  {
+    label: 'AI-Assisted Development',
+    items:
+      'Claude Code, Cursor, Codex, GitHub Copilot, Spec-Driven Development, AI Code Quality & Security Audits, Python Scripting & Code Scaffolding',
   },
 ];
 
 export const RESUME_PROJECTS: ResumeProject[] = [
   {
-    title: 'Main Character: AI Personal Knowledge & Retrieval System',
-    stack: 'Python, FastAPI, ChromaDB, Anthropic Claude API',
+    title: 'OnTrack: Restaurant Maintenance Management',
+    years: '2026–present',
+    stack: 'React PWA, Supabase (Auth, Postgres, Edge Functions), Docker, Cloudflare, Claude Design, Claude Code',
     items: [
-      'Architected an AI-powered journal application using local embeddings, an entity graph, multi-level summaries, and semantic retrieval over personal journal entries.',
-      "Built the retrieval pipeline to ground LLM responses in the user's actual journal history rather than generic model knowledge.",
+      'Designing and building a mobile-first maintenance ticketing app for a Chicago restaurant group to replace their current system; designed 100+ screens in Claude Design and presented the plan to the client in a review deck.',
+      'Iterating with the operations manager, who tests each release and requests features, with every round of feedback going back into the design and build.',
+      "Designed database-enforced role-based access control for four roles (restaurant managers, operations managers, leadership, admin) using Postgres row-level security, with roles looked up per request so changes apply immediately instead of waiting for tokens to expire; sessions that haven't completed two-factor sign-in can read nothing.",
+      "Secured privileged Edge Functions by verifying each caller's token and role server-side, kept roles out of client-writable user metadata, used role-based UI guards for display only, and contained the test environment in Docker.",
     ],
   },
   {
-    title: 'GPS3 (Guinea Pig Simulator 3)',
-    stack: 'Vue 3 (Composition API), TypeScript, Pinia, Three.js, Vite',
+    title: 'Main Character: AI Journal & Retrieval System',
+    years: '2026',
+    stack: 'Python, FastAPI, ChromaDB, Anthropic Claude API, Figma',
+    link: { text: 'ktoc.dev/main-character', href: 'https://ktoc.dev/main-character' },
     items: [
-      'Solo-developed virtual pet care simulator managing 10 interconnected wellness needs across 2D game view and interactive 3D habitat.',
-      "Designed game's visual language in Claude Design, then converted into a standalone token-based design system and ported back into the game as the single source of styling truth.",
+      "Designed and built a full-stack LLM application with a sandboxed online demo: Python/FastAPI backend, local embeddings, a ChromaDB vector store, an entity graph, and multi-level summaries that ground an AI companion in the user's own history, with prompts tuned to stay supportive without sycophancy.",
+      'Built two streaming conversational surfaces: a companion users chat with while writing, and an Ask mode for natural-language questions about past entries with retrieval-grounded answers and follow-ups; a smart-reply mode streams each tool-use round as it happens.',
+      'Streamed every reply token by token through a FastAPI chunked response and designed for model latency and non-deterministic output: a thinking state holds until the first token, the log follows the reply only if the reader was already at the bottom, and an interrupted stream is clearly flagged.',
+      "Created the brand identity and splash page spotlight effects, and brought the app's design tokens into Figma as variables so design and code share the same values.",
+      "Instrumented the demo with custom Google Analytics events and masked Clarity session recordings anywhere a visitor's own writing appears, injected at build time with a build check that fails if a refresh breaks the injection.",
+    ],
+  },
+  {
+    title: 'ktoc.dev: Portfolio',
+    stack: 'React, Next.js, TypeScript, Web Animations API, Cloudflare',
+    items: [
+      'Designed and built a personal portfolio with custom page-to-page motion transitions written directly against the Web Animations API.',
+      "Built a custom, dependency-free consent layer with strict blocking and separate choices for analytics and session recording: no tag loads and no cookie is set before consent, Google Consent Mode and Clarity's consent API are wired in, and opting out stops each tool immediately in every open tab and cleans up its cookies.",
+      'Covered consent state, per-tool loading, cookie cleanup, and cross-tab sync with automated tests, plus production-build browser checks that keep test traffic out of live analytics.',
+    ],
+  },
+  {
+    title: 'GPS3: Guinea Pig Simulation Game',
+    years: '2025–present',
+    stack: 'Vue 3, Three.js, Claude Design, Claude Code',
+    items: [
+      'Building a 3D simulation game that pairs a real-time Three.js scene with a reactive Vue 3 interface, with a custom debugging interface for testing the game during development.',
+      "Ran a design-to-code pipeline for the game's UI chrome: designed it in Claude Design, wrote the handoff to replace the debug interface in the live app, then refined the app's design system and components so the shipped UI matched the design.",
     ],
   },
 ];
