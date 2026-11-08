@@ -4,9 +4,9 @@ import gsap from 'gsap';
    is the silence between the last word landing and this one starting, and a
    negative hold starts this one before the last has landed. */
 const CUES = [
-  { hold: 0, duration: 0.7 },
-  { hold: -0.09, duration: 0.45 },
-  { hold: -0.25, duration: 0.6 },
+  { hold: 0, duration: 0.6 },
+  { hold: -0.08, duration: 0.45 },
+  { hold: -0.2, duration: 0.6 },
 ];
 
 /* Decelerates with no overshoot; out, so a word shows from the start of its cue. */

@@ -10,6 +10,8 @@ type FigureProps = {
   className?: string;
   priority?: boolean;
   style?: React.CSSProperties;
+  /** Tossed onto the page by enterPage() rather than risen. */
+  toss?: boolean;
 };
 
 /**
@@ -21,11 +23,19 @@ type FigureProps = {
  * takes only a tint at the bottom edge. `about` is the standard treatment
  * sized for the About page's figure.
  */
-export default function Figure({ src, alt, variant, className, priority, style }: FigureProps) {
+export default function Figure({
+  src,
+  alt,
+  variant,
+  className,
+  priority,
+  style,
+  toss,
+}: FigureProps) {
   const classes = [styles.figure, styles[variant], className].filter(Boolean).join(' ');
 
   return (
-    <figure className={classes} style={style}>
+    <figure className={classes} style={style} data-toss={toss ? '' : undefined}>
       <Image
         src={src}
         alt={alt}

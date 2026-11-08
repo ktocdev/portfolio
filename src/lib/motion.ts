@@ -2,7 +2,8 @@
  * The site's motion recipe: a zone-by-zone rise, imperative WAAPI rather than
  * CSS classes because the content it animates is freshly mounted on every
  * route or project change. A page with a [data-flip-heading] flips that in
- * first (GSAP, see flipHeading.ts). Everything here is a no-op under
+ * first (GSAP, see flipHeading.ts), and a [data-toss] photo on it is tossed
+ * in rather than risen (tossPhoto.ts). Everything here is a no-op under
  * prefers-reduced-motion — callers check `prefersReducedMotion()` first.
  */
 
@@ -108,10 +109,16 @@ export function staggerZones(
 }
 
 const FLIP_HEADING = '[data-flip-heading]';
+const TOSS = '[data-toss]';
 /* Set by firstLoadScript in layout.tsx; hides the section in globals.css. */
 const ENTRANCE_HOLD = 'data-entrance-hold';
 
-const loadFlip = () => import('./flipHeading');
+/* One load for both, so the page loader covers the whole entrance's code. */
+const loadEntrance = () =>
+  Promise.all([import('./flipHeading'), import('./tossPhoto')]).then(([flip, toss]) => ({
+    ...flip,
+    ...toss,
+  }));
 
 /* The band is 40% of the button's width (ButtonLink.module.css), so 250% of its
    own width takes it from just off the left edge to just off the right. */
@@ -124,7 +131,7 @@ const SHIMMER_MS = 900;
  */
 export function preloadEntrance(page: Element): Promise<unknown> | null {
   if (!page.querySelector(FLIP_HEADING) || prefersReducedMotion()) return null;
-  return loadFlip().catch(() => null);
+  return loadEntrance().catch(() => null);
 }
 
 /**
@@ -139,7 +146,8 @@ export function entranceHeld(section: Element | null | undefined): boolean {
 
 /**
  * Enters a page: its heading's flip when it has one, then its other zones rise
- * together. Without one, just the staggered rise. Returns a cancel function.
+ * together while its [data-toss] photo, if any, is tossed in. Without a
+ * flip, just the staggered rise. Returns a cancel function.
  */
 export function enterPage(
   section: Element,
@@ -162,12 +170,18 @@ export function enterPage(
   let cancelled = false;
   let cancelRunning: (() => void) | null = null;
 
-  loadFlip()
-    .then(({ flipHeading }) => {
+  loadEntrance()
+    .then(({ flipHeading, tossPhoto }) => {
       if (cancelled) return;
       cancelRunning = flipHeading(heading, () => {
         show();
-        const cancelRise = staggerZones(rest, { duration: timing.duration, step: 0 });
+        /* Same frame as show(), so the photo never paints at rest first. */
+        const photo = section.querySelector<HTMLElement>(TOSS);
+        const cancelToss = photo ? tossPhoto(photo) : null;
+        const cancelRise = staggerZones(
+          rest.filter((zone) => zone !== photo),
+          { duration: timing.duration, step: 0 },
+        );
         /* Waits out the rise, so the band crosses a button at full strength. */
         const shimmer = section.querySelector('[data-shimmer]')?.animate(SHIMMER, {
           pseudoElement: '::after',
@@ -177,6 +191,7 @@ export function enterPage(
         });
         cancelRunning = () => {
           cancelRise();
+          cancelToss?.();
           shimmer?.cancel();
         };
       });

@@ -106,6 +106,20 @@
   justify-self: center;
 }
 
+/* Lies on the page like a print dropped on a table: a slight turn and a paper
+   shadow, lit from the upper left. --lift (0 resting, 1 held well above the
+   page) is driven by tossPhoto.ts; raised, the shadow falls further off,
+   spreads, and fades. The tilt is the rest state, so reduced motion keeps it. */
+.portrait {
+  --lift: 0;
+  rotate: -2deg;
+  box-shadow:
+    calc(1px + 12px * var(--lift)) calc(1px + 24px * var(--lift)) calc(2px + 22px * var(--lift))
+      color-mix(in srgb, var(--paper-shadow) calc(100% - 70% * var(--lift)), transparent),
+    calc(2px + 28px * var(--lift)) calc(8px + 52px * var(--lift)) calc(18px + 56px * var(--lift))
+      -4px color-mix(in srgb, var(--paper-shadow-soft) calc(100% - 50% * var(--lift)), transparent);
+}
+
 .portrait .image {
   filter: none;
   mix-blend-mode: normal;
