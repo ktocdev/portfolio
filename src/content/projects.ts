@@ -26,6 +26,21 @@ export type Note =
   | { kind: 'para'; text: string }
   | { kind: 'text'; text: string; link?: Link; subs?: string[] };
 
+export type StoryPoint = { text: string; link?: Link; subs?: string[] };
+
+/**
+ * One instant photo on the case study's table. The print shows `figure` big
+ * with `figureLabel` under it, the white margin carries `group` and `title`
+ * as a caption, and `points` are what the photo opens to.
+ */
+export type Story = {
+  group: string;
+  title: string;
+  figure: string;
+  figureLabel: string;
+  points: StoryPoint[];
+};
+
 /** `alt` is the text alternative; `label` (the visible chip) is only a fallback since it's too terse on its own — describe what the screen shows. */
 export type Slide = {
   label: string;
@@ -45,6 +60,9 @@ export type Project = {
   paras?: string[];
   facts?: Fact[];
   notes?: Note[];
+  stories?: Story[];
+  /** Small print under the stories' table. */
+  storiesNote?: string;
   links: Link[];
   slides?: Slide[];
 };
@@ -83,119 +101,148 @@ export const PROJECTS: Project[] = [
         kind: 'para',
         text: "Three generations of one company's design system: founding team for Comet (2016), builder of its successor Nebula (2020), and sole architect of nebula-nuxt (2026), a themed component layer that lets twelve product teams replace legacy UI incrementally while migrating to Nuxt.",
       },
-      { kind: 'heading', text: 'nebula-nuxt' },
-      { kind: 'subheading', text: 'Proposal Stage' },
+    ],
+    storiesNote: 'Note: nebula-nuxt is internal; not publicly viewable.',
+    stories: [
       {
-        kind: 'text',
-        text: 'Architected nebula-nuxt: Nuxt UI plus custom components, themed to match the legacy Nebula brand, letting teams replace legacy UI incrementally while migrating to Nuxt and separating visual-language changes from component rebuilds. Deliberately transitional, not the end state. Payoff: post-migration, the org can shift visual language via a theme change alone, with no component rebuild needed.',
-      },
-      {
-        kind: 'text',
-        text: 'Led migration audit and stakeholder roadmap: analyzed legacy Nebula components, flagged highest-priority candidates, determined Nuxt UI equivalent vs. custom rebuild per component, assigned points per component, compiled into timeline.',
-      },
-      {
-        kind: 'text',
-        text: "Authored a position paper and presented it at a company AMA to win organization-wide agreement on the platform direction, without formal authority over the teams involved. nebula-nuxt was selected over competing proposals as the quarter's committed deliverable; legacy Nebula support was separately recognized as its own committed item.",
-      },
-      { kind: 'subheading', text: 'Platform Ownership' },
-      {
-        kind: 'text',
-        text: 'Owned the platform end to end: component APIs, semantic design tokens and theming, shared workspace packages with versioned releases optimized for tree-shaking so apps shipped only the components they used, a separately published icon package, and GitHub Actions CI.',
-      },
-      {
-        kind: 'text',
-        text: 'Owned code quality for the library: reviewed PRs and caught issues before release, and backed changes with Vitest and Playwright so they shipped safely to every consumer.',
-      },
-      { kind: 'subheading', text: 'Product Integration' },
-      {
-        kind: 'text',
-        text: 'Of the 46 legacy components on the roadmap, 26 had been migrated to nebula-nuxt when I moved on: I built 25 of them and a teammate built the other. The remaining 20 had not yet been started. Partnered with 9 product teams on integration.',
-      },
-      {
-        kind: 'text',
-        text: 'Teammates also contributed to nebula-nuxt, adding updates and new components alongside my work.',
-      },
-      {
-        kind: 'text',
-        text: "Integrated nebula-nuxt into the platform layer with ten production components, including Global Nav, Page Shell, and Modal; added pages to the platform team's playground showing those components under a live theme switcher, legacy Nebula vs. nebula-nuxt side by side, proving they stayed themable inside the production shell.",
-      },
-      { kind: 'subheading', text: 'Doc Site Designer' },
-      {
-        kind: 'text',
-        text: 'Built the new playground doc site for nebula-nuxt with searchable documentation via Nuxt Content; designed and implemented the entire layout and UI, and added robust scaffold, theming, and localization documentation displayed through Nuxt Content.',
-      },
-      {
-        kind: 'text',
-        text: 'Extended Nuxt UI with custom components: Tabs with responsive nav+panel variants, and Breadcrumbs with dropdowns that convert into a searchable command palette past 7 options, powered by a custom rowCollapse composable not provided by Nuxt UI/Reka out of the box.',
-      },
-      {
-        kind: 'text',
-        text: 'Created a live Theme Editor in the nebula-nuxt doc site that switches between the default Nuxt UI theme, legacy Nebula, and another unique theme, with editing granular down to color scale, spacing, font, and border radii and other theme tokens; the theme persists across all component pages until changed or reset.',
-      },
-      { kind: 'disclosure', text: 'Note: nebula-nuxt is internal; not publicly viewable.' },
-      { kind: 'heading', text: 'Nebula Components' },
-      {
-        kind: 'text',
-        text: 'Builder and maintainer of Nebula Components, predecessor to nebula-nuxt. Managed both design systems simultaneously.',
-        link: { label: 'Nebula docs', href: 'https://nebula.discoveryeducation.com/' },
-      },
-      {
-        kind: 'text',
-        text: 'Built MegaMenu for a Back-to-School product deliverable. Core technical feature: detects at runtime when to collapse into a linked drill-down list view, rather than relying on fixed breakpoints. Component adapts its own layout based on available space and content, rather than hiding items past a hardcoded width.',
-        link: { label: 'MegaMenu demo', href: 'https://nebula.discoveryeducation.com/mega-menu-sink' },
-        subs: [
-          'Designed the responsive collapsed view myself: a linked drill-down list, not an accordion, that lets users tap into a category and navigate back out.',
-          'Initial build: 3 days. Product then underwent significant redesign; updated MegaMenu delivered in 3 more days, matching new design.',
+        group: 'nebula-nuxt',
+        title: 'Proposal Stage',
+        figure: '#1',
+        figureLabel: "proposal picked as the quarter's committed deliverable",
+        points: [
+          {
+            text: 'Architected nebula-nuxt: Nuxt UI plus custom components, themed to match the legacy Nebula brand, letting teams replace legacy UI incrementally while migrating to Nuxt and separating visual-language changes from component rebuilds. Deliberately transitional, not the end state. Payoff: post-migration, the org can shift visual language via a theme change alone, with no component rebuild needed.',
+          },
+          {
+            text: 'Led migration audit and stakeholder roadmap: analyzed legacy Nebula components, flagged highest-priority candidates, determined Nuxt UI equivalent vs. custom rebuild per component, assigned points per component, compiled into timeline.',
+          },
+          {
+            text: "Authored a position paper and presented it at a company AMA to win organization-wide agreement on the platform direction, without formal authority over the teams involved. nebula-nuxt was selected over competing proposals as the quarter's committed deliverable; legacy Nebula support was separately recognized as its own committed item.",
+          },
         ],
       },
       {
-        kind: 'text',
-        text: 'Built NebulaContainerTable, an enhanced NebulaTable that uses container queries instead of media queries, so the table adapts to its own container size rather than the viewport — more flexible across layouts.',
-        link: {
-          label: 'ContainerTable demo',
-          href: 'https://nebula.discoveryeducation.com/container-table-sink',
-        },
-      },
-      { kind: 'heading', text: 'AI-Native Interfaces' },
-      {
-        kind: 'text',
-        text: 'Embedded with the AI team to build the frontend of a human-in-the-loop review dashboard where people evaluate and correct AI output; completed a partial design, made the UX calls it left open, and tested it with real users to make the review workflow efficient.',
-      },
-      {
-        kind: 'text',
-        text: "Defined the dashboard's REST contract with the backend engineer, writing a detailed spec on data shapes, request semantics (PATCH vs. POST), and full schema trees so both sides could build in parallel.",
-      },
-      { kind: 'heading', text: 'AI Tooling' },
-      { kind: 'subheading', text: 'Claude Skills' },
-      {
-        kind: 'text',
-        text: 'Made the design system agent-ready with custom Claude skills that automate end-to-end component delivery (build, docs page, release), with human review at each step, replacing one to two days of hands-on work per component.',
+        group: 'nebula-nuxt',
+        title: 'Platform Ownership',
+        figure: 'End to end',
+        figureLabel: 'APIs, tokens, packages, icons, CI, and tests',
+        points: [
+          {
+            text: 'Owned the platform end to end: component APIs, semantic design tokens and theming, shared workspace packages with versioned releases optimized for tree-shaking so apps shipped only the components they used, a separately published icon package, and GitHub Actions CI.',
+          },
+          {
+            text: 'Owned code quality for the library: reviewed PRs and caught issues before release, and backed changes with Vitest and Playwright so they shipped safely to every consumer.',
+          },
+        ],
       },
       {
-        kind: 'text',
-        text: 'Wrote a Claude planning skill that picks the build approach per component: themed primitive, wrapped primitive, or fully custom component.',
+        group: 'nebula-nuxt',
+        title: 'Product Integration',
+        figure: '25 of 46',
+        figureLabel: 'legacy components rebuilt by me in nebula-nuxt',
+        points: [
+          {
+            text: 'Of the 46 legacy components on the roadmap, 26 had been migrated to nebula-nuxt when I moved on: I built 25 of them and a teammate built the other. The remaining 20 had not yet been started. Partnered with 9 product teams on integration.',
+          },
+          {
+            text: 'Teammates also contributed to nebula-nuxt, adding updates and new components alongside my work.',
+          },
+          {
+            text: "Integrated nebula-nuxt into the platform layer with ten production components, including Global Nav, Page Shell, and Modal; added pages to the platform team's playground showing those components under a live theme switcher, legacy Nebula vs. nebula-nuxt side by side, proving they stayed themable inside the production shell.",
+          },
+        ],
       },
       {
-        kind: 'text',
-        text: 'Wrote a Claude release-automation skill for the migration.',
+        group: 'nebula-nuxt',
+        title: 'Doc Site Designer',
+        figure: '3 themes',
+        figureLabel: 'in a live Theme Editor, editable down to each token',
+        points: [
+          {
+            text: 'Built the new playground doc site for nebula-nuxt with searchable documentation via Nuxt Content; designed and implemented the entire layout and UI, and added robust scaffold, theming, and localization documentation displayed through Nuxt Content.',
+          },
+          {
+            text: 'Extended Nuxt UI with custom components: Tabs with responsive nav+panel variants, and Breadcrumbs with dropdowns that convert into a searchable command palette past 7 options, powered by a custom rowCollapse composable not provided by Nuxt UI/Reka out of the box.',
+          },
+          {
+            text: 'Created a live Theme Editor in the nebula-nuxt doc site that switches between the default Nuxt UI theme, legacy Nebula, and another unique theme, with editing granular down to color scale, spacing, font, and border radii and other theme tokens; the theme persists across all component pages until changed or reset.',
+          },
+        ],
       },
       {
-        kind: 'text',
-        text: 'Wrote a Claude skill to port existing component doc-page examples from Nebula Components to nebula-nuxt, ensuring new components stayed backward compatible.',
+        group: 'Nebula',
+        title: 'Nebula Components',
+        figure: '3 days',
+        figureLabel: 'to build MegaMenu, and 3 more to match its redesign',
+        points: [
+          {
+            text: 'Builder and maintainer of Nebula Components, predecessor to nebula-nuxt. Managed both design systems simultaneously.',
+            link: { label: 'Nebula docs', href: 'https://nebula.discoveryeducation.com/' },
+          },
+          {
+            text: 'Built MegaMenu for a Back-to-School product deliverable. Core technical feature: detects at runtime when to collapse into a linked drill-down list view, rather than relying on fixed breakpoints. Component adapts its own layout based on available space and content, rather than hiding items past a hardcoded width.',
+            link: { label: 'MegaMenu demo', href: 'https://nebula.discoveryeducation.com/mega-menu-sink' },
+            subs: [
+              'Designed the responsive collapsed view myself: a linked drill-down list, not an accordion, that lets users tap into a category and navigate back out.',
+              'Initial build: 3 days. Product then underwent significant redesign; updated MegaMenu delivered in 3 more days, matching new design.',
+            ],
+          },
+          {
+            text: 'Built NebulaContainerTable, an enhanced NebulaTable that uses container queries instead of media queries, so the table adapts to its own container size rather than the viewport — more flexible across layouts.',
+            link: { label: 'ContainerTable demo', href: 'https://nebula.discoveryeducation.com/container-table-sink' },
+          },
+        ],
       },
       {
-        kind: 'text',
-        text: 'Wrote Claude Skill to audit and fix localization across the platform, refined against 9 company repos and used successfully in production.',
+        group: 'AI team',
+        title: 'AI-Native Interfaces',
+        figure: 'In parallel',
+        figureLabel: 'frontend and backend built at once from one REST spec',
+        points: [
+          {
+            text: 'Embedded with the AI team to build the frontend of a human-in-the-loop review dashboard where people evaluate and correct AI output; completed a partial design, made the UX calls it left open, and tested it with real users to make the review workflow efficient.',
+          },
+          {
+            text: "Defined the dashboard's REST contract with the backend engineer, writing a detailed spec on data shapes, request semantics (PATCH vs. POST), and full schema trees so both sides could build in parallel.",
+          },
+        ],
       },
-      { kind: 'subheading', text: 'Slash Commands' },
       {
-        kind: 'text',
-        text: 'Built plan-create/plan-update slash commands for Claude Code: structured markdown plan docs (executive summary, phases, success criteria, known issues) generated conversationally, with approval-gated drafts and diff-style updates. Enforces consistent status markers and preserves historical context across iterations, turning ad hoc dev notes into a living, reviewable spec.',
+        group: 'AI Tooling',
+        title: 'Claude Skills',
+        figure: '1–2 days',
+        figureLabel: 'of hands-on work saved per component',
+        points: [
+          {
+            text: 'Made the design system agent-ready with custom Claude skills that automate end-to-end component delivery (build, docs page, release), with human review at each step, replacing one to two days of hands-on work per component.',
+          },
+          {
+            text: 'Wrote a Claude planning skill that picks the build approach per component: themed primitive, wrapped primitive, or fully custom component.',
+          },
+          {
+            text: 'Wrote a Claude release-automation skill for the migration.',
+          },
+          {
+            text: 'Wrote a Claude skill to port existing component doc-page examples from Nebula Components to nebula-nuxt, ensuring new components stayed backward compatible.',
+          },
+          {
+            text: 'Wrote Claude Skill to audit and fix localization across the platform, refined against 9 company repos and used successfully in production.',
+          },
+        ],
       },
-      { kind: 'subheading', text: 'Adoption' },
       {
-        kind: 'text',
-        text: "Co-hosted the company's AI Office Hours to help engineers adopt AI-assisted development.",
+        group: 'AI Tooling',
+        title: 'Slash Commands & Adoption',
+        figure: '/plan',
+        figureLabel: 'slash commands that turn dev notes into living specs',
+        points: [
+          {
+            text: 'Built plan-create/plan-update slash commands for Claude Code: structured markdown plan docs (executive summary, phases, success criteria, known issues) generated conversationally, with approval-gated drafts and diff-style updates. Enforces consistent status markers and preserves historical context across iterations, turning ad hoc dev notes into a living, reviewable spec.',
+          },
+          {
+            text: "Co-hosted the company's AI Office Hours to help engineers adopt AI-assisted development.",
+          },
+        ],
       },
     ],
     links: [],

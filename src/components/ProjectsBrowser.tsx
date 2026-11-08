@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import Carousel from './Carousel';
 import FactsGrid from './FactsGrid';
+import PhotoTable from './PhotoTable';
 import type { Note, Project } from '@/content/projects';
 import { COPY } from '@/content/site';
 import { PANE_ENTER, prefersReducedMotion, staggerZones } from '@/lib/motion';
@@ -127,6 +128,11 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
                 className={styles.row}
                 data-selected={i === selected || undefined}
               >
+                {/* The index card's number, left of its margin rule. Decorative:
+                    the list already announces position (1 of 3). */}
+                <span aria-hidden="true" className={styles.number}>
+                  {String(i + 1).padStart(2, '0')}
+                </span>
                 <span className={styles.rowBody}>
                   <span className={styles.name}>
                     {item.name}
@@ -212,6 +218,10 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
               <NoteItem key={`${note.kind}-${i}`} note={note} />
             ))}
           </ul>
+        ) : null}
+
+        {project.stories?.length ? (
+          <PhotoTable key={project.slug} stories={project.stories} note={project.storiesNote} />
         ) : null}
       </article>
     </section>

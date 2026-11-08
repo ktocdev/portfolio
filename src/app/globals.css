@@ -35,6 +35,16 @@
   --paper-shadow: rgba(31, 35, 51, 0.22);
   --paper-shadow-soft: rgba(31, 35, 51, 0.16);
 
+  /* Instant photos and index cards (PhotoTable, the projects list): the paper,
+     the ink written on it, and the print's indigo night-shot gradient with
+     light ink on top. */
+  --paper: #fdfcff;
+  --paper-ink: #1f2333;
+  --print-a: #3e43b8;
+  --print-b: #1f2333;
+  --print-glow: rgba(201, 198, 242, 0.38);
+  --print-ink: #f7f6fb;
+
   /* Luminosity keeps the photograph's tonal range while taking its colour
      from surface-strong, so images sit in the palette in both schemes.
      Dark only softens opacity — screen blows highlights out over a dark base. */
@@ -74,6 +84,12 @@
     --img-shade-0: rgba(0, 0, 0, 0);
     --paper-shadow: rgba(0, 0, 0, 0.5);
     --paper-shadow-soft: rgba(0, 0, 0, 0.4);
+    --paper: #262940;
+    --paper-ink: #e8e7f2;
+    --print-a: #4b50c4;
+    --print-b: #151824;
+    --print-glow: rgba(165, 168, 245, 0.26);
+    --print-ink: #f7f6fb;
 
     --img-blend: luminosity;
     --img-opacity: 0.85;
@@ -108,6 +124,12 @@
   --img-shade-0: rgba(0, 0, 0, 0);
   --paper-shadow: rgba(0, 0, 0, 0.5);
   --paper-shadow-soft: rgba(0, 0, 0, 0.4);
+  --paper: #262940;
+  --paper-ink: #e8e7f2;
+  --print-a: #4b50c4;
+  --print-b: #151824;
+  --print-glow: rgba(165, 168, 245, 0.26);
+  --print-ink: #f7f6fb;
 
   --img-blend: luminosity;
   --img-opacity: 0.85;

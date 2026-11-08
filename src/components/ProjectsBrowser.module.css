@@ -30,42 +30,106 @@
   text-wrap: pretty;
 }
 
+/* A loose stack of index cards, each leaning a little its own way. The
+   selected one is pulled out toward the detail panel, squared up and lifted;
+   hovering one nudges it partway. A margin rule after the number marks it as
+   an index card. */
 .list {
-  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  /* Room for the selected card's pull and the tilted corners. */
+  padding: 0.25rem 1.25rem 0.5rem 0.25rem;
 }
 
 .list > li {
-  border-bottom: 1px solid var(--border-subtle);
+  --tilt: -0.7deg;
+  position: relative;
+}
+
+.list > li:nth-child(3n + 2) {
+  --tilt: 0.6deg;
+}
+
+.list > li:nth-child(3n) {
+  --tilt: -0.35deg;
 }
 
 .row {
   appearance: none;
   -webkit-appearance: none;
-  background: none;
   border: 0;
   margin: 0;
   font: inherit;
-  color: inherit;
+  color: var(--paper-ink);
   text-align: inherit;
   cursor: pointer;
   width: 100%;
-  display: block;
-  padding: clamp(0.6rem, 1.3vh, 1rem) 0.25rem;
-  padding-left: 0.85rem;
-  /* Always present so selecting a row cannot shift the text. */
-  border-left: 2px solid transparent;
-}
-
-.row[data-selected] {
-  border-left-color: var(--accent);
-  background: var(--surface);
+  display: grid;
+  grid-template-columns: 2.75rem 1fr;
+  align-items: start;
+  padding: clamp(0.7rem, 1.4vh, 1rem) 1rem clamp(0.7rem, 1.4vh, 1rem) 0;
+  border-radius: var(--radius-sm);
+  background:
+    /* The red margin rule of an index card, here in the accent. */
+    linear-gradient(var(--accent-selected), var(--accent-selected)) 2.75rem 0 / 1px 100% no-repeat,
+    var(--paper);
+  box-shadow:
+    0 1px 1px var(--paper-shadow),
+    0 3px 8px -4px var(--paper-shadow-soft);
+  transform: rotate(var(--tilt));
+  transition:
+    transform var(--dur-relaxed) var(--ease),
+    box-shadow var(--dur-relaxed) var(--ease);
 }
 
 .row:hover {
+  transform: translateX(0.35rem) rotate(calc(var(--tilt) / 2));
+}
+
+.row:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.row[data-selected] {
+  transform: translateX(0.9rem);
+  box-shadow:
+    1px 2px 3px var(--paper-shadow),
+    4px 12px 22px -6px var(--paper-shadow-soft);
+  background:
+    linear-gradient(var(--accent), var(--accent)) 0 0 / 3px 100% no-repeat,
+    linear-gradient(var(--accent-selected), var(--accent-selected)) 2.75rem 0 / 1px 100% no-repeat,
+    var(--paper);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row {
+    transition: none;
+  }
+}
+
+.number {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-sm);
+  letter-spacing: var(--tracking-mono);
+  color: var(--text-faint);
+  text-align: center;
+  /* Sits on the name's first line. */
+  padding-top: 0.3em;
+}
+
+.row[data-selected] .number,
+.row:hover .number {
+  color: var(--accent);
+}
+
+.row:hover .name {
   color: var(--accent);
 }
 
 .rowBody {
+  padding-left: 0.85rem;
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
