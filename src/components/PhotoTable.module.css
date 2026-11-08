@@ -223,7 +223,9 @@
     height: calc(var(--card-h) * 3);
     /* Room for a lifted photo's growth and the others' shove, so neither
        pokes past the column or over the hint above. */
-    margin: 2.25rem 1.25rem 1.5rem;
+    margin: 2.25rem auto 1.5rem;
+    /* Capped so a wide column doesn't spread the pile into a grid. */
+    width: min(46rem, 100% - 2.5rem);
   }
 
   .card,

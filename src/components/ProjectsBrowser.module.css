@@ -1,37 +1,238 @@
+/* One centred column: the project gets the page's full reading width, and
+   the project list waits in a drawer off the left edge. */
 .projects {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
-  gap: var(--space-column-gap);
-  grid-auto-rows: min-content;
-  align-content: start;
-  min-height: 0;
-}
-
-/* --- Selector ----------------------------------------------------------- */
-.selector {
   display: flex;
   flex-direction: column;
   gap: var(--space-stack);
+  width: 100%;
+  max-width: 60rem;
+  margin-inline: auto;
   min-width: 0;
+  min-height: 0;
+}
+
+.pageHead {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9rem;
 }
 
 .heading {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: var(--type-mono-sm);
+  letter-spacing: var(--tracking-mono-caps);
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.count {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-sm);
+  letter-spacing: var(--tracking-mono);
+  color: var(--text-faint);
+}
+
+.title {
   font-family: var(--font-display);
   font-weight: 400;
   font-size: var(--type-h1);
   line-height: 1.08;
   letter-spacing: var(--tracking-h1);
+  text-wrap: balance;
+}
+
+/* Inline boxes can't take the flip's transform. */
+.word {
+  display: inline-block;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 1rem;
+  margin-top: calc(var(--space-stack) * -0.5);
+}
+
+.metaTagline {
+  font-size: var(--type-body-sm);
+  color: var(--muted);
+}
+
+.metaStack {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-sm);
+  letter-spacing: var(--tracking-mono);
+  color: var(--text-faint);
+}
+
+/* --- Deck: the drawer's handle ------------------------------------------- */
+/* Three index cards tucked behind the screen's left edge, fanned so their
+   ends show, with the label written up the front one. Hover or focus draws
+   them out a little, the same nudge as a card in the open drawer. Below
+   48rem the gutter is narrower than the deck, so it drops to the lower left
+   and floats over the column's edge as the page scrolls beneath it. */
+.deck {
+  appearance: none;
+  -webkit-appearance: none;
+  position: fixed;
+  left: 0;
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 15;
+  width: 2.5rem;
+  height: 11rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.deckCard {
+  position: absolute;
+  inset: 0;
+  background: var(--paper);
+  border: 1px solid var(--border-subtle);
+  border-left: 0;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  box-shadow:
+    1px 1px 2px var(--paper-shadow),
+    2px 8px 18px -4px var(--paper-shadow-soft);
+  transform-origin: 0 50%;
+  transition: transform var(--dur-relaxed) var(--ease);
+}
+
+.deckCard:nth-child(1) {
+  transform: translateX(-0.95rem) rotate(-5deg);
+}
+
+.deckCard:nth-child(2) {
+  transform: translateX(-0.5rem) rotate(3.5deg);
+}
+
+/* The front card carries the index card's margin rule. */
+.deckCard:nth-child(3) {
+  background:
+    linear-gradient(var(--accent-selected), var(--accent-selected)) calc(100% - 0.55rem) 0 / 1px
+      100% no-repeat,
+    var(--paper);
+}
+
+.deck:hover .deckCard:nth-child(1),
+.deck:focus-visible .deckCard:nth-child(1) {
+  transform: translateX(-0.3rem) rotate(-8deg);
+}
+
+.deck:hover .deckCard:nth-child(2),
+.deck:focus-visible .deckCard:nth-child(2) {
+  transform: translateX(0.05rem) rotate(5deg);
+}
+
+.deck:hover .deckCard:nth-child(3),
+.deck:focus-visible .deckCard:nth-child(3) {
+  transform: translateX(0.45rem);
+}
+
+.deck:focus-visible {
+  outline: none;
+}
+
+.deck:focus-visible .deckCard:nth-child(3) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Written up the card, read bottom to top like a spine. */
+.deckLabel {
+  position: absolute;
+  inset: 0 0.55rem 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  writing-mode: vertical-rl;
+  rotate: 180deg;
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-xs);
+  letter-spacing: var(--tracking-mono-caps);
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: translate var(--dur-relaxed) var(--ease);
+}
+
+.deck:hover .deckLabel,
+.deck:focus-visible .deckLabel {
+  translate: 0.45rem 0;
+}
+
+.deckCount {
+  color: var(--text-faint);
+}
+
+@media (max-width: 47.99rem) {
+  .deck {
+    top: auto;
+    bottom: calc(1.25rem + var(--consent-inset, 0px));
+    translate: none;
+    height: 9.5rem;
+  }
+}
+
+/* --- Drawer -------------------------------------------------------------- */
+/* Shown by data-open; on the way out, GSAP holds both
+   visible inline until the cards have gone (see ProjectsBrowser.tsx). */
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 19;
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
+  backdrop-filter: blur(2px);
+  visibility: hidden;
+}
+
+.drawer {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 20;
+  width: min(26rem, 90vw);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-stack);
+  padding: var(--space-page-y) 0.5rem var(--space-page-y) var(--space-page-x);
+  overflow-y: auto;
+  visibility: hidden;
+}
+
+.scrim[data-open],
+.drawer[data-open] {
+  visibility: visible;
+}
+
+.drawerLabel {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-sm);
+  letter-spacing: var(--tracking-mono-caps);
+  text-transform: uppercase;
+  color: var(--accent);
 }
 
 .intro {
-  max-width: 36ch;
+  max-width: 34ch;
   font-size: var(--type-body-sm);
   color: var(--muted);
   text-wrap: pretty;
+  margin-top: calc(var(--space-stack) * -0.6);
 }
 
 /* A loose stack of index cards, each leaning a little its own way. The
-   selected one is pulled out toward the detail panel, squared up and lifted;
+   selected one is pulled out of the stack, squared up and lifted;
    hovering one nudges it partway. A margin rule after the number marks it as
    an index card. */
 .list {
