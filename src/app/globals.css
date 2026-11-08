@@ -31,6 +31,10 @@
   --img-shade: rgba(31, 35, 51, 0.18);
   --img-shade-0: rgba(31, 35, 51, 0);
 
+  /* The headshot's paper shadow: a tight contact line and a soft fall-off. */
+  --paper-shadow: rgba(31, 35, 51, 0.22);
+  --paper-shadow-soft: rgba(31, 35, 51, 0.16);
+
   /* Luminosity keeps the photograph's tonal range while taking its colour
      from surface-strong, so images sit in the palette in both schemes.
      Dark only softens opacity — screen blows highlights out over a dark base. */
@@ -68,6 +72,8 @@
     --img-tint-0: rgba(165, 168, 245, 0);
     --img-shade: rgba(0, 0, 0, 0.3);
     --img-shade-0: rgba(0, 0, 0, 0);
+    --paper-shadow: rgba(0, 0, 0, 0.5);
+    --paper-shadow-soft: rgba(0, 0, 0, 0.4);
 
     --img-blend: luminosity;
     --img-opacity: 0.85;
@@ -100,6 +106,8 @@
   --img-tint-0: rgba(165, 168, 245, 0);
   --img-shade: rgba(0, 0, 0, 0.3);
   --img-shade-0: rgba(0, 0, 0, 0);
+  --paper-shadow: rgba(0, 0, 0, 0.5);
+  --paper-shadow-soft: rgba(0, 0, 0, 0.4);
 
   --img-blend: luminosity;
   --img-opacity: 0.85;

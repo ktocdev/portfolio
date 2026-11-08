@@ -31,7 +31,7 @@ export default function HomePage() {
         </ButtonLink>
       </div>
 
-      <Figure src={IMAGES.headshot.src} alt={IMAGES.headshot.alt} variant="portrait" priority />
+      <Figure src={IMAGES.headshot.src} alt={IMAGES.headshot.alt} variant="portrait" priority toss />
     </section>
   );
 }

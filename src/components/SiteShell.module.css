@@ -18,6 +18,12 @@
   color: var(--text);
 }
 
+/* A tossed photo starts partly off the page, scaled up and turned; clipped
+   here, its flight can't open a sideways scroll on a narrow screen. */
+.root:has([data-toss]) {
+  overflow-x: hidden;
+}
+
 /* min-height:0 lets the grid child shrink below its content height, which is
    what keeps the page inside one viewport. */
 .main {
