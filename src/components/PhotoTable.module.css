@@ -34,6 +34,8 @@
   flex-direction: column;
   padding: 0.6rem 0.6rem 0;
   background: var(--paper);
+  /* The facts grid's hairline, so a photo's edge holds on a pale page. */
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
   /* Same paper shadow as the home headshot (Figure.module.css): a contact line
      and a soft fall-off that spread and fade as --lift raises the photo. */
@@ -89,8 +91,8 @@
   outline-offset: 4px;
 }
 
-/* The developed image: a print in the palette's own inks, darkest at the
-   lower right like light falling across it. */
+/* The developed image: a quiet tonal print in the facts grid's inks, with
+   light falling across it from one corner, and the grid's thin border. */
 .print {
   display: flex;
   flex-direction: column;
@@ -101,7 +103,8 @@
   background:
     radial-gradient(120% 90% at 15% 10%, var(--print-glow) 0%, transparent 60%),
     linear-gradient(150deg, var(--print-a) 0%, var(--print-b) 100%);
-  color: var(--print-ink);
+  color: var(--paper-ink);
+  border: 1px solid var(--border);
   border-radius: 1px;
 }
 
@@ -119,6 +122,7 @@
 
 .figure {
   font-family: var(--font-display);
+  color: var(--hero-em);
   font-size: clamp(1.75rem, 1.2rem + 1.4vw, 2.4rem);
   line-height: 1.02;
   letter-spacing: var(--tracking-display);
@@ -131,7 +135,7 @@
   line-height: 1.35;
   letter-spacing: 0.02em;
   text-wrap: pretty;
-  opacity: 0.9;
+  color: var(--muted);
 }
 
 /* The wide white margin under the print, written on like a caption. */
@@ -244,7 +248,9 @@
   }
 
   .figure {
-    font-size: clamp(1.35rem, 0.95rem + 0.85vw, 1.85rem);
+    /* 1.5rem floor: hero-em on the print's darker corner passes only as
+       large text. */
+    font-size: clamp(1.5rem, 1.05rem + 0.8vw, 1.85rem);
   }
 
   .caption {
