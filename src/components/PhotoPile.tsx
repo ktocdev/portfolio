@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 
-import { PILE_DEAL, prefersReducedMotion } from '@/lib/motion';
+import { PILE_DEAL, PILE_SETTLE, prefersReducedMotion } from '@/lib/motion';
 import type { PhotoPileControl } from '@/lib/photoPile';
 import styles from './PhotoPile.module.css';
 
@@ -112,6 +112,14 @@ export default function PhotoPile({ photos, children }: PhotoPileProps) {
       });
     };
 
+    /* The entrance was skipped or cut short (enterPage in motion.ts): every
+       print down, no deal. Queued after any deal still waiting on the module. */
+    const onSettle = () => {
+      if (!motion) return;
+      cards.slice(1).forEach(({ photo }) => photo.style.removeProperty('visibility'));
+      ready.then((pileControl) => pileControl?.settle());
+    };
+
     const pageCanScroll = (down: boolean) => {
       const page = document.scrollingElement ?? document.documentElement;
       return down ? page.scrollTop + page.clientHeight < page.scrollHeight - 1 : page.scrollTop > 0;
@@ -145,10 +153,12 @@ export default function PhotoPile({ photos, children }: PhotoPileProps) {
     };
 
     element.addEventListener(PILE_DEAL, onDeal);
+    element.addEventListener(PILE_SETTLE, onSettle);
     window.addEventListener('wheel', onWheel, { passive: false });
     return () => {
       disposed = true;
       element.removeEventListener(PILE_DEAL, onDeal);
+      element.removeEventListener(PILE_SETTLE, onSettle);
       window.removeEventListener('wheel', onWheel);
       element.removeEventListener('click', onClick);
       element.removeEventListener('keydown', onKey);

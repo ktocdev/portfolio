@@ -137,8 +137,34 @@ const TOSS = '[data-toss]';
 const PHOTO_PILE = '[data-photo-pile]';
 /** Sent to a page's [data-photo-pile] the moment its headshot is tossed. */
 export const PILE_DEAL = 'pile:deal';
+/** Sent to a page's [data-photo-pile] to end its deal at once, every print down. */
+export const PILE_SETTLE = 'pile:settle';
 /* Set by firstLoadScript in layout.tsx; hides the section in globals.css. */
 const ENTRANCE_HOLD = 'data-entrance-hold';
+/* Set by firstLoadScript in layout.tsx once the tab has been hidden. */
+const WAS_HIDDEN = 'data-was-hidden';
+
+/* Sections marked data-enter-once="<name>" whose entrance has played (or been
+   missed) in this document. Module state, so it lasts across client-side
+   route changes and resets only on a full load. */
+const enteredOnce = new Set<string>();
+
+/**
+ * Whether a [data-enter-once] section should skip straight to its final state:
+ * it has entered before in this document, or the tab is hidden now, or it was
+ * hidden while this first load's entrance was still being held.
+ */
+function skipOnceEntrance(section: Element): boolean {
+  const name = section.getAttribute('data-enter-once');
+  if (name === null) return false;
+  const root = document.documentElement;
+  const skip =
+    enteredOnce.has(name) ||
+    document.visibilityState === 'hidden' ||
+    (root.hasAttribute(ENTRANCE_HOLD) && root.hasAttribute(WAS_HIDDEN));
+  enteredOnce.add(name);
+  return skip;
+}
 
 /* One load for both, so the page loader covers the whole entrance's code. */
 const loadEntrance = () =>
@@ -190,8 +216,40 @@ function sweepShimmer(section: Element, delay: number): Animation | undefined {
  * together while its [data-toss] photo, if any, is tossed in and its photo
  * pile starts dealing. Without a
  * flip, just the staggered rise. Returns a cancel function.
+ *
+ * A section marked data-enter-once (home) enters once per full page load. Come
+ * back to it by a client-side route change, or have its tab hidden before the
+ * entrance starts, and it shows its final state with no motion; hide the tab
+ * (another tab, the window minimised) while it plays and everything jumps to
+ * the end, pile included. Only a reload plays it again.
  */
 export function enterPage(
+  section: Element,
+  timing: { duration: number; step: number },
+): () => void {
+  if (skipOnceEntrance(section)) {
+    document.documentElement.removeAttribute(ENTRANCE_HOLD);
+    section.querySelector(PHOTO_PILE)?.dispatchEvent(new Event(PILE_SETTLE));
+    return () => {};
+  }
+  const cancel = enterPageNow(section, timing);
+  if (!section.hasAttribute('data-enter-once')) return cancel;
+
+  const onHidden = () => {
+    if (document.visibilityState !== 'hidden') return;
+    stop();
+    cancel();
+    section.querySelector(PHOTO_PILE)?.dispatchEvent(new Event(PILE_SETTLE));
+  };
+  const stop = () => document.removeEventListener('visibilitychange', onHidden);
+  document.addEventListener('visibilitychange', onHidden);
+  return () => {
+    stop();
+    cancel();
+  };
+}
+
+function enterPageNow(
   section: Element,
   timing: { duration: number; step: number },
 ): () => void {

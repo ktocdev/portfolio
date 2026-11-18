@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   return (
-    <section className={styles.home}>
+    <section className={styles.home} data-enter-once="home">
       <div className={styles.left}>
         <h1 className={styles.heading} data-flip-heading="">
           {COPY.home.heading.split(' ').map((word, i) => (
