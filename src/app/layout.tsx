@@ -102,8 +102,13 @@ const themeScript = `(function(){try{var t=localStorage.getItem('portfolio-theme
  * the app can play its entrance. The hold lifts 2s after the loader, so a slow
  * app bundle costs the animation rather than leaving the page blank. Script
  * off, it is never set.
+ *
+ * And it notes on <html> (data-was-hidden) if the tab is hidden at any point,
+ * from the first byte on, so a page whose entrance plays only once
+ * (enterPage() in motion.ts) can tell it was missed while loading and show
+ * its final state instead.
  */
-const firstLoadScript = `(function(){var d=document,h=d.documentElement,done=function(){h.setAttribute('data-first-ready','');setTimeout(function(){h.removeAttribute('data-entrance-hold')},2000)};h.setAttribute('data-entrance-hold','');setTimeout(done,15000);function check(){var w=[].slice.call(d.querySelectorAll('main img')).filter(function(i){if(i.complete)return false;var r=i.getClientRects();if(!r.length)return false;return!(i.loading==='lazy'&&r[0].top>innerHeight*1.5)}).map(function(i){return new Promise(function(res){i.addEventListener('load',res,{once:true});i.addEventListener('error',res,{once:true})})});if(d.fonts)w.push(d.fonts.ready);Promise.all(w).then(done,done)}if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',check);else check()})();`;
+const firstLoadScript = `(function(){var d=document,h=d.documentElement,hid=function(){if(d.visibilityState==='hidden')h.setAttribute('data-was-hidden','')};hid();d.addEventListener('visibilitychange',hid);var done=function(){h.setAttribute('data-first-ready','');setTimeout(function(){h.removeAttribute('data-entrance-hold')},2000)};h.setAttribute('data-entrance-hold','');setTimeout(done,15000);function check(){var w=[].slice.call(d.querySelectorAll('main img')).filter(function(i){if(i.complete)return false;var r=i.getClientRects();if(!r.length)return false;return!(i.loading==='lazy'&&r[0].top>innerHeight*1.5)}).map(function(i){return new Promise(function(res){i.addEventListener('load',res,{once:true});i.addEventListener('error',res,{once:true})})});if(d.fonts)w.push(d.fonts.ready);Promise.all(w).then(done,done)}if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',check);else check()})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

@@ -14,6 +14,9 @@ export type PhotoPileControl = {
    * bottom one out and lays it on top. Stops the dealing first. Returns how
    * long the flip runs, in ms. */
   step(direction: 1 | -1): number;
+  /** Ends the deal at once: every print down at rest, in the order the deal
+   * would have left them. Any flip in flight lands. No-op without motion. */
+  settle(): void;
   /** Kills everything running and leaves each photo where it lies. */
   destroy(): void;
 };
@@ -165,6 +168,26 @@ export function photoPile(cards: PileCard[], { motion }: { motion: boolean }): P
           ease: 'power2.inOut',
         });
       return (OUT_S + BACK_S) * 1000;
+    },
+
+    settle() {
+      if (!motion) return;
+      timer?.kill();
+      timer = null;
+      waiting?.();
+      waiting = null;
+      flip?.progress(1);
+      /* Each cancel leaves its print at rest. */
+      tosses.splice(0).forEach((cancel) => cancel());
+      if (hand.length) {
+        deck = [...deck, ...hand];
+        hand = [];
+        restack();
+      }
+      gsap.set(
+        cards.slice(1).map((card) => card.photo),
+        { clearProps: 'opacity,visibility' },
+      );
     },
 
     destroy() {
