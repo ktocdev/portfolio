@@ -408,6 +408,32 @@ export const PROJECTS: Project[] = [
     links: [],
   },
   {
+    slug: 'ontrack',
+    name: 'OnTrack',
+    tagline: 'Restaurant maintenance management',
+    meta: 'React PWA · Supabase · Docker · Cloudflare',
+    description:
+      'A mobile-first maintenance ticketing app for a Chicago restaurant group, built with the operations manager, who tests each release and requests features.',
+    /* Placeholder overview, from the resume; screens and the story to come. */
+    paras: [
+      'Designing and building a mobile-first maintenance ticketing app for a Chicago restaurant group, iterating with the operations manager, who tests each release and requests features.',
+      "Designed database-enforced role-based access control for four roles (restaurant managers, operations managers, leadership, admin) using Postgres row-level security, so role, rights, and deactivation changes apply on the next request instead of waiting for tokens to expire; sessions that haven't completed two-factor sign-in can read nothing.",
+      "Secured privileged Edge Functions by verifying each caller's token and role server-side, kept roles out of client-writable user metadata, and used role-based UI guards for display only; runs the test environment in Docker containers.",
+    ],
+    links: [],
+    slides: [
+      {
+        label: 'Coming soon',
+        src: '/projects/ontrack-placeholder-light.svg',
+        srcDark: '/projects/ontrack-placeholder-dark.svg',
+        width: 1600,
+        height: 1000,
+        type: 'image',
+        alt: 'Placeholder: screens of OnTrack are coming soon.',
+      },
+    ],
+  },
+  {
     slug: 'main-character',
     name: 'Main Character',
     tagline: 'AI personal knowledge & retrieval system',
