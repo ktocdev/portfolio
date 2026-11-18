@@ -5,7 +5,7 @@
   "description": "Katie O'Connor — portfolio",
   "scripts": {
     "dev": "next dev",
-    "build": "next build && node scripts/flatten-segment-files.mjs && node scripts/demo-canonicals.mjs && node scripts/demo-consent.mjs && node scripts/ontrack-ds-pages.mjs --check",
+    "build": "next build && node scripts/flatten-segment-files.mjs && node scripts/demo-canonicals.mjs && node scripts/demo-consent.mjs && node scripts/demo-links.mjs && node scripts/permanent-redirects.mjs && node scripts/ontrack-ds-pages.mjs --check",
     "dev:print": "node scripts/print-env.mjs dev",
     "build:print": "node scripts/print-env.mjs build",
     "pdf": "node scripts/pdf.mjs",
