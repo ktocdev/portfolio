@@ -1,0 +1,375 @@
+/* --- Stack (narrow) ------------------------------------------------------- */
+/* The base layout is the phone one: each row's photos stacked down the
+   column, each overlapping the one above and leaning alternately, opening in
+   place. The grid below takes over in a container at least 34rem wide —
+   PhotoTable.tsx measures the same threshold. */
+.wrap {
+  container: photos / inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+/* The group's name over its row, as the case-study notes head their lists. */
+.rowHead {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: var(--type-mono-sm);
+  letter-spacing: var(--tracking-mono-caps);
+  text-transform: uppercase;
+  color: var(--accent);
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.hint,
+.note {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-sm);
+  color: var(--muted);
+}
+
+.table {
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card {
+  --lift: 0;
+  position: relative;
+  width: min(100%, 21rem);
+  display: flex;
+  flex-direction: column;
+  padding: 0.6rem 0.6rem 0;
+  background: var(--paper);
+  /* The facts grid's hairline, so a photo's edge holds on a pale page. */
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  /* Same paper shadow as the home headshot (Figure.module.css): a contact line
+     and a soft fall-off that spread and fade as --lift raises the photo. */
+  box-shadow:
+    calc(1px + 12px * var(--lift)) calc(1px + 24px * var(--lift)) calc(2px + 22px * var(--lift))
+      color-mix(in srgb, var(--paper-shadow) calc(100% - 70% * var(--lift)), transparent),
+    calc(2px + 28px * var(--lift)) calc(8px + 52px * var(--lift)) calc(18px + 56px * var(--lift))
+      -4px color-mix(in srgb, var(--paper-shadow-soft) calc(100% - 50% * var(--lift)), transparent);
+  /* A third of the table tilt: full-width cards lean much further at the edge. */
+  transform: translateX(var(--shift, 0)) rotate(calc(var(--r) * 0.35));
+}
+
+.card + .card {
+  margin-top: -1.25rem;
+}
+
+.card:nth-child(odd) {
+  --shift: -0.6rem;
+}
+
+.card:nth-child(even) {
+  --shift: 0.6rem;
+}
+
+.card[data-open] {
+  transform: none;
+  width: 100%;
+  z-index: 2;
+  --lift: 0.5;
+}
+
+/* The whole photo is the control: the print, and the blank paper under it. */
+.face {
+  appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  /* The instant photo's wide foot, left blank. */
+  padding-bottom: 1.5rem;
+}
+
+.card[data-open] .face {
+  padding-bottom: 0;
+}
+
+.face:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+/* The developed image: a quiet tonal print in the facts grid's inks, with
+   light falling across it from one corner, and the grid's thin border. */
+.print {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.1rem 1rem;
+  min-height: 7.5rem;
+  background:
+    radial-gradient(120% 90% at 15% 10%, var(--print-glow) 0%, transparent 60%),
+    linear-gradient(150deg, var(--print-a) 0%, var(--print-b) 100%);
+  color: var(--paper-ink);
+  border: 1px solid var(--border);
+  border-radius: 1px;
+}
+
+.card:nth-child(3n + 2) .print {
+  background:
+    radial-gradient(110% 90% at 85% 15%, var(--print-glow) 0%, transparent 60%),
+    linear-gradient(200deg, var(--print-a) 0%, var(--print-b) 100%);
+}
+
+.card:nth-child(3n) .print {
+  background:
+    radial-gradient(120% 100% at 30% 90%, var(--print-glow) 0%, transparent 55%),
+    linear-gradient(120deg, var(--print-b) 0%, var(--print-a) 100%);
+}
+
+.figure {
+  font-family: var(--font-display);
+  color: var(--hero-em);
+  font-size: clamp(1.75rem, 1.2rem + 1.4vw, 2.4rem);
+  line-height: 1.02;
+  letter-spacing: var(--tracking-display);
+  text-wrap: balance;
+}
+
+.figureLabel {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-xs);
+  line-height: 1.35;
+  letter-spacing: 0.02em;
+  text-wrap: pretty;
+  color: var(--muted);
+}
+
+/* The title on a strip of masking tape stuck across the print's top
+   corner, hanging a little past its edge onto the paper. Torn ends, a tilt
+   that alternates from photo to photo, and paper showing through. */
+.title {
+  --tape-tilt: -2.5deg;
+  align-self: flex-start;
+  max-width: calc(100% + 0.6rem);
+  margin: -0.45rem 0 auto -1.35rem;
+  padding: 0.3rem 0.85rem 0.34rem;
+  font-family: var(--font-display);
+  font-size: var(--type-h3);
+  line-height: 1.15;
+  text-wrap: balance;
+  color: var(--paper-ink);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.28), transparent 45%),
+    color-mix(in srgb, var(--paper) 74%, var(--accent) 26%);
+  opacity: 0.94;
+  transform: rotate(var(--tape-tilt));
+  clip-path: polygon(
+    0 6%, 3% 0, 97% 0, 100% 8%, 98% 24%, 100% 42%, 97.5% 60%, 100% 78%, 98% 100%,
+    3% 100%, 0 90%, 2.5% 72%, 0 54%, 2% 36%, 0 20%
+  );
+}
+
+.card:nth-child(even) .title {
+  --tape-tilt: 2deg;
+}
+
+.card:nth-child(3n) .title {
+  --tape-tilt: -1deg;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.body {
+  padding: 0.9rem 0.25rem 1rem;
+  color: var(--paper-ink);
+}
+
+.points {
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  font-size: var(--type-body-md);
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+.subs {
+  padding-left: 1.1rem;
+  margin-top: 0.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.link {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  letter-spacing: var(--tracking-mono);
+  white-space: nowrap;
+}
+
+/* Screenshots of the work, in columns that keep each one's own shape: a
+   masonry of mixed sizes, nothing cropped. */
+.shots {
+  columns: 2 15rem;
+  column-gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.shot {
+  break-inside: avoid;
+  margin: 0 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #fff;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  box-shadow:
+    1px 1px 2px var(--paper-shadow),
+    2px 8px 18px -4px var(--paper-shadow-soft);
+}
+
+.shot a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.shot figcaption {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-xs);
+  letter-spacing: var(--tracking-mono);
+  color: var(--muted);
+}
+
+.putBack {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 1rem 0 0;
+  padding: 0.4rem 0.75rem;
+  background: none;
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-sm);
+  color: var(--paper-ink);
+  cursor: pointer;
+}
+
+.putBack:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* --- Grid (wide) ---------------------------------------------------------- */
+@container photos (min-width: 34rem) {
+  .table {
+    /* Every row has the same columns, so photos line up from row to row. */
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+    gap: 1.5rem;
+    align-items: start;
+    padding: 0.4rem 0 0.25rem;
+  }
+
+  .card,
+  .card + .card,
+  .card:nth-child(odd),
+  .card:nth-child(even) {
+    width: auto;
+    aspect-ratio: 1 / 1.19;
+    margin: 0;
+    padding: 0.55rem 0.55rem 0;
+    transform: none;
+  }
+
+  .print {
+    flex: 1;
+    min-height: 0;
+    padding: 0.85rem 0.8rem;
+    justify-content: flex-end;
+  }
+
+  .figure {
+    /* 1.5rem floor: hero-em on the print's darker corner passes only as
+       large text. */
+    font-size: clamp(1.5rem, 1.05rem + 0.8vw, 1.85rem);
+  }
+
+  .title {
+    margin-left: -1.15rem;
+    font-size: clamp(0.95rem, 0.85rem + 0.25vw, 1.0625rem);
+  }
+
+  /* Picked up: across its whole row, as tall as its text, and the rest of
+     the row moves down under it. The print shrinks to a band, figure and
+     label side by side. */
+  .card[data-open] {
+    grid-column: 1 / -1;
+    aspect-ratio: auto;
+    padding: 0.7rem 0.7rem 0;
+  }
+
+  .card[data-open] .print {
+    flex: none;
+    justify-content: flex-start;
+    padding: 1rem 1.1rem;
+  }
+
+  .card[data-open] .stat {
+    flex-direction: row;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.9rem;
+  }
+
+  .card[data-open] .figureLabel {
+    font-size: var(--type-mono-sm);
+  }
+
+  .card[data-open] .title {
+    margin-left: -1.45rem;
+    font-size: var(--type-h3);
+  }
+
+  .card[data-open] .body {
+    max-width: 68ch;
+  }
+}
+
+/* Wide enough for the longest row on one line: as many columns as it has
+   photos (PhotoTable.tsx sets --columns), spread across the full width. */
+@container photos (min-width: 44rem) {
+  .table {
+    grid-template-columns: repeat(var(--columns, 4), minmax(0, 1fr));
+  }
+}

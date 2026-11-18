@@ -1,71 +1,303 @@
+/* One centred column: the project gets the page's full reading width, and
+   the project list waits in a drawer off the left edge. */
 .projects {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
-  gap: var(--space-column-gap);
-  grid-auto-rows: min-content;
-  align-content: start;
-  min-height: 0;
-}
-
-/* --- Selector ----------------------------------------------------------- */
-.selector {
   display: flex;
   flex-direction: column;
   gap: var(--space-stack);
+  width: 100%;
+  max-width: 60rem;
+  margin-inline: auto;
   min-width: 0;
+  min-height: 0;
 }
 
-.heading {
+.title {
   font-family: var(--font-display);
   font-weight: 400;
   font-size: var(--type-h1);
   line-height: 1.08;
   letter-spacing: var(--tracking-h1);
+  text-wrap: balance;
+}
+
+/* With a logo the title stays on one line, shrinking on a narrow column
+   (it is about 13.6em long), and leaves room under the logo's second line,
+   which hangs below the baseline. */
+.title[data-logo] {
+  font-size: min(var(--type-h1), 100cqi / 13.8);
+  white-space: nowrap;
+  padding-bottom: 0.3em;
+}
+
+/* Inline boxes can't take the flip's transform. */
+.word {
+  display: inline-block;
+}
+
+/* --- Deck: the drawer's handle ------------------------------------------- */
+/* Three index cards tucked behind the screen's left edge, fanned so their
+   ends show, with the label written up the front one. Hover or focus draws
+   them out a little, the same nudge as a card in the open drawer. Below
+   48rem the gutter is narrower than the deck, so it drops to the lower left
+   and floats over the column's edge as the page scrolls beneath it. */
+.deck {
+  appearance: none;
+  -webkit-appearance: none;
+  position: fixed;
+  left: 0;
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 15;
+  width: 2.5rem;
+  height: 11rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.deckCard {
+  position: absolute;
+  inset: 0;
+  background: var(--paper);
+  border: 1px solid var(--border-subtle);
+  border-left: 0;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  box-shadow:
+    1px 1px 2px var(--paper-shadow),
+    2px 8px 18px -4px var(--paper-shadow-soft);
+  transform-origin: 0 50%;
+  transition: transform var(--dur-relaxed) var(--ease);
+}
+
+.deckCard:nth-child(1) {
+  transform: translateX(-0.95rem) rotate(-5deg);
+}
+
+.deckCard:nth-child(2) {
+  transform: translateX(-0.5rem) rotate(3.5deg);
+}
+
+/* The front card carries the index card's margin rule. */
+.deckCard:nth-child(3) {
+  background:
+    linear-gradient(var(--accent-selected), var(--accent-selected)) calc(100% - 0.55rem) 0 / 1px
+      100% no-repeat,
+    var(--paper);
+}
+
+.deck:hover .deckCard:nth-child(1),
+.deck:focus-visible .deckCard:nth-child(1) {
+  transform: translateX(-0.3rem) rotate(-8deg);
+}
+
+.deck:hover .deckCard:nth-child(2),
+.deck:focus-visible .deckCard:nth-child(2) {
+  transform: translateX(0.05rem) rotate(5deg);
+}
+
+.deck:hover .deckCard:nth-child(3),
+.deck:focus-visible .deckCard:nth-child(3) {
+  transform: translateX(0.45rem);
+}
+
+.deck:focus-visible {
+  outline: none;
+}
+
+.deck:focus-visible .deckCard:nth-child(3) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Written up the card, read bottom to top like a spine. */
+.deckLabel {
+  position: absolute;
+  inset: 0 0.55rem 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  writing-mode: vertical-rl;
+  rotate: 180deg;
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-xs);
+  letter-spacing: var(--tracking-mono-caps);
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: translate var(--dur-relaxed) var(--ease);
+}
+
+.deck:hover .deckLabel,
+.deck:focus-visible .deckLabel {
+  translate: 0.45rem 0;
+}
+
+.deckCount {
+  color: var(--text-faint);
+}
+
+@media (max-width: 47.99rem) {
+  .deck {
+    top: auto;
+    bottom: calc(1.25rem + var(--consent-inset, 0px));
+    translate: none;
+    height: 9.5rem;
+  }
+}
+
+/* --- Drawer -------------------------------------------------------------- */
+/* Shown by data-open; on the way out, GSAP holds both
+   visible inline until the cards have gone (see ProjectsBrowser.tsx). */
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 19;
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
+  backdrop-filter: blur(2px);
+  visibility: hidden;
+}
+
+.drawer {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 20;
+  width: min(26rem, 90vw);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-stack);
+  padding: var(--space-page-y) 0.5rem var(--space-page-y) var(--space-page-x);
+  overflow-y: auto;
+  visibility: hidden;
+}
+
+.scrim[data-open],
+.drawer[data-open] {
+  visibility: visible;
+}
+
+.drawerLabel {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-sm);
+  letter-spacing: var(--tracking-mono-caps);
+  text-transform: uppercase;
+  color: var(--accent);
 }
 
 .intro {
-  max-width: 36ch;
+  max-width: 34ch;
   font-size: var(--type-body-sm);
   color: var(--muted);
   text-wrap: pretty;
+  margin-top: calc(var(--space-stack) * -0.6);
 }
 
+/* A loose stack of index cards, each leaning a little its own way. The
+   selected one is pulled out of the stack, squared up and lifted;
+   hovering one nudges it partway. A margin rule after the number marks it as
+   an index card. */
 .list {
-  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  /* Room for the selected card's pull and the tilted corners. */
+  padding: 0.25rem 1.25rem 0.5rem 0.25rem;
 }
 
 .list > li {
-  border-bottom: 1px solid var(--border-subtle);
+  --tilt: -0.7deg;
+  position: relative;
+}
+
+.list > li:nth-child(3n + 2) {
+  --tilt: 0.6deg;
+}
+
+.list > li:nth-child(3n) {
+  --tilt: -0.35deg;
 }
 
 .row {
   appearance: none;
   -webkit-appearance: none;
-  background: none;
   border: 0;
   margin: 0;
   font: inherit;
-  color: inherit;
+  color: var(--paper-ink);
   text-align: inherit;
   cursor: pointer;
   width: 100%;
-  display: block;
-  padding: clamp(0.6rem, 1.3vh, 1rem) 0.25rem;
-  padding-left: 0.85rem;
-  /* Always present so selecting a row cannot shift the text. */
-  border-left: 2px solid transparent;
-}
-
-.row[data-selected] {
-  border-left-color: var(--accent);
-  background: var(--surface);
+  display: grid;
+  grid-template-columns: 2.75rem 1fr;
+  align-items: start;
+  padding: clamp(0.7rem, 1.4vh, 1rem) 1rem clamp(0.7rem, 1.4vh, 1rem) 0;
+  border-radius: var(--radius-sm);
+  background:
+    /* The red margin rule of an index card, here in the accent. */
+    linear-gradient(var(--accent-selected), var(--accent-selected)) 2.75rem 0 / 1px 100% no-repeat,
+    var(--paper);
+  box-shadow:
+    0 1px 1px var(--paper-shadow),
+    0 3px 8px -4px var(--paper-shadow-soft);
+  transform: rotate(var(--tilt));
+  transition:
+    transform var(--dur-relaxed) var(--ease),
+    box-shadow var(--dur-relaxed) var(--ease);
 }
 
 .row:hover {
+  transform: translateX(0.35rem) rotate(calc(var(--tilt) / 2));
+}
+
+.row:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.row[data-selected] {
+  transform: translateX(0.9rem);
+  box-shadow:
+    1px 2px 3px var(--paper-shadow),
+    4px 12px 22px -6px var(--paper-shadow-soft);
+  background:
+    linear-gradient(var(--accent), var(--accent)) 0 0 / 3px 100% no-repeat,
+    linear-gradient(var(--accent-selected), var(--accent-selected)) 2.75rem 0 / 1px 100% no-repeat,
+    var(--paper);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row {
+    transition: none;
+  }
+}
+
+.number {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-sm);
+  letter-spacing: var(--tracking-mono);
+  color: var(--text-faint);
+  text-align: center;
+  /* Sits on the name's first line. */
+  padding-top: 0.3em;
+}
+
+.row[data-selected] .number,
+.row:hover .number {
+  color: var(--accent);
+}
+
+.row:hover .name {
   color: var(--accent);
 }
 
 .rowBody {
+  padding-left: 0.85rem;
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
@@ -92,6 +324,8 @@
 
 /* --- Detail panel ------------------------------------------------------- */
 .detail {
+  /* The title's size is measured against this column. */
+  container-type: inline-size;
   display: flex;
   flex-direction: column;
   gap: clamp(0.9rem, 2vh, 1.5rem);
@@ -115,6 +349,107 @@
   font-size: var(--type-body-md);
   line-height: 1.55;
   text-wrap: pretty;
+}
+
+/* The prose, then (when there are facts) the facts grid beside it. */
+.prose {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.9rem, 2vh, 1.5rem);
+  min-width: 0;
+}
+
+/* Sized from the title's type: the wordmark's first line stands as tall as
+   the title's capitals, and sits on its baseline. */
+.logo img {
+  display: inline-block;
+  width: auto;
+  height: 1.3em;
+  vertical-align: -0.5em;
+}
+
+.logo [data-theme-art='dark'] {
+  display: none;
+}
+
+/* The same two selectors as the dark tokens in globals.css. */
+@media (prefers-color-scheme: dark) {
+  :global(:root:not([data-theme='light'])) .logo [data-theme-art='light'] {
+    display: none;
+  }
+
+  :global(:root:not([data-theme='light'])) .logo [data-theme-art='dark'] {
+    display: inline-block;
+  }
+}
+
+:global(:root[data-theme='dark']) .logo [data-theme-art='light'] {
+  display: none;
+}
+
+:global(:root[data-theme='dark']) .logo [data-theme-art='dark'] {
+  display: inline-block;
+}
+
+/* A screenshot of the work, framed like the facts grid's sheet. The phone
+   view shares the desktop one's grid cell, held to the lower right and
+   standing taller, so the cell grows to fit whichever reaches lower. */
+.shot {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 0.4rem;
+}
+
+.shotFrame {
+  display: grid;
+}
+
+.shotMain,
+.shotInset {
+  grid-area: 1 / 1;
+  height: auto;
+  background: #fff;
+  border: 1px solid var(--border-subtle);
+}
+
+.shotMain {
+  align-self: start;
+  width: 88%;
+  border-radius: var(--radius-sm);
+  box-shadow:
+    1px 1px 2px var(--paper-shadow),
+    2px 8px 18px -4px var(--paper-shadow-soft);
+}
+
+.shotInset {
+  justify-self: end;
+  align-self: end;
+  width: 24%;
+  margin-top: 13%;
+  border-radius: 0.6rem;
+  box-shadow:
+    2px 3px 6px var(--paper-shadow),
+    6px 20px 36px -8px var(--paper-shadow-soft);
+}
+
+.shotCaption {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-xs);
+  letter-spacing: var(--tracking-mono);
+  color: var(--muted);
+}
+
+.lead {
+  display: grid;
+  gap: clamp(0.9rem, 2vh, 1.5rem) var(--space-column-gap);
+  align-items: start;
+}
+
+@media (min-width: 48rem) {
+  .lead {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  }
 }
 
 /* --- Case-study notes --------------------------------------------------- */

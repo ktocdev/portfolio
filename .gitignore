@@ -37,3 +37,9 @@ yarn-error.log*
 # cloudflare
 .wrangler/
 node_modules
+
+# homepage photo originals (scripts/home-photos.mjs makes the web copies)
+home-images/
+
+# screenshot originals (the .webp copies in public/media are what ship)
+media-originals/

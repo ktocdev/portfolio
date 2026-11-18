@@ -8,13 +8,18 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   overflow: hidden;
+  /* A sheet lying flat beside the case study's photos: their paper and their
+     resting shadow (PhotoTable.module.css at --lift 0), without the tilt. */
+  box-shadow:
+    1px 1px 2px var(--paper-shadow),
+    2px 8px 18px -4px var(--paper-shadow-soft);
 }
 
 .cell {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
-  background: var(--surface);
+  background: var(--paper);
   padding: clamp(0.85rem, 1.8vh, 1.25rem) 1rem;
 }
 

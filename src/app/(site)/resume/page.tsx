@@ -71,17 +71,14 @@ export default function ResumePage() {
             {SITE.name}
           </h1>
 
-          {/* The lockup shrink-wraps to its wider row, and each row is a
-              nowrap flex line with space-between, so the narrower row spreads
-              its items and dividers out to the same width. The tagline is
-              bracketed by dividers; the contact line is not. */}
+          {/* Two left-aligned rows, dividers between items only, matching
+              the published PDF. */}
           <div className={styles.lockup}>
             <p className={styles.tagline}>
-              <Divider />
-              {RESUME_TITLES.map((title) => (
+              {RESUME_TITLES.map((title, i) => (
                 <Fragment key={title}>
+                  {i > 0 ? <Divider /> : null}
                   <span>{title}</span>
-                  <Divider />
                 </Fragment>
               ))}
             </p>

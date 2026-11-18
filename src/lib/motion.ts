@@ -3,7 +3,8 @@
  * CSS classes because the content it animates is freshly mounted on every
  * route or project change. A page with a [data-flip-heading] flips that in
  * first (GSAP, see flipHeading.ts), and a [data-toss] photo on it is tossed
- * in rather than risen (tossPhoto.ts). Everything here is a no-op under
+ * in rather than risen (tossPhoto.ts), and a [data-photo-pile] around it is
+ * told to deal its prints on top (PhotoPile.tsx). Everything here is a no-op under
  * prefers-reduced-motion — callers check `prefersReducedMotion()` first.
  */
 
@@ -110,6 +111,9 @@ export function staggerZones(
 
 const FLIP_HEADING = '[data-flip-heading]';
 const TOSS = '[data-toss]';
+const PHOTO_PILE = '[data-photo-pile]';
+/** Sent to a page's [data-photo-pile] the moment its headshot is tossed. */
+export const PILE_DEAL = 'pile:deal';
 /* Set by firstLoadScript in layout.tsx; hides the section in globals.css. */
 const ENTRANCE_HOLD = 'data-entrance-hold';
 
@@ -146,7 +150,8 @@ export function entranceHeld(section: Element | null | undefined): boolean {
 
 /**
  * Enters a page: its heading's flip when it has one, then its other zones rise
- * together while its [data-toss] photo, if any, is tossed in. Without a
+ * together while its [data-toss] photo, if any, is tossed in and its photo
+ * pile starts dealing. Without a
  * flip, just the staggered rise. Returns a cancel function.
  */
 export function enterPage(
@@ -178,8 +183,11 @@ export function enterPage(
         /* Same frame as show(), so the photo never paints at rest first. */
         const photo = section.querySelector<HTMLElement>(TOSS);
         const cancelToss = photo ? tossPhoto(photo) : null;
+        /* The pile runs its own deal, so the wheel can take it over. */
+        section.querySelector(PHOTO_PILE)?.dispatchEvent(new Event(PILE_DEAL));
+        /* The photo may be a zone itself or sit in one with its pile. */
         const cancelRise = staggerZones(
-          rest.filter((zone) => zone !== photo),
+          rest.filter((zone) => !photo || !zone.contains(photo)),
           { duration: timing.duration, step: 0 },
         );
         /* Waits out the rise, so the band crosses a button at full strength. */

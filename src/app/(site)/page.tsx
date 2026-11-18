@@ -3,6 +3,8 @@ import type { Metadata } from 'next';
 
 import ButtonLink from '@/components/ButtonLink';
 import Figure from '@/components/Figure';
+import PhotoPile from '@/components/PhotoPile';
+import HOME_PHOTOS from '@/content/home-photos.json';
 import { COPY, IMAGES } from '@/content/site';
 import styles from './page.module.css';
 
@@ -31,7 +33,10 @@ export default function HomePage() {
         </ButtonLink>
       </div>
 
-      <Figure src={IMAGES.headshot.src} alt={IMAGES.headshot.alt} variant="portrait" priority toss />
+      {/* The prints come from home-images/ via `npm run home-photos`. */}
+      <PhotoPile photos={HOME_PHOTOS}>
+        <Figure src={IMAGES.headshot.src} alt={IMAGES.headshot.alt} variant="portrait" priority toss />
+      </PhotoPile>
     </section>
   );
 }
