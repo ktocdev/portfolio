@@ -13,6 +13,13 @@
   isolation: isolate;
 }
 
+/* Screenshots of one shape: the stage is that shape, full width, so the
+   picture fills it with nothing around it. */
+.stage[data-fit] {
+  height: auto;
+  aspect-ratio: var(--fit);
+}
+
 /* Slides stack in place; only the active one is displayed. display:none keeps
    the inactive ones out of the tab order for free. */
 .slide {
@@ -190,6 +197,35 @@
 }
 
 /* --- Full-size link ------------------------------------------------------ */
+.mediaWrap {
+  width: 100%;
+  height: 100%;
+}
+
+/* A slide with both themes' pictures shows the one for the current theme;
+   the same two selectors as the dark tokens in globals.css. */
+.mediaLink[data-theme-art='dark'] {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :global(:root:not([data-theme='light'])) .mediaLink[data-theme-art='light'] {
+    display: none;
+  }
+
+  :global(:root:not([data-theme='light'])) .mediaLink[data-theme-art='dark'] {
+    display: block;
+  }
+}
+
+:global(:root[data-theme='dark']) .mediaLink[data-theme-art='light'] {
+  display: none;
+}
+
+:global(:root[data-theme='dark']) .mediaLink[data-theme-art='dark'] {
+  display: block;
+}
+
 /* Fills the slide so the whole picture is the target. Ring pulled inside
    (rather than the usual 3px outward) since the stage clips overflow. */
 .mediaLink {
