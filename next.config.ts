@@ -20,6 +20,17 @@ const devOnlyRewrites: Pick<NextConfig, 'rewrites'> =
             source: '/main-character/demo/',
             destination: '/main-character/demo/index.html',
           },
+          /* Same for the OnTrack design system (public/ontrack/design-system/,
+             refreshed by the refresh-design-system skill). Every route folder
+             holds an index.html, so the folder rule covers them all. */
+          {
+            source: '/ontrack/design-system/:path*/',
+            destination: '/ontrack/design-system/:path*/index.html',
+          },
+          {
+            source: '/ontrack/design-system/',
+            destination: '/ontrack/design-system/index.html',
+          },
         ],
       }
     : {};

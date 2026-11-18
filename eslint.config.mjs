@@ -7,7 +7,8 @@ import nextTs from 'eslint-config-next/typescript';
 export default defineConfig([
   ...nextVitals,
   ...nextTs,
-  globalIgnores(['.next/**', 'out/**', 'node_modules/**', 'design_handoff_portfolio/**', 'design_handoff_splash/**']),
+  /* public/ontrack/ is the OnTrack design system's minified build, linted in its own repo. */
+  globalIgnores(['.next/**', 'out/**', 'node_modules/**', '.wrangler/**', 'public/ontrack/**','design_handoff_portfolio/**', 'design_handoff_splash/**']),
   {
     rules: {
       /* Static export runs with images.unoptimized, so next/image adds nothing

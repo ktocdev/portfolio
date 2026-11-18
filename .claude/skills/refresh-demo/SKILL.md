@@ -68,6 +68,15 @@ If it names something missing, the demo renamed or dropped it: report which,
 and say `MASKED` (or the hook) in `src/demo/consent.ts` needs updating
 before the next build, which would otherwise fail on it.
 
+## 4. Know what the build will rewrite
+
+`npm run build` also runs `scripts/demo-links.mjs`, which points the demo's
+`….html` links at the URLs Cloudflare serves (`input.html` -> `input`), so
+Google stops finding redirects. It expects `design/design.js` to keep its
+`PAGES` list of `'foo.html'` names and its `add('home', 'index.html', …)`
+line. If the refreshed `design.js` changed either, tell the user the build
+will fail on it and the script needs updating.
+
 ## Stop here
 
 Don't run `npm run build`, `npm run deploy`, or commit. Hand back the change

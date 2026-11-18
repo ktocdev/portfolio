@@ -20,3 +20,15 @@
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+
+# The OnTrack design system (public/ontrack/design-system/, refreshed from the
+# OnTrack repo by the refresh-design-system skill). Its own policy, not the
+# site's: the token editor loads Google Fonts, and the page carries no
+# analytics. "! Content-Security-Policy" detaches the site-wide CSP first —
+# Cloudflare would otherwise send both, and the browser enforces each, so the
+# stricter one would still block the fonts. It is for whoever has the link, so
+# it asks not to be indexed (the pages say noindex too).
+/ontrack/design-system/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'
+  X-Robots-Tag: noindex, nofollow
