@@ -25,6 +25,14 @@ const RISE: Keyframe[] = [
   { opacity: 1, transform: 'none' },
 ];
 
+/* A [data-rise="photo"] zone: a screenshot set down on the page, so it comes
+   from further, settles from a touch larger, and takes longer about it. */
+const PHOTO_RISE: Keyframe[] = [
+  { opacity: 0, transform: 'translateY(28px) scale(0.975)' },
+  { opacity: 1, transform: 'none' },
+];
+const PHOTO_RISE_SCALE = 2;
+
 export function prefersReducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
@@ -35,11 +43,19 @@ export function prefersReducedMotion() {
  * figure (image, crop, overlay) always rises as one unit.
  */
 export function zonesOf(container: Element): Element[] {
-  let zones = [...container.children];
+  let zones = expandZones([...container.children]);
   if (zones.length < 3) {
     zones = zones.flatMap((zone) => (zone.querySelector('img') ? [zone] : [...zone.children]));
   }
   return zones;
+}
+
+/* A [data-zones] wrapper is not a zone itself: its children are, all the way
+   down, so a page can mark the parts that should rise one after another. */
+function expandZones(elements: Element[]): Element[] {
+  return elements.flatMap((el) =>
+    el.hasAttribute('data-zones') ? expandZones([...el.children]) : [el],
+  );
 }
 
 /**
@@ -74,8 +90,10 @@ export function staggerZones(
 
   zones.forEach((zone, i) => {
     if (!(zone instanceof HTMLElement)) return;
+    const photo = zone.dataset.rise === 'photo';
+    const keyframes = photo ? PHOTO_RISE : RISE;
     const options: KeyframeAnimationOptions = {
-      duration,
+      duration: photo ? duration * PHOTO_RISE_SCALE : duration,
       delay: Math.min(i, MAX_STEP_INDEX) * step,
       easing: EASE,
       /* A zone waiting on its delay stays invisible instead of flashing. */
@@ -87,7 +105,7 @@ export function staggerZones(
       zone.style.opacity = '0';
       const start = () => {
         release();
-        animations.push(zone.animate(RISE, options));
+        animations.push(zone.animate(keyframes, options));
       };
       const release = () => {
         img.removeEventListener('load', start);
@@ -100,7 +118,7 @@ export function staggerZones(
       return;
     }
 
-    animations.push(zone.animate(RISE, options));
+    animations.push(zone.animate(keyframes, options));
   });
 
   return () => {
@@ -149,6 +167,20 @@ export function entranceHeld(section: Element | null | undefined): boolean {
 }
 
 /**
+ * Sweeps the light band across the page's [data-shimmer] button, if it has
+ * one, after `delay`: long enough to wait out the rise, so the band crosses
+ * the button at full strength.
+ */
+function sweepShimmer(section: Element, delay: number): Animation | undefined {
+  return section.querySelector('[data-shimmer]')?.animate(SHIMMER, {
+    pseudoElement: '::after',
+    duration: SHIMMER_MS,
+    delay,
+    easing: 'ease-in-out',
+  });
+}
+
+/**
  * Enters a page: its heading's flip when it has one, then its other zones rise
  * together while its [data-toss] photo, if any, is tossed in and its photo
  * pile starts dealing. Without a
@@ -160,7 +192,14 @@ export function enterPage(
 ): () => void {
   const zones = zonesOf(section);
   const heading = section.querySelector<HTMLElement>(FLIP_HEADING);
-  if (!heading) return staggerZones(zones, timing);
+  if (!heading) {
+    const cancelRise = staggerZones(zones, timing);
+    const shimmer = sweepShimmer(section, timing.duration);
+    return () => {
+      cancelRise();
+      shimmer?.cancel();
+    };
+  }
 
   const rest = zones.filter((zone) => zone !== heading);
   const held = [heading, ...rest] as HTMLElement[];
@@ -174,11 +213,16 @@ export function enterPage(
 
   let cancelled = false;
   let cancelRunning: (() => void) | null = null;
+  /* Home's few zones wait for the heading and then rise as one. A long page
+     marked data-enter-stagger (projects) rises alongside the flip, top to
+     bottom, the way it does when switching projects. */
+  const staggered = section.hasAttribute('data-enter-stagger');
 
   loadEntrance()
     .then(({ flipHeading, tossPhoto }) => {
       if (cancelled) return;
-      cancelRunning = flipHeading(heading, () => {
+      let cancelRest: (() => void) | null = null;
+      const enterRest = () => {
         show();
         /* Same frame as show(), so the photo never paints at rest first. */
         const photo = section.querySelector<HTMLElement>(TOSS);
@@ -188,21 +232,23 @@ export function enterPage(
         /* The photo may be a zone itself or sit in one with its pile. */
         const cancelRise = staggerZones(
           rest.filter((zone) => !photo || !zone.contains(photo)),
-          { duration: timing.duration, step: 0 },
+          { duration: timing.duration, step: staggered ? timing.step : 0 },
         );
-        /* Waits out the rise, so the band crosses a button at full strength. */
-        const shimmer = section.querySelector('[data-shimmer]')?.animate(SHIMMER, {
-          pseudoElement: '::after',
-          duration: SHIMMER_MS,
-          delay: timing.duration,
-          easing: 'ease-in-out',
-        });
-        cancelRunning = () => {
+        const shimmer = sweepShimmer(section, timing.duration);
+        cancelRest = () => {
           cancelRise();
           cancelToss?.();
           shimmer?.cancel();
         };
+      };
+      const cancelFlip = flipHeading(heading, () => {
+        if (!staggered) enterRest();
       });
+      if (staggered) enterRest();
+      cancelRunning = () => {
+        cancelFlip();
+        cancelRest?.();
+      };
       heading.style.removeProperty('opacity');
     })
     .catch(() => {
