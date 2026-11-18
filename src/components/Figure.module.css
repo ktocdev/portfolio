@@ -108,10 +108,11 @@
 
 /* Lies on the page like a print dropped on a table: a slight turn and a paper
    shadow, lit from the upper left. --lift (0 resting, 1 held well above the
-   page) is driven by tossPhoto.ts; raised, the shadow falls further off,
+   page) is driven by tossPhoto.ts, or inherited as --flift while the photo
+   pile (PhotoPile.module.css) flips it; raised, the shadow falls further off,
    spreads, and fades. The tilt is the rest state, so reduced motion keeps it. */
 .portrait {
-  --lift: 0;
+  --lift: var(--flift, 0);
   rotate: -2deg;
   box-shadow:
     calc(1px + 12px * var(--lift)) calc(1px + 24px * var(--lift)) calc(2px + 22px * var(--lift))

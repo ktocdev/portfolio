@@ -33,12 +33,25 @@ export type StoryPoint = { text: string; link?: Link; subs?: string[] };
  * with `figureLabel` under it, the white margin carries `group` and `title`
  * as a caption, and `points` are what the photo opens to.
  */
+/** A screenshot of the work, at its file's own pixel size. */
+export type Shot = {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  caption?: string;
+};
+
 export type Story = {
   group: string;
   title: string;
   figure: string;
   figureLabel: string;
   points: StoryPoint[];
+  /** Shown under the points once the photo is opened. */
+  shots?: Shot[];
+  /** Starts opened, so its text and screenshots show without a click. */
+  open?: boolean;
 };
 
 /** `alt` is the text alternative; `label` (the visible chip) is only a fallback since it's too terse on its own — describe what the screen shows. */
@@ -47,6 +60,16 @@ export type Slide = {
   src: string;
   alt?: string;
   type: 'video' | 'image';
+};
+
+/** The company's logo, in place of its name in the title: `dark` is the same artwork with
+ * its wordmark in white, for the dark theme. */
+export type Logo = {
+  light: string;
+  dark: string;
+  alt: string;
+  width: number;
+  height: number;
 };
 
 export type Project = {
@@ -65,6 +88,10 @@ export type Project = {
   storiesNote?: string;
   links: Link[];
   slides?: Slide[];
+  logo?: Logo;
+  /** One screenshot under the lead prose; `inset` (a phone view of the same
+   * screen) overlaps its lower right. */
+  leadShot?: { main: Shot; inset?: Shot; caption: string };
 };
 
 export const PROJECTS: Project[] = [
@@ -74,6 +101,28 @@ export const PROJECTS: Project[] = [
     tagline: 'Comet · Nebula · nebula-nuxt',
     meta: 'Vue · Nuxt · 2016–2026 · Case study',
     caseStudy: true,
+    logo: {
+      light: '/media/projects/de-logo-full-black-1.png',
+      dark: '/media/projects/de-logo-dark.png',
+      alt: 'Discovery Education',
+      width: 330,
+      height: 77,
+    },
+    leadShot: {
+      main: {
+        src: '/media/projects/nebula/mega-menu-desktop.webp',
+        alt: 'Nebula MegaMenu on desktop: the top navigation with one section open, a gradient image panel beside three grade-band columns of links.',
+        width: 1600,
+        height: 525,
+      },
+      inset: {
+        src: '/media/projects/nebula/mega-menu-mobile.webp',
+        alt: 'The same MegaMenu on a phone, collapsed into a drill-down list: the section list with one selected, and its links below.',
+        width: 420,
+        height: 720,
+      },
+      caption: 'Nebula MegaMenu, desktop and collapsed drill-down',
+    },
     description:
       "Three generations of one company's design system: founding team for Comet (2016), builder of its successor Nebula (2020), and sole architect of nebula-nuxt (2026), a themed component layer that lets twelve product teams replace legacy UI incrementally while migrating to Nuxt.",
     /* Shown as the first case-study note (below the stats), not a lead paragraph. */
@@ -102,7 +151,6 @@ export const PROJECTS: Project[] = [
         text: "Three generations of one company's design system: founding team for Comet (2016), builder of its successor Nebula (2020), and sole architect of nebula-nuxt (2026), a themed component layer that lets twelve product teams replace legacy UI incrementally while migrating to Nuxt.",
       },
     ],
-    storiesNote: 'Note: nebula-nuxt is internal; not publicly viewable.',
     stories: [
       {
         group: 'nebula-nuxt',
@@ -172,6 +220,7 @@ export const PROJECTS: Project[] = [
       {
         group: 'Nebula',
         title: 'Nebula Components',
+        open: true,
         figure: '3 days',
         figureLabel: 'to build MegaMenu, and 3 more to match its redesign',
         points: [
@@ -190,6 +239,36 @@ export const PROJECTS: Project[] = [
           {
             text: 'Built NebulaContainerTable, an enhanced NebulaTable that uses container queries instead of media queries, so the table adapts to its own container size rather than the viewport — more flexible across layouts.',
             link: { label: 'ContainerTable demo', href: 'https://nebula.discoveryeducation.com/container-table-sink' },
+          },
+        ],
+        shots: [
+          {
+            src: '/media/projects/nebula/container-table-compare.webp',
+            alt: 'Two tables in 400px containers: the original NebulaTable, driven by media queries, overflows its box; NebulaContainerTable switches to stacked cards.',
+            width: 1328,
+            height: 995,
+            caption: 'Media query vs. container query, both 400px wide',
+          },
+          {
+            src: '/media/projects/nebula/container-table-scroll.webp',
+            alt: 'NebulaContainerTable in a 516px container, keeping all six columns and scrolling sideways within its bounds.',
+            width: 798,
+            height: 663,
+            caption: 'ContainerTable scrolling within a 516px container',
+          },
+          {
+            src: '/media/projects/nebula/admin-form.webp',
+            alt: 'An admin form built from Nebula components: role and department selects, permission checkboxes and account-setting toggles.',
+            width: 795,
+            height: 618,
+            caption: 'Form components: select, checkbox, toggle',
+          },
+          {
+            src: '/media/projects/nebula/accordion.webp',
+            alt: 'Nebula accordion menu with its Visual Language section open, and buttons that open and close sections.',
+            width: 930,
+            height: 663,
+            caption: 'Accordion menu',
           },
         ],
       },

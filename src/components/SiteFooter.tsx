@@ -12,7 +12,13 @@ export default function SiteFooter() {
 
   return (
     <footer className={styles.footer}>
-      <span>{SITE.copyright}</span>
+      <span>
+        {/* The lab's only way in: the © itself, styled as the text around it. */}
+        <Link href="/lab" prefetch={false} className={styles.secret}>
+          {SITE.copyright.slice(0, 1)}
+        </Link>
+        {SITE.copyright.slice(1)}
+      </span>
       <div className={styles.right}>
         {/* No prefetch, as with Cookies below: the blog ships its own stylesheet. */}
         {hasPosts && (

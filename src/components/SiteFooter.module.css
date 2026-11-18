@@ -27,3 +27,10 @@
 .link:hover {
   color: var(--accent);
 }
+
+/* Hidden in plain sight: no colour, underline or hover change of its own. */
+.secret {
+  color: inherit;
+  text-decoration: none;
+  cursor: text;
+}

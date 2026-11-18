@@ -67,40 +67,37 @@
   text-wrap: balance;
 }
 
-/* The lockup is only as wide as its wider row (fit-content, not the flex
-   item's default stretch), so the other row's space-between spreads its
-   items and dividers out to exactly that width. */
 .lockup {
   display: grid;
-  width: fit-content;
-  max-width: 100%;
 }
 
-/* Both rows are in the body face, as in the draft, so the header carries no
-   mono: the tagline is the emphatic line, the contact line the quiet one. */
+/* Both rows are in the body face, left-aligned with dividers between items,
+   as on the PDF: the tagline is the emphatic line, the contact line the
+   quiet one. */
 .tagline,
 .contact {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   flex-wrap: nowrap;
   font-family: var(--font-body);
   white-space: nowrap;
 }
 
-/* Base size, medium weight, tightly tracked; bracketed by dividers. */
+/* Base size, medium weight, in the accent. */
 .tagline {
-  gap: 0.5em;
+  gap: 0.6em;
   margin-bottom: 0.1em;
   font-weight: 500;
-  letter-spacing: 0.03em;
+  color: var(--accent);
 }
 
-/* One step smaller, regular; dividers between items only. */
+/* One step smaller, regular, muted. */
 .contact {
-  gap: 0.25em;
+  gap: 0.5em;
   font-size: var(--doc-size-xs);
   font-style: normal;
+  color: var(--muted);
 }
 
 /* The ∷ separators: control colour, as the site's dividers are; regular
@@ -345,28 +342,6 @@
 
   .header {
     gap: 4pt;
-  }
-
-  /* On screen the two rows share a width: the lockup shrink-wraps to the
-     wider one and space-between spreads the other to match. The phone makes
-     the contact row long enough that the stretch pulls the three titles far
-     apart, so the sheet drops the shared width and spaces every item and
-     divider evenly instead. Screen keeps the lockup. */
-  .lockup {
-    width: auto;
-  }
-
-  .tagline,
-  .contact {
-    justify-content: flex-start;
-  }
-
-  .tagline {
-    gap: 0.6em;
-  }
-
-  .contact {
-    gap: 0.5em;
   }
 
   .contactLink {

@@ -1,0 +1,97 @@
+/* Every print shares the headshot's grid cell, centred on it. The prints are
+   out of flow, so the pile sizes to the headshot alone and the page lays out
+   exactly as it did before they were added. */
+.pile {
+  position: relative;
+  /* Same height as the headshot's frame (.portrait in Figure.module.css). */
+  --frame-h: min(23.75rem, 64vh);
+
+  display: grid;
+  /* A definite track, so the headshot's width: 100% resolves against the
+     column as it did before it was wrapped, not against its own content. */
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  width: 100%;
+  min-width: 0;
+}
+
+.pile > * {
+  grid-area: 1 / 1;
+}
+
+/* Every photo in the pile. Its resting spot (--x, --y, --r, inline on the
+   prints) plus the flip's excursion out of the pile (--f*, driven by
+   photoPile.ts) — custom properties rather than transforms, so GSAP never
+   folds the resting spot into a transform it then clears. */
+.card {
+  translate: calc(var(--x, 0px) + var(--fx, 0px)) calc(var(--y, 0px) + var(--fy, 0px));
+  rotate: calc(var(--r, 0deg) + var(--fr, 0deg));
+}
+
+/* The headshot's holder spans the column, as the headshot did unwrapped, so
+   its width: 100% still measures the column. */
+.base {
+  display: grid;
+  place-items: center;
+  width: 100%;
+}
+
+/* Where a print rests. Slightly smaller than the headshot, so the pile's
+   lower layers show at its edges rather than only through the tilts. The
+   aspect ratio is inline, from the photo. */
+.spot {
+  /* Absolute in a grid, the cell is the containing block and place-items
+     still centres it. */
+  position: absolute;
+  height: calc(var(--frame-h) * 0.84);
+  max-width: 92%;
+}
+
+/* The headshot's paper (Figure.module.css .portrait): radius and a shadow lit
+   from the upper left, which tossPhoto.ts lifts through --lift and a flip
+   through the holder's --flift. */
+.print {
+  --lift: var(--flift, 0);
+  position: relative;
+  height: 100%;
+  margin: 0;
+  background: var(--surface-strong);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow:
+    calc(1px + 12px * var(--lift)) calc(1px + 24px * var(--lift)) calc(2px + 22px * var(--lift))
+      color-mix(in srgb, var(--paper-shadow) calc(100% - 70% * var(--lift)), transparent),
+    calc(2px + 28px * var(--lift)) calc(8px + 52px * var(--lift)) calc(18px + 56px * var(--lift))
+      -4px color-mix(in srgb, var(--paper-shadow-soft) calc(100% - 50% * var(--lift)), transparent);
+}
+
+.image {
+  object-fit: cover;
+}
+
+/* A mouse with its wheel between up and down arrows: the wheel flips the
+   pile (PhotoPile.tsx). Dark on a white halo, so it reads over any photo in
+   either theme; browsers that refuse a custom cursor get the plain
+   up-down arrow. Reduced motion uses a click instead, so it gets the
+   pointer below. */
+@media (prefers-reduced-motion: no-preference) {
+  .pile:has(.spot) {
+    cursor:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12.5 5 16 1.75 19.5 5M12.5 27 16 30.25 19.5 27' stroke='%23fff' stroke-width='3.5'/%3E%3Cpath d='M12.5 5 16 1.75 19.5 5M12.5 27 16 30.25 19.5 27' stroke='%231f1d2b' stroke-width='1.5'/%3E%3Crect x='10.5' y='7.5' width='11' height='17' rx='5.5' stroke='%23fff' stroke-width='3.5'/%3E%3Crect x='10.5' y='7.5' width='11' height='17' rx='5.5' fill='%23fff' stroke='%231f1d2b' stroke-width='1.5'/%3E%3Cpath d='M16 11v3.5' stroke='%231f1d2b' stroke-width='2'/%3E%3C/g%3E%3C/svg%3E")
+        16 16,
+      ns-resize;
+  }
+}
+
+/* No toss, no deal: only the headshot, and a click lays the next print on
+   top (PhotoPile.tsx, photoPile.ts reveals each one inline). Hidden from the
+   first paint, so the prints never show before the script runs. */
+@media (prefers-reduced-motion: reduce) {
+  .print {
+    visibility: hidden;
+  }
+
+  .pile:has(.spot) {
+    cursor: pointer;
+  }
+}

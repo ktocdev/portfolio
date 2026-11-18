@@ -11,28 +11,6 @@
   min-height: 0;
 }
 
-.pageHead {
-  display: flex;
-  align-items: baseline;
-  gap: 0.9rem;
-}
-
-.heading {
-  font-family: var(--font-mono);
-  font-weight: 400;
-  font-size: var(--type-mono-sm);
-  letter-spacing: var(--tracking-mono-caps);
-  text-transform: uppercase;
-  color: var(--accent);
-}
-
-.count {
-  font-family: var(--font-mono);
-  font-size: var(--type-mono-sm);
-  letter-spacing: var(--tracking-mono);
-  color: var(--text-faint);
-}
-
 .title {
   font-family: var(--font-display);
   font-weight: 400;
@@ -42,29 +20,18 @@
   text-wrap: balance;
 }
 
+/* With a logo the title stays on one line, shrinking on a narrow column
+   (it is about 13.6em long), and leaves room under the logo's second line,
+   which hangs below the baseline. */
+.title[data-logo] {
+  font-size: min(var(--type-h1), 100cqi / 13.8);
+  white-space: nowrap;
+  padding-bottom: 0.3em;
+}
+
 /* Inline boxes can't take the flip's transform. */
 .word {
   display: inline-block;
-}
-
-.meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.25rem 1rem;
-  margin-top: calc(var(--space-stack) * -0.5);
-}
-
-.metaTagline {
-  font-size: var(--type-body-sm);
-  color: var(--muted);
-}
-
-.metaStack {
-  font-family: var(--font-mono);
-  font-size: var(--type-mono-sm);
-  letter-spacing: var(--tracking-mono);
-  color: var(--text-faint);
 }
 
 /* --- Deck: the drawer's handle ------------------------------------------- */
@@ -357,6 +324,8 @@
 
 /* --- Detail panel ------------------------------------------------------- */
 .detail {
+  /* The title's size is measured against this column. */
+  container-type: inline-size;
   display: flex;
   flex-direction: column;
   gap: clamp(0.9rem, 2vh, 1.5rem);
@@ -380,6 +349,107 @@
   font-size: var(--type-body-md);
   line-height: 1.55;
   text-wrap: pretty;
+}
+
+/* The prose, then (when there are facts) the facts grid beside it. */
+.prose {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.9rem, 2vh, 1.5rem);
+  min-width: 0;
+}
+
+/* Sized from the title's type: the wordmark's first line stands as tall as
+   the title's capitals, and sits on its baseline. */
+.logo img {
+  display: inline-block;
+  width: auto;
+  height: 1.3em;
+  vertical-align: -0.5em;
+}
+
+.logo [data-theme-art='dark'] {
+  display: none;
+}
+
+/* The same two selectors as the dark tokens in globals.css. */
+@media (prefers-color-scheme: dark) {
+  :global(:root:not([data-theme='light'])) .logo [data-theme-art='light'] {
+    display: none;
+  }
+
+  :global(:root:not([data-theme='light'])) .logo [data-theme-art='dark'] {
+    display: inline-block;
+  }
+}
+
+:global(:root[data-theme='dark']) .logo [data-theme-art='light'] {
+  display: none;
+}
+
+:global(:root[data-theme='dark']) .logo [data-theme-art='dark'] {
+  display: inline-block;
+}
+
+/* A screenshot of the work, framed like the facts grid's sheet. The phone
+   view shares the desktop one's grid cell, held to the lower right and
+   standing taller, so the cell grows to fit whichever reaches lower. */
+.shot {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 0.4rem;
+}
+
+.shotFrame {
+  display: grid;
+}
+
+.shotMain,
+.shotInset {
+  grid-area: 1 / 1;
+  height: auto;
+  background: #fff;
+  border: 1px solid var(--border-subtle);
+}
+
+.shotMain {
+  align-self: start;
+  width: 88%;
+  border-radius: var(--radius-sm);
+  box-shadow:
+    1px 1px 2px var(--paper-shadow),
+    2px 8px 18px -4px var(--paper-shadow-soft);
+}
+
+.shotInset {
+  justify-self: end;
+  align-self: end;
+  width: 24%;
+  margin-top: 13%;
+  border-radius: 0.6rem;
+  box-shadow:
+    2px 3px 6px var(--paper-shadow),
+    6px 20px 36px -8px var(--paper-shadow-soft);
+}
+
+.shotCaption {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-xs);
+  letter-spacing: var(--tracking-mono);
+  color: var(--muted);
+}
+
+.lead {
+  display: grid;
+  gap: clamp(0.9rem, 2vh, 1.5rem) var(--space-column-gap);
+  align-items: start;
+}
+
+@media (min-width: 48rem) {
+  .lead {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  }
 }
 
 /* --- Case-study notes --------------------------------------------------- */

@@ -50,6 +50,56 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
   const animateSwitch = useRef(false);
   const project = projects[selected];
   const paras = project.paras ?? [project.description];
+  /* A logo stands in for the company's name at the start of the title. */
+  const logo = project.logo && project.name.startsWith(project.logo.alt) ? project.logo : undefined;
+  const titleWords = (logo ? project.name.slice(logo.alt.length) : project.name)
+    .split(' ')
+    .filter(Boolean);
+
+  const prose =
+    paras.length || project.notes?.length ? (
+      <div className={styles.prose}>
+        {paras.length ? (
+          <div className={styles.paras}>
+            {paras.map((para) => (
+              <p key={para}>{para}</p>
+            ))}
+          </div>
+        ) : null}
+
+        {project.notes?.length ? (
+          <ul role="list" aria-label="Case study notes" className={styles.notes}>
+            {project.notes.map((note, i) => (
+              <NoteItem key={`${note.kind}-${i}`} note={note} />
+            ))}
+          </ul>
+        ) : null}
+
+        {project.leadShot ? (
+          <figure className={styles.shot}>
+            <span className={styles.shotFrame}>
+              <img
+                className={styles.shotMain}
+                src={project.leadShot.main.src}
+                alt={project.leadShot.main.alt}
+                width={project.leadShot.main.width}
+                height={project.leadShot.main.height}
+              />
+              {project.leadShot.inset ? (
+                <img
+                  className={styles.shotInset}
+                  src={project.leadShot.inset.src}
+                  alt={project.leadShot.inset.alt}
+                  width={project.leadShot.inset.width}
+                  height={project.leadShot.inset.height}
+                />
+              ) : null}
+            </span>
+            <figcaption className={styles.shotCaption}>{project.leadShot.caption}</figcaption>
+          </figure>
+        ) : null}
+      </div>
+    ) : null;
 
   useEffect(() => {
     const fromHash = () => {
@@ -361,12 +411,9 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
         </ol>
       </div>
 
-      <div className={styles.pageHead}>
-        <h1 className={styles.heading}>Projects</h1>
-        <span aria-hidden="true" className={styles.count}>
-          {pad(selected + 1)} / {pad(projects.length)}
-        </span>
-      </div>
+      {/* The page's heading for screen readers; on screen the project's own
+          title leads (the deck shows the position in the list). */}
+      <h1 className="visuallyHidden">Projects</h1>
 
       {/* Named by its own title, which is always on screen (the tabs sit in
           the drawer, inert while it is closed). No live region: the tab
@@ -382,18 +429,36 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
         className={styles.detail}
       >
         {/* Words in their own boxes for the flip; see flipHeading.ts. */}
-        <h2 ref={title} id={`title-${project.slug}`} className={styles.title}>
-          {project.name.split(' ').map((word, i) => (
+        <h2
+          ref={title}
+          id={`title-${project.slug}`}
+          className={styles.title}
+          data-logo={logo ? '' : undefined}
+        >
+          {logo ? (
+            /* Both themes' artwork, one hidden by CSS, so the right one shows
+               on first paint with no script. Its alt text reads as the words
+               it stands in for. */
+            <span className={`${styles.word} ${styles.logo}`}>
+              {(['light', 'dark'] as const).map((theme) => (
+                <img
+                  key={theme}
+                  src={logo[theme]}
+                  alt={theme === 'light' ? logo.alt : ''}
+                  width={logo.width}
+                  height={logo.height}
+                  data-theme-art={theme}
+                />
+              ))}
+            </span>
+          ) : null}
+          {titleWords.map((word, i) => (
             <Fragment key={`${word}-${i}`}>
-              {i > 0 ? ' ' : null}
+              {i > 0 || logo ? ' ' : null}
               <span className={styles.word}>{word}</span>
             </Fragment>
           ))}
         </h2>
-        <p className={styles.meta}>
-          <span className={styles.metaTagline}>{project.tagline}</span>
-          <span className={styles.metaStack}>{project.meta}</span>
-        </p>
 
         {project.slides?.length ? (
           /* Keyed so switching projects remounts: index resets, videos unmount. */
@@ -433,23 +498,16 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
           </div>
         ) : null}
 
-        {paras.length ? (
-          <div className={styles.paras}>
-            {paras.map((para) => (
-              <p key={para}>{para}</p>
-            ))}
+        {/* With facts, the prose sits on the left and the facts grid beside
+            it; without, the prose runs down the column on its own. */}
+        {project.facts?.length ? (
+          <div className={styles.lead}>
+            {prose}
+            <FactsGrid facts={project.facts} />
           </div>
-        ) : null}
-
-        {project.facts?.length ? <FactsGrid facts={project.facts} /> : null}
-
-        {project.notes?.length ? (
-          <ul role="list" aria-label="Case study notes" className={styles.notes}>
-            {project.notes.map((note, i) => (
-              <NoteItem key={`${note.kind}-${i}`} note={note} />
-            ))}
-          </ul>
-        ) : null}
+        ) : (
+          prose
+        )}
 
         {project.stories?.length ? (
           <PhotoTable key={project.slug} stories={project.stories} note={project.storiesNote} />
