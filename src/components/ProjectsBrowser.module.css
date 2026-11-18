@@ -136,10 +136,6 @@
   translate: 0.45rem 0;
 }
 
-.deckCount {
-  color: var(--text-faint);
-}
-
 @media (max-width: 47.99rem) {
   .deck {
     top: auto;
@@ -200,8 +196,8 @@
 
 /* A loose stack of index cards, each leaning a little its own way. The
    selected one is pulled out of the stack, squared up and lifted;
-   hovering one nudges it partway. A margin rule after the number marks it as
-   an index card. */
+   hovering one nudges it partway. A margin rule down the left side marks it
+   as an index card. */
 .list {
   display: flex;
   flex-direction: column;
@@ -233,14 +229,12 @@
   text-align: inherit;
   cursor: pointer;
   width: 100%;
-  display: grid;
-  grid-template-columns: 2.75rem 1fr;
-  align-items: start;
-  padding: clamp(0.7rem, 1.4vh, 1rem) 1rem clamp(0.7rem, 1.4vh, 1rem) 0;
+  display: block;
+  padding: clamp(0.7rem, 1.4vh, 1rem) 1rem clamp(0.7rem, 1.4vh, 1rem) 2.1rem;
   border-radius: var(--radius-sm);
   background:
     /* The red margin rule of an index card, here in the accent. */
-    linear-gradient(var(--accent-selected), var(--accent-selected)) 2.75rem 0 / 1px 100% no-repeat,
+    linear-gradient(var(--accent-selected), var(--accent-selected)) 1.25rem 0 / 1px 100% no-repeat,
     var(--paper);
   box-shadow:
     0 1px 1px var(--paper-shadow),
@@ -267,7 +261,7 @@
     4px 12px 22px -6px var(--paper-shadow-soft);
   background:
     linear-gradient(var(--accent), var(--accent)) 0 0 / 3px 100% no-repeat,
-    linear-gradient(var(--accent-selected), var(--accent-selected)) 2.75rem 0 / 1px 100% no-repeat,
+    linear-gradient(var(--accent-selected), var(--accent-selected)) 1.25rem 0 / 1px 100% no-repeat,
     var(--paper);
 }
 
@@ -277,27 +271,11 @@
   }
 }
 
-.number {
-  font-family: var(--font-mono);
-  font-size: var(--type-mono-sm);
-  letter-spacing: var(--tracking-mono);
-  color: var(--text-faint);
-  text-align: center;
-  /* Sits on the name's first line. */
-  padding-top: 0.3em;
-}
-
-.row[data-selected] .number,
-.row:hover .number {
-  color: var(--accent);
-}
-
 .row:hover .name {
   color: var(--accent);
 }
 
 .rowBody {
-  padding-left: 0.85rem;
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
@@ -310,13 +288,6 @@
   line-height: 1.25;
 }
 
-.badge {
-  margin-left: 0.6em;
-  font-family: var(--font-mono);
-  font-size: var(--type-mono-sm);
-  color: var(--text-faint);
-}
-
 .tagline {
   font-size: var(--type-meta);
   color: var(--muted);
@@ -326,6 +297,9 @@
 .detail {
   /* The title's size is measured against this column. */
   container-type: inline-size;
+  /* Keeps every z-index inside (the photo table's lifted prints climb with
+     each hover) below the fixed deck and drawer. */
+  isolation: isolate;
   display: flex;
   flex-direction: column;
   gap: clamp(0.9rem, 2vh, 1.5rem);
@@ -351,7 +325,7 @@
   text-wrap: pretty;
 }
 
-/* The prose, then (when there are facts) the facts grid beside it. */
+/* The project's lead prose: paragraphs, then notes. */
 .prose {
   display: flex;
   flex-direction: column;
@@ -450,6 +424,23 @@
   .lead {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
   }
+}
+
+/* --- Case-study sections ------------------------------------------------- */
+.caseSection {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 2.4vh, 1.75rem);
+  margin-top: clamp(1rem, 3vh, 2.25rem);
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--type-h2);
+  line-height: 1.1;
+  letter-spacing: var(--tracking-display);
+  color: var(--text);
 }
 
 /* --- Case-study notes --------------------------------------------------- */

@@ -52,6 +52,15 @@ export default function Carousel({ slides, projectName }: CarouselProps) {
     slide.alt ??
     `${slide.label} — ${slide.type === 'video' ? 'screen recording' : 'screenshot'} from ${projectName}`;
 
+  /* Screenshots of one size: the stage takes their shape, so each fills it
+     edge to edge instead of sitting in a letterbox. */
+  const first = slides[0];
+  const fit =
+    first.width && first.height &&
+    slides.every((slide) => slide.width === first.width && slide.height === first.height)
+      ? `${first.width} / ${first.height}`
+      : undefined;
+
   /* Info control only appears when `alt` is real copy — the generated
      fallback stays on the media itself, not surfaced here. */
   const description = slides[index].alt;
@@ -60,13 +69,23 @@ export default function Carousel({ slides, projectName }: CarouselProps) {
     /* data-own-loader: the rise in lib/motion.ts doesn't hold this at
        opacity 0 for its images, or the spinner would load unseen. */
     <div className={styles.carousel} data-own-loader="">
-      <div ref={stageRef} className={styles.stage}>
+      <div
+        ref={stageRef}
+        className={styles.stage}
+        data-fit={fit ? '' : undefined}
+        style={fit ? ({ '--fit': fit } as React.CSSProperties) : undefined}
+      >
         {slides.map((slide, i) => (
           <div key={slide.src} className={styles.slide} data-active={i === index || undefined}>
             {slide.type === 'video' ? (
               <VideoSlide src={slide.src} label={describe(slide)} active={i === index} />
             ) : (
-              <ImageSlide src={slide.src} alt={describe(slide)} active={i === index} />
+              <ImageSlide
+                src={slide.src}
+                srcDark={slide.srcDark}
+                alt={describe(slide)}
+                active={i === index}
+              />
             )}
           </div>
         ))}
@@ -154,34 +173,63 @@ type SlideProps = {
    stays on the img so the link inherits it as its name. The spinner covers
    the current slide until its image loads; lazy, so a slide's image only
    starts loading once it is stepped to. */
-function ImageSlide({ src, alt, active }: SlideProps & { alt: string }) {
-  const ref = useRef<HTMLImageElement>(null);
+function ImageSlide({
+  src,
+  srcDark,
+  alt,
+  active,
+}: SlideProps & { srcDark?: string; alt: string }) {
+  const wrap = useRef<HTMLDivElement>(null);
   const hydrated = useHydrated();
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    const img = ref.current;
-    if (!img) return;
+    /* With a dark version, CSS displays one of the two: the hidden one is
+       lazy and never loads, so whichever finishes first is the one shown. */
+    const imgs = [...(wrap.current?.querySelectorAll('img') ?? [])];
     /* error counts as done: a broken image must not spin forever. */
     const onDone = () => setLoaded(true);
-    img.addEventListener('load', onDone);
-    img.addEventListener('error', onDone);
-    /* It may have finished (or come from cache) before the listeners did. */
-    if (img.complete) onDone();
+    imgs.forEach((img) => {
+      img.addEventListener('load', onDone);
+      img.addEventListener('error', onDone);
+      /* It may have finished (or come from cache) before the listeners did. */
+      if (img.complete && img.getClientRects().length > 0) onDone();
+    });
     return () => {
-      img.removeEventListener('load', onDone);
-      img.removeEventListener('error', onDone);
+      imgs.forEach((img) => {
+        img.removeEventListener('load', onDone);
+        img.removeEventListener('error', onDone);
+      });
     };
-  }, [src]);
+  }, [src, srcDark]);
+
+  /* Both themes' pictures, one hidden by CSS (as the case study's logo is),
+     so the right one shows on first paint with no script; each links to
+     itself full size. */
+  const versions = srcDark
+    ? ([
+        ['light', src],
+        ['dark', srcDark],
+      ] as const)
+    : ([[undefined, src]] as const);
 
   return (
-    <>
-      <a href={src} target="_blank" rel="noopener" className={styles.mediaLink}>
-        <img ref={ref} className={styles.media} src={src} alt={alt} loading="lazy" />
-        <span className="visuallyHidden"> (opens in a new tab)</span>
-      </a>
+    <div ref={wrap} className={styles.mediaWrap}>
+      {versions.map(([theme, url]) => (
+        <a
+          key={url}
+          href={url}
+          target="_blank"
+          rel="noopener"
+          className={styles.mediaLink}
+          data-theme-art={theme}
+        >
+          <img className={styles.media} src={url} alt={alt} loading="lazy" />
+          <span className="visuallyHidden"> (opens in a new tab)</span>
+        </a>
+      ))}
       {active && hydrated && !loaded ? <MediaSpinner /> : null}
-    </>
+    </div>
   );
 }
 

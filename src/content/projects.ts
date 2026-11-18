@@ -1,3 +1,5 @@
+import type { StoryIconName } from '@/components/StoryIcon';
+
 /**
  * Project content, ported from the prototype's PROJECTS constant.
  * Long-form copy is first-person narrative voice and is reproduced verbatim.
@@ -43,8 +45,14 @@ export type Shot = {
 };
 
 export type Story = {
-  group: string;
+  /** Heads a row of its section's cards; stories without one share an
+   * unheaded row. */
+  group?: string;
+  /** One of the strongest stories: its tape and figure take the accent. */
+  featured?: boolean;
   title: string;
+  /** A line icon on the card, above the figure (StoryIcon.tsx). */
+  icon?: StoryIconName;
   figure: string;
   figureLabel: string;
   points: StoryPoint[];
@@ -58,6 +66,12 @@ export type Story = {
 export type Slide = {
   label: string;
   src: string;
+  /** The same screen in the dark theme, shown when the site is dark. */
+  srcDark?: string;
+  /** Pixel size. When every slide has one, the stage takes their shape and
+   * the picture fills it, with no letterboxing. */
+  width?: number;
+  height?: number;
   alt?: string;
   type: 'video' | 'image';
 };
@@ -72,26 +86,36 @@ export type Logo = {
   height: number;
 };
 
+/** One screenshot; `inset` (a phone view of the same screen) overlaps its
+ * lower right. */
+export type LeadShot = { main: Shot; inset?: Shot; caption: string };
+
+/**
+ * A titled part of a case study: an optional screenshot and facts grid side
+ * by side, then its stories as a table of cards.
+ */
+export type CaseSection = {
+  title: string;
+  leadShot?: LeadShot;
+  facts?: Fact[];
+  stories: Story[];
+  /** Small print under the cards. */
+  note?: string;
+};
+
 export type Project = {
   slug: string;
   name: string;
   tagline: string;
   meta: string;
-  caseStudy?: boolean;
   description: string;
   status?: string;
   paras?: string[];
-  facts?: Fact[];
   notes?: Note[];
-  stories?: Story[];
-  /** Small print under the stories' table. */
-  storiesNote?: string;
+  sections?: CaseSection[];
   links: Link[];
   slides?: Slide[];
   logo?: Logo;
-  /** One screenshot under the lead prose; `inset` (a phone view of the same
-   * screen) overlaps its lower right. */
-  leadShot?: { main: Shot; inset?: Shot; caption: string };
 };
 
 export const PROJECTS: Project[] = [
@@ -100,7 +124,6 @@ export const PROJECTS: Project[] = [
     name: 'Discovery Education Design Systems',
     tagline: 'Comet · Nebula · nebula-nuxt',
     meta: 'Vue · Nuxt · 2016–2026 · Case study',
-    caseStudy: true,
     logo: {
       light: '/media/projects/de-logo-full-black-1.png',
       dark: '/media/projects/de-logo-dark.png',
@@ -108,223 +131,307 @@ export const PROJECTS: Project[] = [
       width: 330,
       height: 77,
     },
-    leadShot: {
-      main: {
-        src: '/media/projects/nebula/mega-menu-desktop.webp',
-        alt: 'Nebula MegaMenu on desktop: the top navigation with one section open, a gradient image panel beside three grade-band columns of links.',
-        width: 1600,
-        height: 525,
-      },
-      inset: {
-        src: '/media/projects/nebula/mega-menu-mobile.webp',
-        alt: 'The same MegaMenu on a phone, collapsed into a drill-down list: the section list with one selected, and its links below.',
-        width: 420,
-        height: 720,
-      },
-      caption: 'Nebula MegaMenu, desktop and collapsed drill-down',
-    },
     description:
       "Three generations of one company's design system: founding team for Comet (2016), builder of its successor Nebula (2020), and sole architect of nebula-nuxt (2026), a themed component layer that lets twelve product teams replace legacy UI incrementally while migrating to Nuxt.",
-    /* Shown as the first case-study note (below the stats), not a lead paragraph. */
+    /* Shown as a case-study note, ahead of the sections, not a lead paragraph. */
     paras: [],
-    facts: [
-      {
-        value: '45M',
-        label: 'students and 4.5M educators reached across 100 countries and territories',
-      },
-      {
-        value: '8',
-        label:
-          'dimensions of UI rigor: theming, polish, i18n/l10n, analytics, responsiveness, a11y, API, and performance',
-      },
-      {
-        value: '3',
-        label: 'generations of the library: Comet (2016), Nebula (2020), nebula-nuxt (2026)',
-      },
-      { value: '124', label: 'components and utilities managed across Nebula and nebula-nuxt' },
-      { value: '12', label: 'product teams consuming the systems' },
-      { value: '46', label: 'legacy components audited and planned for the nebula-nuxt migration' },
-    ],
     notes: [
       {
         kind: 'para',
         text: "Three generations of one company's design system: founding team for Comet (2016), builder of its successor Nebula (2020), and sole architect of nebula-nuxt (2026), a themed component layer that lets twelve product teams replace legacy UI incrementally while migrating to Nuxt.",
       },
     ],
-    stories: [
+    sections: [
       {
-        group: 'nebula-nuxt',
-        title: 'Proposal Stage',
-        figure: '#1',
-        figureLabel: "proposal picked as the quarter's committed deliverable",
-        points: [
+        title: 'Design System',
+        leadShot: {
+          main: {
+            src: '/media/projects/nebula/mega-menu-desktop.webp',
+            alt: 'Nebula MegaMenu on desktop: the top navigation with one section open, a gradient image panel beside three grade-band columns of links.',
+            width: 1600,
+            height: 525,
+          },
+          inset: {
+            src: '/media/projects/nebula/mega-menu-mobile.webp',
+            alt: 'The same MegaMenu on a phone, collapsed into a drill-down list: the section list with one selected, and its links below.',
+            width: 420,
+            height: 720,
+          },
+          caption: 'Nebula MegaMenu, desktop and collapsed drill-down',
+        },
+        facts: [
           {
-            text: 'Architected nebula-nuxt: Nuxt UI plus custom components, themed to match the legacy Nebula brand, letting teams replace legacy UI incrementally while migrating to Nuxt and separating visual-language changes from component rebuilds. Deliberately transitional, not the end state. Payoff: post-migration, the org can shift visual language via a theme change alone, with no component rebuild needed.',
+            value: '45M',
+            label: 'students and 4.5M educators reached across 100 countries and territories',
           },
           {
-            text: 'Led migration audit and stakeholder roadmap: analyzed legacy Nebula components, flagged highest-priority candidates, determined Nuxt UI equivalent vs. custom rebuild per component, assigned points per component, compiled into timeline.',
+            value: '8',
+            label:
+              'dimensions of UI rigor: theming, polish, i18n/l10n, analytics, responsiveness, a11y, API, and performance',
           },
           {
-            text: "Authored a position paper and presented it at a company AMA to win organization-wide agreement on the platform direction, without formal authority over the teams involved. nebula-nuxt was selected over competing proposals as the quarter's committed deliverable; legacy Nebula support was separately recognized as its own committed item.",
+            value: '3',
+            label: 'generations of the library: Comet (2016), Nebula (2020), nebula-nuxt (2026)',
           },
+          { value: '124', label: 'components and utilities managed across Nebula and nebula-nuxt' },
+          { value: '12', label: 'product teams consuming the systems' },
+          { value: '46', label: 'legacy components audited and planned for the nebula-nuxt migration' },
         ],
-      },
-      {
-        group: 'nebula-nuxt',
-        title: 'Platform Ownership',
-        figure: 'End to end',
-        figureLabel: 'APIs, tokens, packages, icons, CI, and tests',
-        points: [
+        stories: [
           {
-            text: 'Owned the platform end to end: component APIs, semantic design tokens and theming, shared workspace packages with versioned releases optimized for tree-shaking so apps shipped only the components they used, a separately published icon package, and GitHub Actions CI.',
-          },
-          {
-            text: 'Owned code quality for the library: reviewed PRs and caught issues before release, and backed changes with Vitest and Playwright so they shipped safely to every consumer.',
-          },
-        ],
-      },
-      {
-        group: 'nebula-nuxt',
-        title: 'Product Integration',
-        figure: '25 of 46',
-        figureLabel: 'legacy components rebuilt by me in nebula-nuxt',
-        points: [
-          {
-            text: 'Of the 46 legacy components on the roadmap, 26 had been migrated to nebula-nuxt when I moved on: I built 25 of them and a teammate built the other. The remaining 20 had not yet been started. Partnered with 9 product teams on integration.',
-          },
-          {
-            text: 'Teammates also contributed to nebula-nuxt, adding updates and new components alongside my work.',
-          },
-          {
-            text: "Integrated nebula-nuxt into the platform layer with ten production components, including Global Nav, Page Shell, and Modal; added pages to the platform team's playground showing those components under a live theme switcher, legacy Nebula vs. nebula-nuxt side by side, proving they stayed themable inside the production shell.",
-          },
-        ],
-      },
-      {
-        group: 'nebula-nuxt',
-        title: 'Doc Site Designer',
-        figure: '3 themes',
-        figureLabel: 'in a live Theme Editor, editable down to each token',
-        points: [
-          {
-            text: 'Built the new playground doc site for nebula-nuxt with searchable documentation via Nuxt Content; designed and implemented the entire layout and UI, and added robust scaffold, theming, and localization documentation displayed through Nuxt Content.',
-          },
-          {
-            text: 'Extended Nuxt UI with custom components: Tabs with responsive nav+panel variants, and Breadcrumbs with dropdowns that convert into a searchable command palette past 7 options, powered by a custom rowCollapse composable not provided by Nuxt UI/Reka out of the box.',
-          },
-          {
-            text: 'Created a live Theme Editor in the nebula-nuxt doc site that switches between the default Nuxt UI theme, legacy Nebula, and another unique theme, with editing granular down to color scale, spacing, font, and border radii and other theme tokens; the theme persists across all component pages until changed or reset.',
-          },
-        ],
-      },
-      {
-        group: 'Nebula',
-        title: 'Nebula Components',
-        open: true,
-        figure: '3 days',
-        figureLabel: 'to build MegaMenu, and 3 more to match its redesign',
-        points: [
-          {
-            text: 'Builder and maintainer of Nebula Components, predecessor to nebula-nuxt. Managed both design systems simultaneously.',
-            link: { label: 'Nebula docs', href: 'https://nebula.discoveryeducation.com/' },
-          },
-          {
-            text: 'Built MegaMenu for a Back-to-School product deliverable. Core technical feature: detects at runtime when to collapse into a linked drill-down list view, rather than relying on fixed breakpoints. Component adapts its own layout based on available space and content, rather than hiding items past a hardcoded width.',
-            link: { label: 'MegaMenu demo', href: 'https://nebula.discoveryeducation.com/mega-menu-sink' },
-            subs: [
-              'Designed the responsive collapsed view myself: a linked drill-down list, not an accordion, that lets users tap into a category and navigate back out.',
-              'Initial build: 3 days. Product then underwent significant redesign; updated MegaMenu delivered in 3 more days, matching new design.',
+            group: 'nebula-nuxt',
+            featured: true,
+            title: 'Proposal Stage',
+            icon: 'proposal',
+            figure: '#1',
+            figureLabel: "proposal picked as the quarter's committed deliverable",
+            points: [
+              {
+                text: 'Architected nebula-nuxt: Nuxt UI plus custom components, themed to match the legacy Nebula brand, letting teams replace legacy UI incrementally while migrating to Nuxt and separating visual-language changes from component rebuilds. Deliberately transitional, not the end state. Payoff: post-migration, the org can shift visual language via a theme change alone, with no component rebuild needed.',
+              },
+              {
+                text: 'Led migration audit and stakeholder roadmap: analyzed legacy Nebula components, flagged highest-priority candidates, determined Nuxt UI equivalent vs. custom rebuild per component, assigned points per component, compiled into timeline.',
+              },
+              {
+                text: "Authored a position paper and presented it at a company AMA to win organization-wide agreement on the platform direction, without formal authority over the teams involved. nebula-nuxt was selected over competing proposals as the quarter's committed deliverable; legacy Nebula support was separately recognized as its own committed item.",
+              },
             ],
           },
           {
-            text: 'Built NebulaContainerTable, an enhanced NebulaTable that uses container queries instead of media queries, so the table adapts to its own container size rather than the viewport — more flexible across layouts.',
-            link: { label: 'ContainerTable demo', href: 'https://nebula.discoveryeducation.com/container-table-sink' },
-          },
-        ],
-        shots: [
-          {
-            src: '/media/projects/nebula/container-table-compare.webp',
-            alt: 'Two tables in 400px containers: the original NebulaTable, driven by media queries, overflows its box; NebulaContainerTable switches to stacked cards.',
-            width: 1328,
-            height: 995,
-            caption: 'Media query vs. container query, both 400px wide',
-          },
-          {
-            src: '/media/projects/nebula/container-table-scroll.webp',
-            alt: 'NebulaContainerTable in a 516px container, keeping all six columns and scrolling sideways within its bounds.',
-            width: 798,
-            height: 663,
-            caption: 'ContainerTable scrolling within a 516px container',
-          },
-          {
-            src: '/media/projects/nebula/admin-form.webp',
-            alt: 'An admin form built from Nebula components: role and department selects, permission checkboxes and account-setting toggles.',
-            width: 795,
-            height: 618,
-            caption: 'Form components: select, checkbox, toggle',
+            group: 'nebula-nuxt',
+            featured: true,
+            title: 'Product Integration',
+            icon: 'layers',
+            figure: '25 of 46',
+            figureLabel: 'legacy components rebuilt by me in nebula-nuxt',
+            points: [
+              {
+                text: 'Of the 46 legacy components on the roadmap, 26 had been migrated to nebula-nuxt when I moved on: I built 25 of them and a teammate built the other. The remaining 20 had not yet been started. Partnered with 9 product teams on integration.',
+              },
+              {
+                text: 'Teammates also contributed to nebula-nuxt, adding updates and new components alongside my work.',
+              },
+              {
+                text: "Integrated nebula-nuxt into the platform layer with ten production components, including Global Nav, Page Shell, and Modal; added pages to the platform team's playground showing those components under a live theme switcher, legacy Nebula vs. nebula-nuxt side by side, proving they stayed themable inside the production shell.",
+              },
+            ],
           },
           {
-            src: '/media/projects/nebula/accordion.webp',
-            alt: 'Nebula accordion menu with its Visual Language section open, and buttons that open and close sections.',
-            width: 930,
-            height: 663,
-            caption: 'Accordion menu',
+            group: 'nebula-nuxt',
+            title: 'Doc Site Designer',
+            icon: 'sliders',
+            figure: '3 themes',
+            figureLabel: 'in a live Theme Editor, editable down to each token',
+            points: [
+              {
+                text: 'Built the new playground doc site for nebula-nuxt with searchable documentation via Nuxt Content; designed and implemented the entire layout and UI, and added robust scaffold, theming, and localization documentation displayed through Nuxt Content.',
+              },
+              {
+                text: 'Extended Nuxt UI with custom components: Tabs with responsive nav+panel variants, and Breadcrumbs with dropdowns that convert into a searchable command palette past 7 options, powered by a custom rowCollapse composable not provided by Nuxt UI/Reka out of the box.',
+              },
+              {
+                text: 'Created a live Theme Editor in the nebula-nuxt doc site that switches between the default Nuxt UI theme, legacy Nebula, and another unique theme, with editing granular down to color scale, spacing, font, and border radii and other theme tokens; the theme persists across all component pages until changed or reset.',
+              },
+            ],
+          },
+          {
+            group: 'Nebula',
+            featured: true,
+            title: 'Nebula Components',
+            icon: 'components',
+            open: true,
+            figure: '3 days',
+            figureLabel: 'to build MegaMenu, and 3 more to match its redesign',
+            points: [
+              {
+                text: 'Builder and maintainer of Nebula Components, predecessor to nebula-nuxt. Managed both design systems simultaneously.',
+                link: { label: 'Nebula docs', href: 'https://nebula.discoveryeducation.com/' },
+              },
+              {
+                text: 'Built MegaMenu for a Back-to-School product deliverable. Core technical feature: detects at runtime when to collapse into a linked drill-down list view, rather than relying on fixed breakpoints. Component adapts its own layout based on available space and content, rather than hiding items past a hardcoded width.',
+                link: { label: 'MegaMenu demo', href: 'https://nebula.discoveryeducation.com/mega-menu-sink' },
+                subs: [
+                  'Designed the responsive collapsed view myself: a linked drill-down list, not an accordion, that lets users tap into a category and navigate back out.',
+                  'Initial build: 3 days. Product then underwent significant redesign; updated MegaMenu delivered in 3 more days, matching new design.',
+                ],
+              },
+              {
+                text: 'Built NebulaContainerTable, an enhanced NebulaTable that uses container queries instead of media queries, so the table adapts to its own container size rather than the viewport — more flexible across layouts.',
+                link: { label: 'ContainerTable demo', href: 'https://nebula.discoveryeducation.com/container-table-sink' },
+              },
+            ],
+            shots: [
+              {
+                src: '/media/projects/nebula/container-table-compare.webp',
+                alt: 'Two tables in 400px containers: the original NebulaTable, driven by media queries, overflows its box; NebulaContainerTable switches to stacked cards.',
+                width: 1328,
+                height: 995,
+                caption: 'Media query vs. container query, both 400px wide',
+              },
+              {
+                src: '/media/projects/nebula/container-table-scroll.webp',
+                alt: 'NebulaContainerTable in a 516px container, keeping all six columns and scrolling sideways within its bounds.',
+                width: 798,
+                height: 663,
+                caption: 'ContainerTable scrolling within a 516px container',
+              },
+              {
+                src: '/media/projects/nebula/admin-form.webp',
+                alt: 'An admin form built from Nebula components: role and department selects, permission checkboxes and account-setting toggles.',
+                width: 795,
+                height: 618,
+                caption: 'Form components: select, checkbox, toggle',
+              },
+              {
+                src: '/media/projects/nebula/accordion.webp',
+                alt: 'Nebula accordion menu with its Visual Language section open, and buttons that open and close sections.',
+                width: 930,
+                height: 663,
+                caption: 'Accordion menu',
+              },
+            ],
+          },
+          {
+            group: 'AI tooling',
+            featured: true,
+            title: 'Claude Skills',
+            icon: 'sparkle',
+            figure: '1–2 days',
+            figureLabel: 'of hands-on work saved per component',
+            points: [
+              {
+                text: 'Made the design system agent-ready with custom Claude skills that automate end-to-end component delivery (build, docs page, release), with human review at each step, replacing one to two days of hands-on work per component.',
+              },
+              {
+                text: 'Wrote a Claude planning skill that picks the build approach per component: themed primitive, wrapped primitive, or fully custom component.',
+              },
+              {
+                text: 'Wrote a Claude release-automation skill for the migration.',
+              },
+              {
+                text: 'Wrote a Claude skill to port existing component doc-page examples from Nebula Components to nebula-nuxt, ensuring new components stayed backward compatible.',
+              },
+              {
+                text: 'Wrote Claude Skill to audit and fix localization across the platform, refined against 9 company repos and used successfully in production.',
+              },
+            ],
           },
         ],
       },
       {
-        group: 'AI team',
-        title: 'AI-Native Interfaces',
-        figure: 'In parallel',
-        figureLabel: 'frontend and backend built at once from one REST spec',
-        points: [
+        title: 'Product Team',
+        stories: [
           {
-            text: 'Embedded with the AI team to build the frontend of a human-in-the-loop review dashboard where people evaluate and correct AI output; completed a partial design, made the UX calls it left open, and tested it with real users to make the review workflow efficient.',
+            featured: true,
+            title: 'AI-Native Interfaces',
+            icon: 'review',
+            figure: 'In parallel',
+            figureLabel: 'frontend and backend built at once from one REST spec',
+            points: [
+              {
+                text: 'Embedded with the AI team to build the frontend of a human-in-the-loop review dashboard where people evaluate and correct AI output; completed a partial design, made the UX calls it left open, and tested it with real users to make the review workflow efficient.',
+              },
+              {
+                text: "Defined the dashboard's REST contract with the backend engineer, writing a detailed spec on data shapes, request semantics (PATCH vs. POST), and full schema trees so both sides could build in parallel.",
+              },
+            ],
           },
           {
-            text: "Defined the dashboard's REST contract with the backend engineer, writing a detailed spec on data shapes, request semantics (PATCH vs. POST), and full schema trees so both sides could build in parallel.",
+            title: 'Video Onboarding Modal',
+            icon: 'video',
+            figure: '2 years',
+            figureLabel: "running, at teachers' first back-to-school login",
+            points: [
+              {
+                text: "Built the Video Onboarding Modal with a new performance- and accessibility-optimized video player for teachers' first back-to-school login, advising on compression for slow networks and adding engagement tracking for the analytics team; reused two years running.",
+              },
+            ],
+          },
+          {
+            title: 'Production Reliability',
+            icon: 'pulse',
+            figure: 'On call',
+            figureLabel: 'for biweekly migrations, watching New Relic',
+            points: [
+              {
+                text: 'Monitored JavaScript errors in New Relic while on call for biweekly migrations, troubleshooting production issues across a multi-team platform; delivered feature-flag projects that rendered UI from backend flag data while keeping tracking metrics intact.',
+              },
+            ],
+          },
+          {
+            title: 'Product Teams',
+            icon: 'team',
+            figure: '12+',
+            figureLabel: 'product teams, in two-week sprints',
+            points: [
+              {
+                text: 'Contributed to 12+ product teams, including Techbook, Search, Assessments, Atlas (in-house CMS), Admin Tools, and User Onboarding, working in two-week Agile sprints with product, design, backend, and QA.',
+              },
+            ],
           },
         ],
       },
       {
-        group: 'AI Tooling',
-        title: 'Claude Skills',
-        figure: '1–2 days',
-        figureLabel: 'of hands-on work saved per component',
-        points: [
+        title: 'Behind the scenes',
+        stories: [
           {
-            text: 'Made the design system agent-ready with custom Claude skills that automate end-to-end component delivery (build, docs page, release), with human review at each step, replacing one to two days of hands-on work per component.',
+            title: 'Platform Ownership',
+            icon: 'package',
+            figure: 'End to end',
+            figureLabel: 'APIs, tokens, packages, icons, CI, and tests',
+            points: [
+              {
+                text: 'Owned the platform end to end: component APIs, semantic design tokens and theming, shared workspace packages with versioned releases optimized for tree-shaking so apps shipped only the components they used, a separately published icon package, and GitHub Actions CI.',
+              },
+              {
+                text: 'Owned code quality for the library: reviewed PRs and caught issues before release, and backed changes with Vitest and Playwright so they shipped safely to every consumer.',
+              },
+            ],
           },
           {
-            text: 'Wrote a Claude planning skill that picks the build approach per component: themed primitive, wrapped primitive, or fully custom component.',
-          },
-          {
-            text: 'Wrote a Claude release-automation skill for the migration.',
-          },
-          {
-            text: 'Wrote a Claude skill to port existing component doc-page examples from Nebula Components to nebula-nuxt, ensuring new components stayed backward compatible.',
-          },
-          {
-            text: 'Wrote Claude Skill to audit and fix localization across the platform, refined against 9 company repos and used successfully in production.',
-          },
-        ],
-      },
-      {
-        group: 'AI Tooling',
-        title: 'Slash Commands & Adoption',
-        figure: '/plan',
-        figureLabel: 'slash commands that turn dev notes into living specs',
-        points: [
-          {
-            text: 'Built plan-create/plan-update slash commands for Claude Code: structured markdown plan docs (executive summary, phases, success criteria, known issues) generated conversationally, with approval-gated drafts and diff-style updates. Enforces consistent status markers and preserves historical context across iterations, turning ad hoc dev notes into a living, reviewable spec.',
-          },
-          {
-            text: "Co-hosted the company's AI Office Hours to help engineers adopt AI-assisted development.",
+            title: 'Slash Commands & Adoption',
+            icon: 'terminal',
+            figure: '/plan',
+            figureLabel: 'slash commands that turn dev notes into living specs',
+            points: [
+              {
+                text: 'Built plan-create/plan-update slash commands for Claude Code: structured markdown plan docs (executive summary, phases, success criteria, known issues) generated conversationally, with approval-gated drafts and diff-style updates. Enforces consistent status markers and preserves historical context across iterations, turning ad hoc dev notes into a living, reviewable spec.',
+              },
+              {
+                text: "Co-hosted the company's AI Office Hours to help engineers adopt AI-assisted development.",
+              },
+            ],
           },
         ],
       },
     ],
     links: [],
+  },
+  {
+    slug: 'ontrack',
+    name: 'OnTrack',
+    tagline: 'Restaurant maintenance management',
+    meta: 'React PWA · Supabase · Docker · Cloudflare',
+    description:
+      'A mobile-first maintenance ticketing app for a Chicago restaurant group, built with the operations manager, who tests each release and requests features.',
+    /* Placeholder overview, from the resume; screens and the story to come. */
+    paras: [
+      'Designing and building a mobile-first maintenance ticketing app for a Chicago restaurant group, iterating with the operations manager, who tests each release and requests features.',
+      "Designed database-enforced role-based access control for four roles (restaurant managers, operations managers, leadership, admin) using Postgres row-level security, so role, rights, and deactivation changes apply on the next request instead of waiting for tokens to expire; sessions that haven't completed two-factor sign-in can read nothing.",
+      "Secured privileged Edge Functions by verifying each caller's token and role server-side, kept roles out of client-writable user metadata, and used role-based UI guards for display only; runs the test environment in Docker containers.",
+    ],
+    links: [],
+    slides: [
+      {
+        label: 'Coming soon',
+        src: '/projects/ontrack-placeholder-light.svg',
+        srcDark: '/projects/ontrack-placeholder-dark.svg',
+        width: 1600,
+        height: 1000,
+        type: 'image',
+        alt: 'Placeholder: screens of OnTrack are coming soon.',
+      },
+    ],
   },
   {
     slug: 'main-character',
@@ -352,63 +459,48 @@ export const PROJECTS: Project[] = [
     slides: [
       {
         label: 'Write',
-        src: '/projects/mc-write.mp4',
-        type: 'video',
-        alt: 'On the write screen, the user saves an example entry. The companion response is a fixed demo response, taken from a real conversation.',
+        src: '/projects/mc-write-light.webp',
+        srcDark: '/projects/mc-write-dark.webp',
+        width: 2160,
+        height: 1350,
+        type: 'image',
+        alt: "The write screen mid-conversation: an entry from September 17 about rewriting a case study, the companion's reply under it, and the composer holding the next entry, with save entry, send and reflect buttons.",
       },
       {
         label: 'Ask',
-        src: '/projects/mc-ask.mp4',
-        type: 'video',
-        alt: 'TODO: describe the Ask screen video.',
-      },
-      {
-        label: 'Search',
-        src: '/projects/mc-search.mp4',
-        type: 'video',
-        alt: 'The search screen shows a query for \"Mom\" and a list of entries that mention Mom, sorted by best match.',
+        src: '/projects/mc-ask-light.webp',
+        srcDark: '/projects/mc-ask-dark.webp',
+        width: 2160,
+        height: 1350,
+        type: 'image',
+        alt: "The ask screen: the question \"when did I first go to Groundwork?\" and the companion's answer, which names the first entry that mentions it by date and title and quotes it. The next question waits in the box below.",
       },
       {
         label: 'Entities',
-        src: '/projects/mc-entities.mp4',
-        type: 'video',
-        alt: 'On the entities screen, the left sidebar lists entities and filters. The right panel shows details for the selected entity. The user adds \"Mom\" to a new \"Family\" group, then gives \"Coda Project\" the alias \"Coda\".',
+        src: '/projects/mc-entities-light.webp',
+        srcDark: '/projects/mc-entities-dark.webp',
+        width: 2160,
+        height: 1350,
+        type: 'image',
+        alt: "The entities screen: the sidebar lists people with their mention counts, under filters for kind, sort and groups. Mika is selected, and the right panel shows a summary of who Mika is, written from the observations across the entries that mention them.",
       },
       {
         label: 'History',
-        src: '/projects/mc-history.mp4',
-        type: 'video',
-        alt: 'The history screen shows all entry groups in the left sidebar. The middle panel orders them by most recent date. The right panel lists individual entries in the group, with links to both entry and summary.',
-      },
-      {
-        label: 'Categories',
-        src: '/projects/mc-categories.mp4',
-        type: 'video',
-        alt: 'On the categories screen, the user scrolls the page. At the top is a list of suggested categories. Below that is each entry by date, a short description, and each category it belongs to.',
+        src: '/projects/mc-history-light.webp',
+        srcDark: '/projects/mc-history-dark.webp',
+        width: 2160,
+        height: 1350,
+        type: 'image',
+        alt: "The history screen: the open chapter and the closed ones, each with its dates, in the sidebar; the current chapter's entries in the middle; and a list of entry dates to jump to on the right. A chapters and weeks switch sits at the top of the sidebar.",
       },
       {
         label: 'Patterns',
-        src: '/projects/mc-patterns.mp4',
-        type: 'video',
-        alt: 'On the patterns screen, the user scrolls the page. Each pattern has a title, description, and the dates of entries that contribute to it.',
-      },
-      {
-        label: 'Dreams',
-        src: '/projects/mc-dreams.mp4',
-        type: 'video',
-        alt: 'The dreams screen shows a list of dreams. Each dream displays date, dream categories, dream descriptions, and \"your read\".',
-      },
-      {
-        label: 'Triage',
-        src: '/projects/mc-triage.mp4',
-        type: 'video',
-        alt: 'The triage screen shows entities that need to be reviewed for accuracy. \"Meridian\" is listed as a place, with options to accept, edit, delete, skip, and more.',
-      },
-      {
-        label: 'Settings',
-        src: '/projects/mc-settings.mp4',
-        type: 'video',
-        alt: 'The settings screen shows options for customizing the app. The user can adjust color mode, language, categories, models, and other preferences.',
+        src: '/projects/mc-patterns-light.webp',
+        srcDark: '/projects/mc-patterns-dark.webp',
+        width: 2160,
+        height: 1350,
+        type: 'image',
+        alt: "The patterns screen: patterns found across the entries, such as The Shutdown Spiral and Groundwork Resurrection, each with its kind, a confidence level, a description, what triggers it, and the entries behind it. Chips across the top filter by kind.",
       },
     ],
   },

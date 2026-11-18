@@ -1,0 +1,394 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 62rem;
+  margin: 0 auto;
+  padding-bottom: 4rem;
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: var(--type-mono-sm);
+  letter-spacing: var(--tracking-mono-caps);
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.concepts {
+  display: flex;
+  flex-direction: column;
+  gap: 4.5rem;
+}
+
+.concept {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.conceptHead {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  max-width: 62ch;
+}
+
+.conceptName {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--type-h2);
+}
+
+.conceptBlurb {
+  color: var(--muted);
+  font-size: var(--type-body-md);
+}
+
+/* --- Shared ------------------------------------------------------------- */
+.stage {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: var(--media-bg);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.media {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* The drawer cards' paper and shadow, lifted a touch on hover. */
+.paperButton {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+  min-height: 2.75rem;
+  padding: 0 1rem;
+  display: inline-grid;
+  place-items: center;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+  color: var(--paper-ink);
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-sm);
+  letter-spacing: var(--tracking-mono);
+  cursor: pointer;
+  box-shadow:
+    0 1px 1px var(--paper-shadow),
+    0 3px 8px -4px var(--paper-shadow-soft);
+  transition:
+    transform var(--dur-base) var(--ease),
+    box-shadow var(--dur-base) var(--ease),
+    color var(--dur-base) var(--ease);
+}
+
+.paperButton:hover {
+  color: var(--accent);
+  transform: translateY(-1px);
+  box-shadow:
+    0 2px 3px var(--paper-shadow),
+    0 8px 16px -6px var(--paper-shadow-soft);
+}
+
+.paperButton:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 1px var(--paper-shadow);
+}
+
+.paperButton:focus-visible,
+.textButton:focus-visible,
+.tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.round {
+  width: 2.75rem;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 1rem;
+}
+
+.textButton {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+  padding: 0.4rem 0;
+  border: 0;
+  background: none;
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-sm);
+  letter-spacing: var(--tracking-mono);
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  text-underline-offset: 0.25em;
+  cursor: pointer;
+}
+
+.slideName {
+  font-family: var(--font-display);
+  font-size: var(--type-h3);
+  color: var(--paper-ink);
+}
+
+.count {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-xs);
+  letter-spacing: var(--tracking-mono-caps);
+  color: var(--muted);
+}
+
+/* --- A · Sheet ----------------------------------------------------------- */
+.sheet {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 0.75rem 0.75rem 1rem;
+  background: var(--paper);
+  border-radius: var(--radius-sm);
+  box-shadow:
+    0 1px 1px var(--paper-shadow),
+    0 10px 28px -10px var(--paper-shadow-soft);
+}
+
+.sheetDrawer {
+  display: grid;
+  grid-template-rows: 0fr;
+  margin-top: -0.9rem;
+  transition:
+    grid-template-rows var(--dur-relaxed) var(--ease),
+    margin var(--dur-relaxed) var(--ease);
+}
+
+.sheetDrawer > p {
+  overflow: hidden;
+  font-size: var(--type-body-md);
+  color: var(--paper-ink);
+  max-width: 70ch;
+  text-wrap: pretty;
+}
+
+.sheetDrawer[data-open] {
+  grid-template-rows: 1fr;
+  margin-top: 0;
+}
+
+.sheetBar {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1rem;
+}
+
+.sheetSteps {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.sheetTitle {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.dots > span {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--border-control);
+  transition:
+    width var(--dur-base) var(--ease),
+    background var(--dur-base) var(--ease);
+}
+
+.dots > span[data-on] {
+  width: 1.25rem;
+  border-radius: 0.2rem;
+  background: var(--accent);
+}
+
+/* --- B · Index tabs ------------------------------------------------------ */
+.tabsWrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.tabsStage {
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  box-shadow: 0 10px 28px -12px var(--paper-shadow-soft);
+}
+
+.edgeLeft,
+.edgeRight {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+  opacity: 0;
+}
+
+.edgeLeft {
+  left: 0.75rem;
+}
+
+.edgeRight {
+  right: 0.75rem;
+}
+
+.tabsStage:hover .edgeLeft,
+.tabsStage:hover .edgeRight,
+.edgeLeft:focus-visible,
+.edgeRight:focus-visible {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .edgeLeft,
+  .edgeRight {
+    opacity: 1;
+  }
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  padding: 0 0.5rem;
+}
+
+/* Index tabs hanging off the stage's foot; the selected one is pulled down
+   and takes the accent. */
+.tab {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+  padding: 0.45rem 0.8rem 0.5rem;
+  border: 0;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  background: var(--paper);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-xs);
+  letter-spacing: var(--tracking-mono-caps);
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow:
+    0 1px 1px var(--paper-shadow),
+    0 3px 6px -4px var(--paper-shadow-soft);
+  transition:
+    padding var(--dur-base) var(--ease),
+    color var(--dur-base) var(--ease);
+}
+
+.tab:hover {
+  color: var(--accent);
+}
+
+.tab[aria-selected='true'] {
+  padding-top: 0.75rem;
+  color: var(--paper-ink);
+  background:
+    linear-gradient(var(--accent), var(--accent)) 0 100% / 100% 2px no-repeat,
+    var(--paper);
+}
+
+.caption {
+  margin-top: 1rem;
+  max-width: 70ch;
+  font-size: var(--type-body-md);
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+/* --- C · Stack & tape ---------------------------------------------------- */
+.stackWrap {
+  position: relative;
+  display: grid;
+  padding: 1.25rem 0.5rem 0.5rem;
+}
+
+.stackSheet,
+.stackFront {
+  grid-area: 1 / 1;
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+}
+
+.stackSheet {
+  box-shadow:
+    0 1px 1px var(--paper-shadow),
+    0 3px 8px -4px var(--paper-shadow-soft);
+}
+
+.stackSheet:nth-child(1) {
+  rotate: 1.6deg;
+  translate: 0.6rem 0.2rem;
+}
+
+.stackSheet:nth-child(2) {
+  rotate: -1.1deg;
+  translate: -0.4rem 0.35rem;
+}
+
+.stackFront {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0 0.75rem 0.75rem;
+  box-shadow:
+    0 1px 1px var(--paper-shadow),
+    0 10px 28px -10px var(--paper-shadow-soft);
+}
+
+/* The case-study cards' tape: straight, centred, mirrored pinked ends. */
+.tape {
+  --notch: 0.3rem;
+  align-self: center;
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin-top: -0.95rem;
+  padding: 0.3rem 1.25rem 0.35rem;
+  background: var(--accent-selected);
+  clip-path: polygon(
+    0 0, 100% 0,
+    calc(100% - var(--notch)) 25%, 100% 50%, calc(100% - var(--notch)) 75%,
+    100% 100%, 0 100%,
+    var(--notch) 75%, 0 50%, var(--notch) 25%
+  );
+}
+
+.stackBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sticky {
+  position: absolute;
+  left: 1.5rem;
+  bottom: 4.5rem;
+  max-width: min(22rem, 70%);
+  padding: 0.9rem 1rem;
+  rotate: -1.5deg;
+  font-size: var(--type-body-md);
+  color: var(--paper-ink);
+  background: color-mix(in srgb, var(--paper) 82%, #f3d36b 18%);
+  box-shadow:
+    1px 2px 3px var(--paper-shadow),
+    4px 14px 24px -8px var(--paper-shadow-soft);
+}

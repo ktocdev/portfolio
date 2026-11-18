@@ -58,10 +58,14 @@ export default function ResumePage() {
   return (
     <article className={`${styles.document} printDocument`} aria-labelledby="resume-name">
       <div className={styles.top}>
-        {/* Screen only: page label and the PDF button. Print drops the row. */}
+        {/* Screen only: the PDF button. Print drops the row. */}
         <p className={styles.tools}>
-          <span>Resume</span>
-          <ButtonLink href="/Katie-OConnor-Resume.pdf" download="Katie-OConnor-Resume.pdf" glyph="↓">
+          <ButtonLink
+            href="/Katie-OConnor-Resume.pdf"
+            download="Katie-OConnor-Resume.pdf"
+            glyph="↓"
+            shimmer
+          >
             Download PDF
           </ButtonLink>
         </p>

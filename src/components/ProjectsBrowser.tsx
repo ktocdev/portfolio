@@ -6,10 +6,10 @@ import gsap from 'gsap';
 import Carousel from './Carousel';
 import FactsGrid from './FactsGrid';
 import PhotoTable from './PhotoTable';
-import type { Note, Project } from '@/content/projects';
+import type { LeadShot, Note, Project } from '@/content/projects';
 import { COPY } from '@/content/site';
 import { flipHeading } from '@/lib/flipHeading';
-import { PANE_ENTER, prefersReducedMotion, staggerZones } from '@/lib/motion';
+import { PANE_ENTER, prefersReducedMotion, staggerZones, zonesOf } from '@/lib/motion';
 import styles from './ProjectsBrowser.module.css';
 
 type ProjectsBrowserProps = {
@@ -23,8 +23,6 @@ const DISMISS_MS = 280;
 /* After a project is picked: long enough to see its card pull out of the
    stack (the row's 250ms transition) before the stack leaves. */
 const PICKED_MS = 220;
-
-const pad = (n: number) => String(n).padStart(2, '0');
 
 export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
   /* Selection is local UI state mirrored into the URL hash (/projects/#gps3),
@@ -44,7 +42,7 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
   /* Set when the drawer is opened by click or key, which hands focus to the
      selected card; opening on hover leaves focus alone. */
   const focusOnOpen = useRef(false);
-  const drawerMounted = useRef(false);
+  const drawerWasOpen = useRef(false);
   /* Set by a user-driven switch (click, keys, back/forward). The hash read on
      mount leaves it false: the page-level enter already covers first paint. */
   const animateSwitch = useRef(false);
@@ -58,7 +56,7 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
 
   const prose =
     paras.length || project.notes?.length ? (
-      <div className={styles.prose}>
+      <div className={styles.prose} data-zones="">
         {paras.length ? (
           <div className={styles.paras}>
             {paras.map((para) => (
@@ -73,30 +71,6 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
               <NoteItem key={`${note.kind}-${i}`} note={note} />
             ))}
           </ul>
-        ) : null}
-
-        {project.leadShot ? (
-          <figure className={styles.shot}>
-            <span className={styles.shotFrame}>
-              <img
-                className={styles.shotMain}
-                src={project.leadShot.main.src}
-                alt={project.leadShot.main.alt}
-                width={project.leadShot.main.width}
-                height={project.leadShot.main.height}
-              />
-              {project.leadShot.inset ? (
-                <img
-                  className={styles.shotInset}
-                  src={project.leadShot.inset.src}
-                  alt={project.leadShot.inset.alt}
-                  width={project.leadShot.inset.width}
-                  height={project.leadShot.inset.height}
-                />
-              ) : null}
-            </span>
-            <figcaption className={styles.shotCaption}>{project.leadShot.caption}</figcaption>
-          </figure>
         ) : null}
       </div>
     ) : null;
@@ -128,7 +102,7 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
     if (!detail.current || !heading || prefersReducedMotion()) return;
     const cancelFlip = flipHeading(heading, () => {});
     const cancelRise = staggerZones(
-      [...detail.current.children].filter((zone) => zone !== heading),
+      zonesOf(detail.current).filter((zone) => zone !== heading),
       PANE_ENTER,
     );
     return () => {
@@ -142,10 +116,11 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
      and the drawer's label fade with them. Reduced motion skips straight to
      the CSS states. */
   useLayoutEffect(() => {
-    if (!drawerMounted.current) {
-      drawerMounted.current = true;
-      return;
-    }
+    /* Only a change animates. Comparing against the last state, not a
+       first-run flag: StrictMode runs this twice on mount, and a flag would
+       let the second run play the closing sweep over the page's entrance. */
+    if (drawerWasOpen.current === drawerOpen) return;
+    drawerWasOpen.current = drawerOpen;
     const panel = drawer.current;
     const shade = scrim.current;
     if (!panel || !shade || prefersReducedMotion()) return;
@@ -305,7 +280,9 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
   const mouse = (event: React.PointerEvent) => event.pointerType === 'mouse';
 
   return (
-    <section className={styles.projects}>
+    /* data-enter-stagger: the page's entrance flips the title while the
+       detail's zones (data-zones, below) rise one after another. */
+    <section className={styles.projects} data-enter-stagger="">
       {/* The edges of a few index cards peeking in from the screen's left
           edge: the project list, put away. Hover pulls the stack out. */}
       <button
@@ -321,12 +298,7 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
         <span aria-hidden="true" className={styles.deckCard} />
         <span aria-hidden="true" className={styles.deckCard} />
         <span aria-hidden="true" className={styles.deckCard} />
-        <span className={styles.deckLabel}>
-          All projects
-          <span aria-hidden="true" className={styles.deckCount}>
-            {pad(selected + 1)}/{pad(projects.length)}
-          </span>
-        </span>
+        <span className={styles.deckLabel}>Projects</span>
       </button>
 
       <div
@@ -352,7 +324,7 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
         }}
       >
         <p data-drawer-chrome="" className={styles.drawerLabel}>
-          All projects
+          Projects
         </p>
         <p data-drawer-chrome="" className={styles.intro}>
           {COPY.projects.intro}
@@ -387,22 +359,8 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
                 className={styles.row}
                 data-selected={i === selected || undefined}
               >
-                {/* The index card's number, left of its margin rule. Decorative:
-                    the list already announces position (1 of 3). */}
-                <span aria-hidden="true" className={styles.number}>
-                  {pad(i + 1)}
-                </span>
                 <span className={styles.rowBody}>
-                  <span className={styles.name}>
-                    {item.name}
-                    {item.caseStudy ? (
-                      /* Decorative only — the tagline and detail panel already
-                         say this is a case study. */
-                      <span aria-hidden="true" className={styles.badge}>
-                        Case Study
-                      </span>
-                    ) : null}
-                  </span>
+                  <span className={styles.name}>{item.name}</span>
                   <span className={styles.tagline}>{item.tagline}</span>
                 </span>
               </button>
@@ -427,12 +385,14 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
         aria-labelledby={`title-${project.slug}`}
         tabIndex={0}
         className={styles.detail}
+        data-zones=""
       >
         {/* Words in their own boxes for the flip; see flipHeading.ts. */}
         <h2
           ref={title}
           id={`title-${project.slug}`}
           className={styles.title}
+          data-flip-heading=""
           data-logo={logo ? '' : undefined}
         >
           {logo ? (
@@ -498,22 +458,62 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
           </div>
         ) : null}
 
-        {/* With facts, the prose sits on the left and the facts grid beside
-            it; without, the prose runs down the column on its own. */}
-        {project.facts?.length ? (
-          <div className={styles.lead}>
-            {prose}
-            <FactsGrid facts={project.facts} />
-          </div>
-        ) : (
-          prose
-        )}
+        {prose}
 
-        {project.stories?.length ? (
-          <PhotoTable key={project.slug} stories={project.stories} note={project.storiesNote} />
-        ) : null}
+        {/* A case study's parts, each under its own heading: its screenshot
+            and facts side by side, then its cards. Each part's children rise
+            in turn on entry (data-zones). */}
+        {project.sections?.map((section, s) => {
+          const headId = `${project.slug}-section-${s}`;
+          return (
+            <section
+              key={`${project.slug}-${section.title}`}
+              className={styles.caseSection}
+              aria-labelledby={headId}
+              data-zones=""
+            >
+              <h3 id={headId} className={styles.sectionTitle}>
+                {section.title}
+              </h3>
+              {section.leadShot || section.facts?.length ? (
+                <div className={styles.lead} data-zones="">
+                  {section.leadShot ? <LeadShotFigure shot={section.leadShot} /> : null}
+                  {section.facts?.length ? <FactsGrid facts={section.facts} /> : null}
+                </div>
+              ) : null}
+              <PhotoTable stories={section.stories} note={section.note} hint={s === 0} />
+            </section>
+          );
+        })}
       </article>
     </section>
+  );
+}
+
+/** A screenshot of the work, with its phone view overlapping the corner. */
+function LeadShotFigure({ shot }: { shot: LeadShot }) {
+  return (
+    <figure className={styles.shot} data-rise="photo">
+      <span className={styles.shotFrame}>
+        <img
+          className={styles.shotMain}
+          src={shot.main.src}
+          alt={shot.main.alt}
+          width={shot.main.width}
+          height={shot.main.height}
+        />
+        {shot.inset ? (
+          <img
+            className={styles.shotInset}
+            src={shot.inset.src}
+            alt={shot.inset.alt}
+            width={shot.inset.width}
+            height={shot.inset.height}
+          />
+        ) : null}
+      </span>
+      <figcaption className={styles.shotCaption}>{shot.caption}</figcaption>
+    </figure>
   );
 }
 
