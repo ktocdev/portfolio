@@ -1,3 +1,5 @@
+import type { StoryIconName } from '@/components/StoryIcon';
+
 /**
  * Project content, ported from the prototype's PROJECTS constant.
  * Long-form copy is first-person narrative voice and is reproduced verbatim.
@@ -49,6 +51,8 @@ export type Story = {
   /** One of the strongest stories: its tape and figure take the accent. */
   featured?: boolean;
   title: string;
+  /** A line icon on the card, above the figure (StoryIcon.tsx). */
+  icon?: StoryIconName;
   figure: string;
   figureLabel: string;
   points: StoryPoint[];
@@ -172,6 +176,7 @@ export const PROJECTS: Project[] = [
             group: 'nebula-nuxt',
             featured: true,
             title: 'Proposal Stage',
+            icon: 'proposal',
             figure: '#1',
             figureLabel: "proposal picked as the quarter's committed deliverable",
             points: [
@@ -190,6 +195,7 @@ export const PROJECTS: Project[] = [
             group: 'nebula-nuxt',
             featured: true,
             title: 'Product Integration',
+            icon: 'layers',
             figure: '25 of 46',
             figureLabel: 'legacy components rebuilt by me in nebula-nuxt',
             points: [
@@ -207,6 +213,7 @@ export const PROJECTS: Project[] = [
           {
             group: 'nebula-nuxt',
             title: 'Doc Site Designer',
+            icon: 'sliders',
             figure: '3 themes',
             figureLabel: 'in a live Theme Editor, editable down to each token',
             points: [
@@ -225,6 +232,7 @@ export const PROJECTS: Project[] = [
             group: 'Nebula',
             featured: true,
             title: 'Nebula Components',
+            icon: 'components',
             open: true,
             figure: '3 days',
             figureLabel: 'to build MegaMenu, and 3 more to match its redesign',
@@ -281,6 +289,7 @@ export const PROJECTS: Project[] = [
             group: 'AI tooling',
             featured: true,
             title: 'Claude Skills',
+            icon: 'sparkle',
             figure: '1–2 days',
             figureLabel: 'of hands-on work saved per component',
             points: [
@@ -309,6 +318,7 @@ export const PROJECTS: Project[] = [
           {
             featured: true,
             title: 'AI-Native Interfaces',
+            icon: 'review',
             figure: 'In parallel',
             figureLabel: 'frontend and backend built at once from one REST spec',
             points: [
@@ -322,6 +332,7 @@ export const PROJECTS: Project[] = [
           },
           {
             title: 'Video Onboarding Modal',
+            icon: 'video',
             figure: '2 years',
             figureLabel: "running, at teachers' first back-to-school login",
             points: [
@@ -332,6 +343,7 @@ export const PROJECTS: Project[] = [
           },
           {
             title: 'Production Reliability',
+            icon: 'pulse',
             figure: 'On call',
             figureLabel: 'for biweekly migrations, watching New Relic',
             points: [
@@ -342,6 +354,7 @@ export const PROJECTS: Project[] = [
           },
           {
             title: 'Product Teams',
+            icon: 'team',
             figure: '12+',
             figureLabel: 'product teams, in two-week sprints',
             points: [
@@ -357,6 +370,7 @@ export const PROJECTS: Project[] = [
         stories: [
           {
             title: 'Platform Ownership',
+            icon: 'package',
             figure: 'End to end',
             figureLabel: 'APIs, tokens, packages, icons, CI, and tests',
             points: [
@@ -370,6 +384,7 @@ export const PROJECTS: Project[] = [
           },
           {
             title: 'Slash Commands & Adoption',
+            icon: 'terminal',
             figure: '/plan',
             figureLabel: 'slash commands that turn dev notes into living specs',
             points: [

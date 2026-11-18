@@ -6,6 +6,7 @@ import { Flip } from 'gsap/Flip';
 
 import type { Story } from '@/content/projects';
 import { prefersReducedMotion } from '@/lib/motion';
+import StoryIcon from './StoryIcon';
 import styles from './PhotoTable.module.css';
 
 gsap.registerPlugin(Flip);
@@ -292,6 +293,7 @@ export default function PhotoTable({ stories, note, hint }: PhotoTableProps) {
                           edge; the figure and its label below. */}
                       <span className={styles.print}>
                         <span className={styles.title}>{story.title}</span>
+                        {story.icon ? <StoryIcon name={story.icon} className={styles.icon} /> : null}
                         <span className={styles.stat}>
                           <span className={styles.figure}>{story.figure}</span>
                           <span className={styles.figureLabel}>{story.figureLabel}</span>

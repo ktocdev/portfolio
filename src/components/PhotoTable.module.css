@@ -172,6 +172,18 @@
   --tape: var(--accent-selected);
 }
 
+/* The card's line icon, above its figure; a featured card's in the accent. */
+.icon {
+  width: 2rem;
+  height: 2rem;
+  flex: none;
+  color: var(--muted);
+}
+
+.card[data-featured] .icon {
+  color: var(--accent);
+}
+
 .stat {
   display: flex;
   flex-direction: column;
@@ -323,6 +335,11 @@
     align-items: baseline;
     flex-wrap: wrap;
     gap: 0.35rem 0.9rem;
+  }
+
+  /* Opened, the card is a band: the icon gives way to the text. */
+  .card[data-open] .icon {
+    display: none;
   }
 
   .card[data-open] .figureLabel {
