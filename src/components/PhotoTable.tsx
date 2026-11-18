@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { Flip } from 'gsap/Flip';
 
@@ -13,6 +13,8 @@ gsap.registerPlugin(Flip);
 type PhotoTableProps = {
   stories: Story[];
   note?: string;
+  /** Shows how to use the cards; the first table on a page carries it. */
+  hint?: boolean;
 };
 
 /* Each photo's lean in the narrow stack, in degrees (the CSS takes a third of
@@ -23,20 +25,24 @@ const TILTS = [-6, 3, 7, 4, -3, -5, -2, 5];
    photos lie on a grid; below it they stack. */
 const GRID_MIN_PX = 34 * 16;
 
+/* Fewest columns a wide table lays out, however short its rows. */
+const MIN_COLUMNS = 4;
+
 /** Stories in rows by their group, in order of first appearance, each keeping
- * its index in `stories`. */
+ * its index in `stories`. Stories without a group share one unheaded row. */
 function rows(stories: Story[]) {
   const byGroup = new Map<string, { story: Story; index: number }[]>();
   stories.forEach((story, index) => {
-    const row = byGroup.get(story.group) ?? [];
+    const group = story.group ?? '';
+    const row = byGroup.get(group) ?? [];
     row.push({ story, index });
-    byGroup.set(story.group, row);
+    byGroup.set(group, row);
   });
   return [...byGroup];
 }
 
 /**
- * The case study's stories as instant photos, a row per group under the
+ * A case-study section's stories as paper cards, a row per group under the
  * group's name. Hovering one lifts it toward the viewer; clicking opens it
  * across its row, enlarged to read, and the rest of the row moves down out of
  * its way. Narrow tables stack each row's photos instead, and each opens in
@@ -46,7 +52,7 @@ function rows(stories: Story[]) {
  * the layout is only a presentation: keyboard and screen-reader users get the
  * same stories in source order.
  */
-export default function PhotoTable({ stories, note }: PhotoTableProps) {
+export default function PhotoTable({ stories, note, hint }: PhotoTableProps) {
   const wrap = useRef<HTMLDivElement>(null);
   const cards = useRef<(HTMLLIElement | null)[]>([]);
   const faces = useRef<(HTMLButtonElement | null)[]>([]);
@@ -206,8 +212,11 @@ export default function PhotoTable({ stories, note }: PhotoTableProps) {
   }, [open]);
 
   const grouped = rows(stories);
-  /* The longest row sets the column count, so every row shares its grid. */
-  const columns = Math.max(...grouped.map(([, row]) => row.length));
+  /* Several tables share the page, so ids are scoped to this one. */
+  const rowId = `stories-${useId().replace(/:/g, '')}`;
+  /* The longest row sets the column count, so every row shares its grid; at
+     least four, so cards keep one size from section to section. */
+  const columns = Math.max(MIN_COLUMNS, ...grouped.map(([, row]) => row.length));
 
   return (
     <div
@@ -215,18 +224,26 @@ export default function PhotoTable({ stories, note }: PhotoTableProps) {
       className={styles.wrap}
       style={{ '--columns': columns } as React.CSSProperties}
     >
-      <p className={styles.hint} aria-hidden="true">
-        {gridded ? 'Hover a photo to lift it. Click to read it.' : 'Tap a photo to read it.'}
-      </p>
+      {hint ? (
+        <p className={styles.hint} aria-hidden="true">
+          {gridded ? 'Hover a card to lift it. Click to read it.' : 'Tap a card to read it.'}
+        </p>
+      ) : null}
 
       {grouped.map(([group, row], r) => {
-        const headId = `stories-row-${r}`;
+        const headId = `${rowId}-${r}`;
 
         return (
-          <section key={group} className={styles.row} aria-labelledby={headId}>
-            <h3 id={headId} className={styles.rowHead}>
-              {group}
-            </h3>
+          <section
+            key={group}
+            className={styles.row}
+            aria-labelledby={group ? headId : undefined}
+          >
+            {group ? (
+              <h4 id={headId} className={styles.rowHead}>
+                {group}
+              </h4>
+            ) : null}
 
             <ul
               role="list"
@@ -238,7 +255,7 @@ export default function PhotoTable({ stories, note }: PhotoTableProps) {
             >
               {row.map(({ story, index: i }) => {
                 const isOpen = open === i;
-                const bodyId = `story-${i}-body`;
+                const bodyId = `${rowId}-story-${i}`;
 
                 return (
                   <li
@@ -248,6 +265,7 @@ export default function PhotoTable({ stories, note }: PhotoTableProps) {
                     }}
                     className={styles.card}
                     data-open={isOpen || undefined}
+                    data-featured={story.featured || undefined}
                     style={
                       {
                         '--r': `${TILTS[i % TILTS.length]}deg`,
@@ -270,8 +288,8 @@ export default function PhotoTable({ stories, note }: PhotoTableProps) {
                       onFocus={() => lift(i)}
                       onBlur={() => drop(i)}
                     >
-                      {/* The title on a strip of tape stuck across the print's
-                          corner; the paper's foot is left blank. */}
+                      {/* The title on a strip of tape across the card's top
+                          edge; the figure and its label below. */}
                       <span className={styles.print}>
                         <span className={styles.title}>{story.title}</span>
                         <span className={styles.stat}>

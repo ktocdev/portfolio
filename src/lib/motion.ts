@@ -67,9 +67,14 @@ function expandZones(elements: Element[]): Element[] {
 function gatingImage(zone: HTMLElement): HTMLImageElement | null {
   const images = zone instanceof HTMLImageElement ? [zone] : [...zone.querySelectorAll('img')];
   return (
-    images.find(
-      (img) => !img.complete && img.getClientRects().length > 0 && !img.closest('[data-own-loader]'),
-    ) ?? null
+    images.find((img) => {
+      if (img.complete || img.closest('[data-own-loader]')) return false;
+      const rects = img.getClientRects();
+      if (rects.length === 0) return false;
+      /* A lazy image well below the fold loads only once it's scrolled near,
+         and would hold its whole zone invisible until then. */
+      return !(img.loading === 'lazy' && rects[0].top > window.innerHeight * 1.5);
+    }) ?? null
   );
 }
 

@@ -50,24 +50,23 @@
   width: min(100%, 21rem);
   display: flex;
   flex-direction: column;
-  padding: 0.6rem 0.6rem 0;
+  padding: 0 1rem 1rem;
+  /* Flat paper, the drawer's index cards' sheet and shadow: a contact line
+     and a soft fall-off that spread and fade as --lift raises the card. */
   background: var(--paper);
-  /* The facts grid's hairline, so a photo's edge holds on a pale page. */
-  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
-  /* Same paper shadow as the home headshot (Figure.module.css): a contact line
-     and a soft fall-off that spread and fade as --lift raises the photo. */
   box-shadow:
-    calc(1px + 12px * var(--lift)) calc(1px + 24px * var(--lift)) calc(2px + 22px * var(--lift))
-      color-mix(in srgb, var(--paper-shadow) calc(100% - 70% * var(--lift)), transparent),
-    calc(2px + 28px * var(--lift)) calc(8px + 52px * var(--lift)) calc(18px + 56px * var(--lift))
-      -4px color-mix(in srgb, var(--paper-shadow-soft) calc(100% - 50% * var(--lift)), transparent);
+    0 calc(1px + 14px * var(--lift)) calc(1px + 22px * var(--lift))
+      color-mix(in srgb, var(--paper-shadow) calc(100% - 60% * var(--lift)), transparent),
+    0 calc(3px + 36px * var(--lift)) calc(8px + 48px * var(--lift)) -4px
+      color-mix(in srgb, var(--paper-shadow-soft) calc(100% - 40% * var(--lift)), transparent);
   /* A third of the table tilt: full-width cards lean much further at the edge. */
   transform: translateX(var(--shift, 0)) rotate(calc(var(--r) * 0.35));
 }
 
+/* Room for each card's tape, which stands above its top edge. */
 .card + .card {
-  margin-top: -1.25rem;
+  margin-top: 1.4rem;
 }
 
 .card:nth-child(odd) {
@@ -102,12 +101,6 @@
   width: 100%;
   flex: 1;
   min-height: 0;
-  /* The instant photo's wide foot, left blank. */
-  padding-bottom: 1.5rem;
-}
-
-.card[data-open] .face {
-  padding-bottom: 0;
 }
 
 .face:focus-visible {
@@ -115,42 +108,27 @@
   outline-offset: 4px;
 }
 
-/* The developed image: a quiet tonal print in the facts grid's inks, with
-   light falling across it from one corner, and the grid's thin border. */
+/* The card's face: no print of its own, just the figure on the paper. */
 .print {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   gap: 0.75rem;
-  padding: 1.1rem 1rem;
-  min-height: 7.5rem;
-  background:
-    radial-gradient(120% 90% at 15% 10%, var(--print-glow) 0%, transparent 60%),
-    linear-gradient(150deg, var(--print-a) 0%, var(--print-b) 100%);
+  min-height: 7rem;
   color: var(--paper-ink);
-  border: 1px solid var(--border);
-  border-radius: 1px;
-}
-
-.card:nth-child(3n + 2) .print {
-  background:
-    radial-gradient(110% 90% at 85% 15%, var(--print-glow) 0%, transparent 60%),
-    linear-gradient(200deg, var(--print-a) 0%, var(--print-b) 100%);
-}
-
-.card:nth-child(3n) .print {
-  background:
-    radial-gradient(120% 100% at 30% 90%, var(--print-glow) 0%, transparent 55%),
-    linear-gradient(120deg, var(--print-b) 0%, var(--print-a) 100%);
 }
 
 .figure {
   font-family: var(--font-display);
-  color: var(--hero-em);
+  color: var(--paper-ink);
   font-size: clamp(1.75rem, 1.2rem + 1.4vw, 2.4rem);
   line-height: 1.02;
   letter-spacing: var(--tracking-display);
   text-wrap: balance;
+}
+
+/* The strongest stories carry the accent, so they read first. */
+.card[data-featured] .figure {
+  color: var(--accent);
 }
 
 .figureLabel {
@@ -162,37 +140,36 @@
   color: var(--muted);
 }
 
-/* The title on a strip of masking tape stuck across the print's top
-   corner, hanging a little past its edge onto the paper. Torn ends, a tilt
-   that alternates from photo to photo, and paper showing through. */
+/* The title on a strip of tape, laid straight across the card's top edge
+   and centred, half on the paper and half off. Both ends are pinked the
+   same way, so the strip mirrors itself. Plain tape is a neutral wash; a
+   featured card's takes the accent. */
 .title {
-  --tape-tilt: -2.5deg;
-  align-self: flex-start;
-  max-width: calc(100% + 0.6rem);
-  margin: -0.45rem 0 auto -1.35rem;
-  padding: 0.3rem 0.85rem 0.34rem;
+  --tape: color-mix(in srgb, var(--paper-ink) 9%, var(--paper));
+  --notch: 0.3rem;
+  align-self: center;
+  max-width: 88%;
+  margin: -0.85rem 0 auto;
+  padding: 0.32rem 1.1rem 0.36rem;
   font-family: var(--font-display);
   font-size: var(--type-h3);
   line-height: 1.15;
+  text-align: center;
   text-wrap: balance;
   color: var(--paper-ink);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.28), transparent 45%),
-    color-mix(in srgb, var(--paper) 74%, var(--accent) 26%);
+  background: var(--tape);
   opacity: 0.94;
-  transform: rotate(var(--tape-tilt));
   clip-path: polygon(
-    0 6%, 3% 0, 97% 0, 100% 8%, 98% 24%, 100% 42%, 97.5% 60%, 100% 78%, 98% 100%,
-    3% 100%, 0 90%, 2.5% 72%, 0 54%, 2% 36%, 0 20%
+    0 0, 100% 0,
+    calc(100% - var(--notch)) 25%, 100% 50%, calc(100% - var(--notch)) 75%,
+    100% 100%, 0 100%,
+    var(--notch) 75%, 0 50%, var(--notch) 25%
   );
 }
 
-.card:nth-child(even) .title {
-  --tape-tilt: 2deg;
-}
-
-.card:nth-child(3n) .title {
-  --tape-tilt: -1deg;
+.card[data-featured] .title {
+  /* The drawer's selected-card tint, which holds its contrast in both themes. */
+  --tape: var(--accent-selected);
 }
 
 .stat {
@@ -306,27 +283,23 @@
   .card:nth-child(odd),
   .card:nth-child(even) {
     width: auto;
-    aspect-ratio: 1 / 1.19;
+    aspect-ratio: 1 / 1.05;
     margin: 0;
-    padding: 0.55rem 0.55rem 0;
+    padding: 0 0.9rem 0.9rem;
     transform: none;
   }
 
   .print {
     flex: 1;
     min-height: 0;
-    padding: 0.85rem 0.8rem;
     justify-content: flex-end;
   }
 
   .figure {
-    /* 1.5rem floor: hero-em on the print's darker corner passes only as
-       large text. */
     font-size: clamp(1.5rem, 1.05rem + 0.8vw, 1.85rem);
   }
 
   .title {
-    margin-left: -1.15rem;
     font-size: clamp(0.95rem, 0.85rem + 0.25vw, 1.0625rem);
   }
 
@@ -336,13 +309,13 @@
   .card[data-open] {
     grid-column: 1 / -1;
     aspect-ratio: auto;
-    padding: 0.7rem 0.7rem 0;
+    padding: 0 1.4rem 0.4rem;
   }
 
   .card[data-open] .print {
     flex: none;
     justify-content: flex-start;
-    padding: 1rem 1.1rem;
+    padding-top: 0.6rem;
   }
 
   .card[data-open] .stat {
@@ -357,7 +330,6 @@
   }
 
   .card[data-open] .title {
-    margin-left: -1.45rem;
     font-size: var(--type-h3);
   }
 

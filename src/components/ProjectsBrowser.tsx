@@ -6,7 +6,7 @@ import gsap from 'gsap';
 import Carousel from './Carousel';
 import FactsGrid from './FactsGrid';
 import PhotoTable from './PhotoTable';
-import type { Note, Project } from '@/content/projects';
+import type { LeadShot, Note, Project } from '@/content/projects';
 import { COPY } from '@/content/site';
 import { flipHeading } from '@/lib/flipHeading';
 import { PANE_ENTER, prefersReducedMotion, staggerZones, zonesOf } from '@/lib/motion';
@@ -71,30 +71,6 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
               <NoteItem key={`${note.kind}-${i}`} note={note} />
             ))}
           </ul>
-        ) : null}
-
-        {project.leadShot ? (
-          <figure className={styles.shot} data-rise="photo">
-            <span className={styles.shotFrame}>
-              <img
-                className={styles.shotMain}
-                src={project.leadShot.main.src}
-                alt={project.leadShot.main.alt}
-                width={project.leadShot.main.width}
-                height={project.leadShot.main.height}
-              />
-              {project.leadShot.inset ? (
-                <img
-                  className={styles.shotInset}
-                  src={project.leadShot.inset.src}
-                  alt={project.leadShot.inset.alt}
-                  width={project.leadShot.inset.width}
-                  height={project.leadShot.inset.height}
-                />
-              ) : null}
-            </span>
-            <figcaption className={styles.shotCaption}>{project.leadShot.caption}</figcaption>
-          </figure>
         ) : null}
       </div>
     ) : null;
@@ -482,22 +458,62 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
           </div>
         ) : null}
 
-        {/* With facts, the prose sits on the left and the facts grid beside
-            it; without, the prose runs down the column on its own. */}
-        {project.facts?.length ? (
-          <div className={styles.lead} data-zones="">
-            {prose}
-            <FactsGrid facts={project.facts} />
-          </div>
-        ) : (
-          prose
-        )}
+        {prose}
 
-        {project.stories?.length ? (
-          <PhotoTable key={project.slug} stories={project.stories} note={project.storiesNote} />
-        ) : null}
+        {/* A case study's parts, each under its own heading: its screenshot
+            and facts side by side, then its cards. Each part's children rise
+            in turn on entry (data-zones). */}
+        {project.sections?.map((section, s) => {
+          const headId = `${project.slug}-section-${s}`;
+          return (
+            <section
+              key={`${project.slug}-${section.title}`}
+              className={styles.caseSection}
+              aria-labelledby={headId}
+              data-zones=""
+            >
+              <h3 id={headId} className={styles.sectionTitle}>
+                {section.title}
+              </h3>
+              {section.leadShot || section.facts?.length ? (
+                <div className={styles.lead} data-zones="">
+                  {section.leadShot ? <LeadShotFigure shot={section.leadShot} /> : null}
+                  {section.facts?.length ? <FactsGrid facts={section.facts} /> : null}
+                </div>
+              ) : null}
+              <PhotoTable stories={section.stories} note={section.note} hint={s === 0} />
+            </section>
+          );
+        })}
       </article>
     </section>
+  );
+}
+
+/** A screenshot of the work, with its phone view overlapping the corner. */
+function LeadShotFigure({ shot }: { shot: LeadShot }) {
+  return (
+    <figure className={styles.shot} data-rise="photo">
+      <span className={styles.shotFrame}>
+        <img
+          className={styles.shotMain}
+          src={shot.main.src}
+          alt={shot.main.alt}
+          width={shot.main.width}
+          height={shot.main.height}
+        />
+        {shot.inset ? (
+          <img
+            className={styles.shotInset}
+            src={shot.inset.src}
+            alt={shot.inset.alt}
+            width={shot.inset.width}
+            height={shot.inset.height}
+          />
+        ) : null}
+      </span>
+      <figcaption className={styles.shotCaption}>{shot.caption}</figcaption>
+    </figure>
   );
 }
 

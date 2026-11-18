@@ -325,7 +325,7 @@
   text-wrap: pretty;
 }
 
-/* The prose, then (when there are facts) the facts grid beside it. */
+/* The project's lead prose: paragraphs, then notes. */
 .prose {
   display: flex;
   flex-direction: column;
@@ -424,6 +424,23 @@
   .lead {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
   }
+}
+
+/* --- Case-study sections ------------------------------------------------- */
+.caseSection {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 2.4vh, 1.75rem);
+  margin-top: clamp(1rem, 3vh, 2.25rem);
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--type-h2);
+  line-height: 1.1;
+  letter-spacing: var(--tracking-display);
+  color: var(--text);
 }
 
 /* --- Case-study notes --------------------------------------------------- */
