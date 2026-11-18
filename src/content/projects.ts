@@ -66,6 +66,12 @@ export type Story = {
 export type Slide = {
   label: string;
   src: string;
+  /** The same screen in the dark theme, shown when the site is dark. */
+  srcDark?: string;
+  /** Pixel size. When every slide has one, the stage takes their shape and
+   * the picture fills it, with no letterboxing. */
+  width?: number;
+  height?: number;
   alt?: string;
   type: 'video' | 'image';
 };
@@ -427,63 +433,48 @@ export const PROJECTS: Project[] = [
     slides: [
       {
         label: 'Write',
-        src: '/projects/mc-write.mp4',
-        type: 'video',
-        alt: 'On the write screen, the user saves an example entry. The companion response is a fixed demo response, taken from a real conversation.',
+        src: '/projects/mc-write-light.webp',
+        srcDark: '/projects/mc-write-dark.webp',
+        width: 2160,
+        height: 1350,
+        type: 'image',
+        alt: "The write screen mid-conversation: an entry from September 17 about rewriting a case study, the companion's reply under it, and the composer holding the next entry, with save entry, send and reflect buttons.",
       },
       {
         label: 'Ask',
-        src: '/projects/mc-ask.mp4',
-        type: 'video',
-        alt: 'TODO: describe the Ask screen video.',
-      },
-      {
-        label: 'Search',
-        src: '/projects/mc-search.mp4',
-        type: 'video',
-        alt: 'The search screen shows a query for \"Mom\" and a list of entries that mention Mom, sorted by best match.',
+        src: '/projects/mc-ask-light.webp',
+        srcDark: '/projects/mc-ask-dark.webp',
+        width: 2160,
+        height: 1350,
+        type: 'image',
+        alt: "The ask screen: the question \"when did I first go to Groundwork?\" and the companion's answer, which names the first entry that mentions it by date and title and quotes it. The next question waits in the box below.",
       },
       {
         label: 'Entities',
-        src: '/projects/mc-entities.mp4',
-        type: 'video',
-        alt: 'On the entities screen, the left sidebar lists entities and filters. The right panel shows details for the selected entity. The user adds \"Mom\" to a new \"Family\" group, then gives \"Coda Project\" the alias \"Coda\".',
+        src: '/projects/mc-entities-light.webp',
+        srcDark: '/projects/mc-entities-dark.webp',
+        width: 2160,
+        height: 1350,
+        type: 'image',
+        alt: "The entities screen: the sidebar lists people with their mention counts, under filters for kind, sort and groups. Mika is selected, and the right panel shows a summary of who Mika is, written from the observations across the entries that mention them.",
       },
       {
         label: 'History',
-        src: '/projects/mc-history.mp4',
-        type: 'video',
-        alt: 'The history screen shows all entry groups in the left sidebar. The middle panel orders them by most recent date. The right panel lists individual entries in the group, with links to both entry and summary.',
-      },
-      {
-        label: 'Categories',
-        src: '/projects/mc-categories.mp4',
-        type: 'video',
-        alt: 'On the categories screen, the user scrolls the page. At the top is a list of suggested categories. Below that is each entry by date, a short description, and each category it belongs to.',
+        src: '/projects/mc-history-light.webp',
+        srcDark: '/projects/mc-history-dark.webp',
+        width: 2160,
+        height: 1350,
+        type: 'image',
+        alt: "The history screen: the open chapter and the closed ones, each with its dates, in the sidebar; the current chapter's entries in the middle; and a list of entry dates to jump to on the right. A chapters and weeks switch sits at the top of the sidebar.",
       },
       {
         label: 'Patterns',
-        src: '/projects/mc-patterns.mp4',
-        type: 'video',
-        alt: 'On the patterns screen, the user scrolls the page. Each pattern has a title, description, and the dates of entries that contribute to it.',
-      },
-      {
-        label: 'Dreams',
-        src: '/projects/mc-dreams.mp4',
-        type: 'video',
-        alt: 'The dreams screen shows a list of dreams. Each dream displays date, dream categories, dream descriptions, and \"your read\".',
-      },
-      {
-        label: 'Triage',
-        src: '/projects/mc-triage.mp4',
-        type: 'video',
-        alt: 'The triage screen shows entities that need to be reviewed for accuracy. \"Meridian\" is listed as a place, with options to accept, edit, delete, skip, and more.',
-      },
-      {
-        label: 'Settings',
-        src: '/projects/mc-settings.mp4',
-        type: 'video',
-        alt: 'The settings screen shows options for customizing the app. The user can adjust color mode, language, categories, models, and other preferences.',
+        src: '/projects/mc-patterns-light.webp',
+        srcDark: '/projects/mc-patterns-dark.webp',
+        width: 2160,
+        height: 1350,
+        type: 'image',
+        alt: "The patterns screen: patterns found across the entries, such as The Shutdown Spiral and Groundwork Resurrection, each with its kind, a confidence level, a description, what triggers it, and the entries behind it. Chips across the top filter by kind.",
       },
     ],
   },
