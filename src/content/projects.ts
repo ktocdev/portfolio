@@ -77,7 +77,6 @@ export type Project = {
   name: string;
   tagline: string;
   meta: string;
-  caseStudy?: boolean;
   description: string;
   status?: string;
   paras?: string[];
@@ -100,7 +99,6 @@ export const PROJECTS: Project[] = [
     name: 'Discovery Education Design Systems',
     tagline: 'Comet · Nebula · nebula-nuxt',
     meta: 'Vue · Nuxt · 2016–2026 · Case study',
-    caseStudy: true,
     logo: {
       light: '/media/projects/de-logo-full-black-1.png',
       dark: '/media/projects/de-logo-dark.png',
