@@ -314,7 +314,9 @@
     /* Every row has the same columns, so photos line up from row to row. */
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
-    gap: 1.5rem;
+    /* Rows only stack when a card is open across one: room between them for
+       the tape standing above the cards under it. */
+    gap: 3rem 1.5rem;
     align-items: start;
     padding: 0.4rem 0 0.25rem;
   }
