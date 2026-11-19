@@ -283,9 +283,9 @@ export const PROJECTS: Project[] = [
               {
                 text: 'Built MegaMenu for a Back-to-School product deliverable. Core technical feature: detects at runtime when to collapse into a linked drill-down list view, rather than relying on fixed breakpoints. Component adapts its own layout based on available space and content, rather than hiding items past a hardcoded width.',
                 link: { label: 'MegaMenu demo', href: 'https://nebula.discoveryeducation.com/mega-menu-sink' },
-                subs: [
-                  'Designed the responsive collapsed view myself: a linked drill-down list, not an accordion, that lets users tap into a category and navigate back out.',
-                ],
+              },
+              {
+                text: 'Designed the responsive collapsed view myself: a linked drill-down list, not an accordion, that lets users tap into a category and navigate back out.',
               },
               {
                 text: "Stopped the tab bar shifting when a tab is selected. A bold selected label is wider, which pushes its neighbors sideways. NebulaButton renders its label into a data-text attribute, so a hidden bold copy can share the label's grid cell and reserve the bold width ahead of time. The fix is CSS only and SSR-safe, with no measuring in the browser.",
