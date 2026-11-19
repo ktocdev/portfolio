@@ -151,8 +151,6 @@ export const PROJECTS: Project[] = [
     sections: [
       {
         title: 'Design System',
-        intro:
-          "Three generations of one company's design system: founding team for Comet (2016), builder of its successor Nebula (2020), and sole architect of nebula-nuxt (2026). Across all three, I plan a component from the whole page out before I build it.",
         leadShot: {
           main: {
             src: '/media/projects/nebula/mega-menu-desktop.webp',
@@ -188,7 +186,7 @@ export const PROJECTS: Project[] = [
         ],
         groupIntros: {
           'nebula-nuxt':
-            'nebula-nuxt is the next generation, which I proposed and built: a themed component layer that lets twelve product teams replace legacy UI incrementally while migrating to Nuxt.',
+            'The next generation, which I proposed and built: a themed component layer that lets twelve product teams replace legacy UI incrementally while migrating to Nuxt.',
           Nebula:
             "Nebula Components was the system most products ran on. Its page shell can hold a sidebar that pushes content aside or a panel that opens over it, so the same screen width can leave very different room. MegaMenu and ContainerTable were both designed from the start to fit the space they're given, not fixed breakpoints.",
         },
