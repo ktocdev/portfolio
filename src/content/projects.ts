@@ -258,7 +258,6 @@ export const PROJECTS: Project[] = [
             featured: true,
             title: 'MegaMenu',
             icon: 'components',
-            open: true,
             figure: 'Zero shift',
             figureLabel: 'tabs never move when one is selected: CSS only, SSR-safe',
             points: [
@@ -303,7 +302,6 @@ export const PROJECTS: Project[] = [
             featured: true,
             title: 'ContainerTable',
             icon: 'components',
-            open: true,
             figure: 'Cards or scroll',
             figureLabel: 'stacks in a narrow box, scrolls sideways in a wider one',
             points: [
@@ -334,7 +332,6 @@ export const PROJECTS: Project[] = [
             group: 'Nebula',
             title: 'Form Building',
             icon: 'components',
-            open: true,
             figure: 'Forms',
             figureLabel: 'built from Nebula select, checkbox and toggle components',
             points: [
@@ -356,7 +353,6 @@ export const PROJECTS: Project[] = [
             group: 'Nebula',
             title: 'Accordion',
             icon: 'components',
-            open: true,
             figure: 'Accordion',
             figureLabel: 'a new accordion menu with sections that open and close',
             points: [
