@@ -44,6 +44,12 @@ function rows(stories: Story[]) {
   return [...byGroup];
 }
 
+/** The row with its open card, if any, moved to the front. */
+function leading<T extends { index: number }>(row: T[], open: number | null) {
+  const at = row.findIndex(({ index }) => index === open);
+  return at <= 0 ? row : [row[at], ...row.slice(0, at), ...row.slice(at + 1)];
+}
+
 /**
  * A case-study section's stories as paper cards, a row per group under the
  * group's name. Hovering one lifts it toward the viewer; clicking opens it
@@ -304,7 +310,10 @@ export default function PhotoTable({ stories, intros, note, hint }: PhotoTablePr
                 if (event.target === event.currentTarget && open !== null) toggle(open);
               }}
             >
-              {row.map(({ story, index: i }) => {
+              {/* In the grid the open card leads its row, in the source as
+                  well as on screen, so the tab order matches what's seen.
+                  The stack opens each card where it lies. */}
+              {(gridded ? leading(row, open) : row).map(({ story, index: i }) => {
                 const isPinned = pinned(i);
                 const isOpen = isPinned || open === i;
                 const bodyId = `${rowId}-story-${i}`;

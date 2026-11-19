@@ -417,12 +417,6 @@
     max-width: 68ch;
   }
 
-  /* The open card always leads its row, whichever it was, and the rest sit
-     in a line under it. */
-  .card[data-open] {
-    order: -1;
-  }
-
   /* While one is open, the others step back: shorter, figure and a larger
      icon only, their labels left for when the reader comes back to them. */
   .table[data-has-open] .card:not([data-open]) {
