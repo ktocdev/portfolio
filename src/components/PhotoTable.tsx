@@ -4,7 +4,7 @@ import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { Flip } from 'gsap/Flip';
 
-import type { Story } from '@/content/projects';
+import type { GroupIntro, Story } from '@/content/projects';
 import { prefersReducedMotion } from '@/lib/motion';
 import StoryIcon from './StoryIcon';
 import styles from './PhotoTable.module.css';
@@ -13,6 +13,8 @@ gsap.registerPlugin(Flip);
 
 type PhotoTableProps = {
   stories: Story[];
+  /** A line under a group's heading, by group name. */
+  intros?: Record<string, GroupIntro>;
   note?: string;
   /** Shows how to use the cards; the first table on a page carries it. */
   hint?: boolean;
@@ -42,6 +44,12 @@ function rows(stories: Story[]) {
   return [...byGroup];
 }
 
+/** The row with its open card, if any, moved to the front. */
+function leading<T extends { index: number }>(row: T[], open: number | null) {
+  const at = row.findIndex(({ index }) => index === open);
+  return at <= 0 ? row : [row[at], ...row.slice(0, at), ...row.slice(at + 1)];
+}
+
 /**
  * A case-study section's stories as paper cards, a row per group under the
  * group's name. Hovering one lifts it toward the viewer; clicking opens it
@@ -53,7 +61,7 @@ function rows(stories: Story[]) {
  * the layout is only a presentation: keyboard and screen-reader users get the
  * same stories in source order.
  */
-export default function PhotoTable({ stories, note, hint }: PhotoTableProps) {
+export default function PhotoTable({ stories, intros, note, hint }: PhotoTableProps) {
   const wrap = useRef<HTMLDivElement>(null);
   const cards = useRef<(HTMLLIElement | null)[]>([]);
   const faces = useRef<(HTMLButtonElement | null)[]>([]);
@@ -161,41 +169,86 @@ export default function PhotoTable({ stories, note, hint }: PhotoTableProps) {
     });
   }
 
-  /* Opening one reflows the cards after it in both layouts, so every card
-     takes part in the Flip. */
+  /* Where every card stood before a toggle, and which ones change size. */
+  const before = useRef(new Map<HTMLLIElement, DOMRect>());
+  const resizing = useRef<number[]>([]);
+
   function toggle(i: number) {
-    if (motion()) flipState.current = Flip.getState(allCards(), { props: '--lift' });
+    if (motion()) {
+      const list = allCards();
+      /* Hover lift and lean off first: captured in the start state, they ride
+         through the whole move and snap away at its end. */
+      gsap.killTweensOf(list);
+      gsap.set(list, { clearProps: 'transform,--lift' });
+      flipState.current = Flip.getState(list);
+      before.current = new Map(list.map((card) => [card, card.getBoundingClientRect()]));
+      resizing.current = open === null || open === i ? [i] : [i, open];
+    }
     setOpen(open === i ? null : i);
   }
 
+  /* The photo being opened or put back changes size; its words are hidden
+     while it does, so they don't rewrap on every frame, and fade in once it
+     has its new shape. In the grid the rest of the cards don't travel (a
+     card sliding from the end of the row to under the open one reads as
+     something flying in): any that moved fade in where they now stand. In
+     the stack they slide, a short way down, as the open one makes room. */
   useLayoutEffect(() => {
     const state = flipState.current;
     flipState.current = null;
     if (!state || !motion()) return;
-    /* GSAP cached each card's transform when the state was taken; cleared, it
-       reads the end of the move from the new CSS instead of the lift or tilt. */
-    gsap.set(allCards(), { clearProps: 'transform,--lift' });
+    const list = allCards();
+    gsap.set(list, { clearProps: 'transform,--lift' });
+
+    const sized = resizing.current
+      .map((index) => cards.current[index])
+      .filter((card): card is HTMLLIElement => !!card);
+    const others = list.filter((card) => !sized.includes(card));
+    const moved = others.filter((card) => {
+      const was = before.current.get(card);
+      const now = card.getBoundingClientRect();
+      return was && (Math.abs(was.top - now.top) > 2 || Math.abs(was.left - now.left) > 2);
+    });
+
+    const duration = gridded ? 0.6 : 0.5;
+    const words = sized.flatMap((card) => [
+      ...card.querySelectorAll<HTMLElement>(`.${styles.print}, .${styles.body}`),
+    ]);
+    gsap.set(words, { autoAlpha: 0 });
+    /* Skeleton lines stand in for the words while the paper changes shape
+       (the ::after in the CSS). */
+    sized.forEach((card) => card.setAttribute('data-resizing', ''));
+    const unskeleton = () => sized.forEach((card) => card.removeAttribute('data-resizing'));
+
     const flip = Flip.from(state, {
-      duration: gridded ? 0.6 : 0.5,
+      targets: gridded ? sized : [...sized, ...moved],
+      duration,
       ease: gridded ? 'power3.inOut' : 'power2.inOut',
-      /* Width and height, not scale, so the caption is never squashed. */
+      /* Width and height, not scale, so nothing is squashed. */
       scale: false,
     });
+    const reveal = gsap.to(words, {
+      autoAlpha: 1,
+      duration: 0.3,
+      delay: duration - 0.05,
+      ease: 'power1.out',
+      clearProps: 'opacity,visibility',
+      onStart: unskeleton,
+    });
+    const settle = gridded
+      ? gsap.fromTo(
+          moved,
+          { autoAlpha: 0 },
+          { autoAlpha: 1, duration: 0.3, delay: duration - 0.05, clearProps: 'opacity,visibility' },
+        )
+      : null;
     return () => {
       flip.progress(1).kill();
+      reveal.progress(1).kill();
+      unskeleton();
+      settle?.progress(1).kill();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
-
-  /* The open photo's text fades up once it is in hand. */
-  useEffect(() => {
-    if (open === null || !motion()) return;
-    const body = cards.current[open]?.querySelector(`.${styles.body}`);
-    if (!body) return;
-    const tween = gsap.from(body, { autoAlpha: 0, y: 8, duration: 0.35, delay: 0.3, ease: 'power2.out' });
-    return () => {
-      tween.progress(1).kill();
-    };
   }, [open]);
 
   /* Escape puts the open photo back and returns focus to it. */
@@ -245,16 +298,22 @@ export default function PhotoTable({ stories, note, hint }: PhotoTableProps) {
                 {group}
               </h4>
             ) : null}
+            {group && intros?.[group] ? <RowIntro intro={intros[group]} /> : null}
 
             <ul
               role="list"
               className={styles.table}
+              /* The rest of the row steps back while one of its cards is open. */
+              data-has-open={row.some(({ index }) => index === open) || undefined}
               onPointerDown={(event) => {
                 /* A click on the bare table puts the open photo down. */
                 if (event.target === event.currentTarget && open !== null) toggle(open);
               }}
             >
-              {row.map(({ story, index: i }) => {
+              {/* In the grid the open card leads its row, in the source as
+                  well as on screen, so the tab order matches what's seen.
+                  The stack opens each card where it lies. */}
+              {(gridded ? leading(row, open) : row).map(({ story, index: i }) => {
                 const isPinned = pinned(i);
                 const isOpen = isPinned || open === i;
                 const bodyId = `${rowId}-story-${i}`;
@@ -377,7 +436,7 @@ export default function PhotoTable({ stories, note, hint }: PhotoTableProps) {
                             faces.current[i]?.focus();
                           }}
                         >
-                          Put it back
+                          Shrink box
                         </button>
                       )}
                     </div>
@@ -391,5 +450,22 @@ export default function PhotoTable({ stories, note, hint }: PhotoTableProps) {
 
       {note ? <p className={styles.note}>{note}</p> : null}
     </div>
+  );
+}
+
+function RowIntro({ intro }: { intro: GroupIntro }) {
+  return (
+    <p className={styles.rowIntro}>
+      {intro.text}
+      {intro.link ? (
+        <>
+          {' '}
+          <a href={intro.link.href} target="_blank" rel="noopener" className={styles.link}>
+            {intro.link.label} <span aria-hidden="true">↗</span>
+            <span className="visuallyHidden"> (opens in a new tab)</span>
+          </a>
+        </>
+      ) : null}
+    </p>
   );
 }

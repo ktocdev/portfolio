@@ -101,11 +101,19 @@ export type LeadShot = { main: Shot; inset?: Shot; caption: string };
  * A titled part of a case study: an optional screenshot and facts grid side
  * by side, then its stories as a table of cards.
  */
+/** A row's intro: a line of prose, optionally ending in a link. */
+export type GroupIntro = { text: string; link?: Link };
+
 export type CaseSection = {
   title: string;
+  /** A lead paragraph under the section's heading. */
+  intro?: string;
   leadShot?: LeadShot;
   facts?: Fact[];
   stories: Story[];
+  /** A line under a group's heading, keyed by the stories' `group`: what the
+   * row's cards have in common, said once rather than on every card. */
+  groupIntros?: Record<string, GroupIntro>;
   /** Small print under the cards. */
   note?: string;
 };
@@ -116,6 +124,8 @@ export type Project = {
   tagline: string;
   meta: string;
   description: string;
+  /** A line under the title: the role, or what the work spans. */
+  role?: string;
   status?: string;
   paras?: string[];
   notes?: Note[];
@@ -128,8 +138,8 @@ export type Project = {
 export const PROJECTS: Project[] = [
   {
     slug: 'discovery-education-design-systems',
-    name: 'Discovery Education Design Systems',
-    tagline: 'Comet · Nebula · nebula-nuxt',
+    name: 'Discovery Education',
+    tagline: 'Design system · Product teams',
     meta: 'Vue · Nuxt · 2016–2026 · Case study',
     logo: {
       light: '/media/projects/de-logo-full-black-1.png',
@@ -138,16 +148,9 @@ export const PROJECTS: Project[] = [
       width: 330,
       height: 77,
     },
+    role: 'Senior Software Engineer · AI-Enabled Engineering',
     description:
-      "Three generations of one company's design system: founding team for Comet (2016), builder of its successor Nebula (2020), and sole architect of nebula-nuxt (2026), a themed component layer that lets twelve product teams replace legacy UI incrementally while migrating to Nuxt.",
-    /* Shown as a case-study note, ahead of the sections, not a lead paragraph. */
-    paras: [],
-    notes: [
-      {
-        kind: 'para',
-        text: "Three generations of one company's design system: founding team for Comet (2016), builder of its successor Nebula (2020), and sole architect of nebula-nuxt (2026), a themed component layer that lets twelve product teams replace legacy UI incrementally while migrating to Nuxt.",
-      },
-    ],
+      "Over eleven years at Discovery Education I built web experiences used by 45M students and 4.5M educators across 100 countries: architect and de facto technical lead of the company's design system, and a product engineer across 12+ teams, working with product, design, backend and QA, and bringing AI-assisted development to the teams I worked with.",
     sections: [
       {
         title: 'Design System',
@@ -184,6 +187,15 @@ export const PROJECTS: Project[] = [
           { value: '12', label: 'product teams consuming the systems' },
           { value: '46', label: 'legacy components audited and planned for the nebula-nuxt migration' },
         ],
+        groupIntros: {
+          'nebula-nuxt': {
+            text: 'The next generation, which I proposed and built: a themed component layer that lets twelve product teams replace legacy UI incrementally while migrating to Nuxt.',
+          },
+          Nebula: {
+            text: "Nebula Components was the system most products ran on. I built and maintained it, and kept it running alongside nebula-nuxt: two design systems at once. Its page shell can hold a sidebar that pushes content aside or a panel that opens over it, so the same screen width can leave very different room. MegaMenu and ContainerTable were both designed from the start to fit the space they're given, not fixed breakpoints.",
+            link: { label: 'Nebula docs', href: 'https://nebula.discoveryeducation.com/' },
+          },
+        },
         stories: [
           {
             group: 'nebula-nuxt',
@@ -244,44 +256,13 @@ export const PROJECTS: Project[] = [
           {
             group: 'Nebula',
             featured: true,
-            title: 'Nebula Components',
-            icon: 'components',
-            figure: '2 systems',
-            figureLabel: 'maintained at once: Nebula and nebula-nuxt',
-            points: [
-              {
-                text: 'Builder and maintainer of Nebula Components, predecessor to nebula-nuxt. Managed both design systems simultaneously.',
-                link: { label: 'Nebula docs', href: 'https://nebula.discoveryeducation.com/' },
-              },
-            ],
-            shots: [
-              {
-                src: '/media/projects/nebula/admin-form.webp',
-                alt: 'An admin form built from Nebula components: role and department selects, permission checkboxes and account-setting toggles.',
-                width: 795,
-                height: 618,
-                caption: 'Form components: select, checkbox, toggle',
-              },
-              {
-                src: '/media/projects/nebula/accordion.webp',
-                alt: 'Nebula accordion menu with its Visual Language section open, and buttons that open and close sections.',
-                width: 930,
-                height: 663,
-                caption: 'Accordion menu',
-              },
-            ],
-          },
-          {
-            group: 'Nebula',
-            featured: true,
             title: 'MegaMenu',
             icon: 'components',
-            open: true,
-            figure: 'No breakpoints',
-            figureLabel: 'collapses by measuring its own space, not the screen width',
+            figure: 'Zero shift',
+            figureLabel: 'tabs never move when one is selected: CSS only, SSR-safe',
             points: [
               {
-                text: 'Built MegaMenu for a Back-to-School product deliverable. Core technical feature: detects at runtime when to collapse into a linked drill-down list view, rather than relying on fixed breakpoints. Component adapts its own layout based on available space and content, rather than hiding items past a hardcoded width.',
+                text: 'Built MegaMenu for a Back-to-School product deliverable. It detects at runtime when to collapse into a linked drill-down list, based on the space and content it has.',
                 link: { label: 'MegaMenu demo', href: 'https://nebula.discoveryeducation.com/mega-menu-sink' },
               },
               {
@@ -321,12 +302,11 @@ export const PROJECTS: Project[] = [
             featured: true,
             title: 'ContainerTable',
             icon: 'components',
-            open: true,
-            figure: 'Container queries',
-            figureLabel: 'not media queries: the table fits its box, not the screen',
+            figure: 'Cards or scroll',
+            figureLabel: 'stacks in a narrow box, scrolls sideways in a wider one',
             points: [
               {
-                text: 'Built NebulaContainerTable, an enhanced NebulaTable that uses container queries instead of media queries, so the table adapts to its own container size rather than the viewport — more flexible across layouts.',
+                text: 'Built NebulaContainerTable, an enhanced NebulaTable that uses container queries, so it adapts to the size of the box it sits in.',
                 link: { label: 'ContainerTable demo', href: 'https://nebula.discoveryeducation.com/container-table-sink' },
               },
             ],
@@ -344,6 +324,49 @@ export const PROJECTS: Project[] = [
                 width: 798,
                 height: 663,
                 caption: 'ContainerTable scrolling within a 516px container',
+              },
+            ],
+          },
+          /* Placeholders: the user is bringing the details for these two. */
+          {
+            group: 'Nebula',
+            title: 'Form Building',
+            icon: 'components',
+            figure: 'Forms',
+            figureLabel: 'built from Nebula select, checkbox and toggle components',
+            points: [
+              {
+                text: 'An admin form built from Nebula components: role and department selects, permission checkboxes and account-setting toggles.',
+              },
+            ],
+            shots: [
+              {
+                src: '/media/projects/nebula/admin-form.webp',
+                alt: 'An admin form built from Nebula components: role and department selects, permission checkboxes and account-setting toggles.',
+                width: 795,
+                height: 618,
+                caption: 'Form components: select, checkbox, toggle',
+              },
+            ],
+          },
+          {
+            group: 'Nebula',
+            title: 'Accordion',
+            icon: 'components',
+            figure: 'Accordion',
+            figureLabel: 'a new accordion menu with sections that open and close',
+            points: [
+              {
+                text: 'Built a new Nebula accordion menu, with buttons that open and close its sections.',
+              },
+            ],
+            shots: [
+              {
+                src: '/media/projects/nebula/accordion.webp',
+                alt: 'Nebula accordion menu with its Visual Language section open, and buttons that open and close sections.',
+                width: 930,
+                height: 663,
+                caption: 'Accordion menu',
               },
             ],
           },

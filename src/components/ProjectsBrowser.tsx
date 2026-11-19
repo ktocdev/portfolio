@@ -111,6 +111,34 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
     };
   }, [project.slug]);
 
+  /* Section headings flip in the first time each scrolls into view. GSAP
+     loads with the first one, as the page's own entrance loads it. */
+  useEffect(() => {
+    const root = detail.current;
+    if (!root || prefersReducedMotion()) return;
+    const cancels: (() => void)[] = [];
+    let live = true;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          observer.unobserve(entry.target);
+          import('@/lib/flipHeading').then(({ flipHeading }) => {
+            if (live) cancels.push(flipHeading(entry.target as HTMLElement, () => {}));
+          });
+        }
+      },
+      /* Starts just as the heading's top edge comes up into the view. */
+      { rootMargin: '0px 0px -8% 0px' },
+    );
+    root.querySelectorAll('[data-flip-on-view]').forEach((heading) => observer.observe(heading));
+    return () => {
+      live = false;
+      observer.disconnect();
+      cancels.forEach((cancel) => cancel());
+    };
+  }, [project.slug]);
+
   /* The drawer's cards are tossed in from the edge one after another, with
      the toss's ease (tossPhoto.ts), and swept back out last-first. The scrim
      and the drawer's label fade with them. Reduced motion skips straight to
@@ -394,6 +422,7 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
           className={styles.title}
           data-flip-heading=""
           data-logo={logo ? '' : undefined}
+          data-logo-only={logo && titleWords.length === 0 ? '' : undefined}
         >
           {logo ? (
             /* Both themes' artwork, one hidden by CSS, so the right one shows
@@ -419,6 +448,8 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
             </Fragment>
           ))}
         </h2>
+
+        {project.role ? <p className={styles.role}>{project.role}</p> : null}
 
         {project.slides?.length ? (
           /* Keyed so switching projects remounts: index resets, videos unmount. */
@@ -460,6 +491,30 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
 
         {prose}
 
+        {/* With several parts, links down to each, so the later ones aren't
+            lost under the first. Scripted, not plain #fragments: the hash
+            names the selected project, and a fragment would switch it. */}
+        {(project.sections?.length ?? 0) > 1 ? (
+          <nav aria-label="On this page" className={styles.jump}>
+            <span className={styles.jumpLabel}>On this page</span>
+            {project.sections?.map((section, s) => (
+              <a
+                key={section.title}
+                href={`#${project.slug}`}
+                className={styles.jumpLink}
+                onClick={(event) => {
+                  event.preventDefault();
+                  const target = document.getElementById(`${project.slug}-section-${s}`);
+                  target?.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+                  target?.focus({ preventScroll: true });
+                }}
+              >
+                {section.title} <span aria-hidden="true">↓</span>
+              </a>
+            ))}
+          </nav>
+        ) : null}
+
         {/* A case study's parts, each under its own heading: its screenshot
             and facts side by side, then its cards. Each part's children rise
             in turn on entry (data-zones). */}
@@ -472,16 +527,34 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
               aria-labelledby={headId}
               data-zones=""
             >
-              <h3 id={headId} className={styles.sectionTitle}>
-                {section.title}
+              {/* Flips in like the title as it scrolls into view; words in
+                  their own boxes for the flip. */}
+              <h3
+                id={headId}
+                className={styles.sectionTitle}
+                tabIndex={-1}
+                data-flip-on-view=""
+              >
+                {section.title.split(' ').map((word, i) => (
+                  <Fragment key={`${word}-${i}`}>
+                    {i > 0 ? ' ' : null}
+                    <span className={styles.word}>{word}</span>
+                  </Fragment>
+                ))}
               </h3>
+              {section.intro ? <p className={styles.sectionIntro}>{section.intro}</p> : null}
               {section.leadShot || section.facts?.length ? (
                 <div className={styles.lead} data-zones="">
                   {section.leadShot ? <LeadShotFigure shot={section.leadShot} /> : null}
                   {section.facts?.length ? <FactsGrid facts={section.facts} /> : null}
                 </div>
               ) : null}
-              <PhotoTable stories={section.stories} note={section.note} hint={s === 0} />
+              <PhotoTable
+                stories={section.stories}
+                intros={section.groupIntros}
+                note={section.note}
+                hint={s === 0}
+              />
             </section>
           );
         })}

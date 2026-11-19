@@ -17,15 +17,31 @@
 }
 
 /* The group's name over its row, as the case-study notes head their lists. */
+/* A third-level heading in the case study's outline (section, then group):
+   the display face at h3 size, ruled off from its cards. */
 .rowHead {
-  font-family: var(--font-mono);
+  font-family: var(--font-display);
   font-weight: 400;
-  font-size: var(--type-mono-sm);
-  letter-spacing: var(--tracking-mono-caps);
-  text-transform: uppercase;
-  color: var(--accent);
+  font-size: var(--type-h3);
+  line-height: 1.2;
+  color: var(--text);
   padding-bottom: 0.4rem;
   border-bottom: 1px solid var(--border-subtle);
+}
+
+/* What the row's cards share, said once above them. */
+.rowIntro {
+  max-width: 68ch;
+  font-size: var(--type-body-md);
+  color: var(--text);
+  text-wrap: pretty;
+}
+
+/* Under a heading or intro, the cards' tape sticks up above them: room for
+   it, so it never overlaps the words. */
+.rowHead + .table,
+.rowIntro + .table {
+  margin-top: 1.9rem;
 }
 
 .hint,
@@ -195,6 +211,58 @@
   gap: 0.35rem;
 }
 
+/* Placeholder lines while a card grows or shrinks (PhotoTable.tsx sets
+   data-resizing for the length of the move): a heading bar, then lines of
+   text, so the paper never looks empty and the real words never rewrap. */
+.card[data-resizing]::before,
+.card[data-resizing]::after {
+  --bar: color-mix(in srgb, var(--paper-ink) 9%, transparent);
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  animation: skeleton-pulse 0.9s ease-in-out infinite alternate;
+}
+
+/* The title's tape, blank: centred across the top edge, one line of the
+   title's size tall, with the same pinked ends. */
+.card[data-resizing]::before {
+  --notch: 0.3rem;
+  top: -0.85rem;
+  left: 50%;
+  translate: -50% 0;
+  width: min(12rem, 60%);
+  height: calc(var(--type-h3) * 1.15 + 0.68rem);
+  /* Opaque, as the real tape is, so it reads as one strip over the edge. */
+  background: color-mix(in srgb, var(--paper-ink) 9%, var(--paper));
+  clip-path: polygon(
+    0 0, 100% 0,
+    calc(100% - var(--notch)) 25%, 100% 50%, calc(100% - var(--notch)) 75%,
+    100% 100%, 0 100%,
+    var(--notch) 75%, 0 50%, var(--notch) 25%
+  );
+}
+
+/* Lines of text under it. */
+.card[data-resizing]::after {
+  inset: 3rem 1.4rem 1.2rem;
+  max-width: 62ch;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--bar) 0 0.7rem,
+    transparent 0.7rem 1.55rem
+  );
+}
+
+@keyframes skeleton-pulse {
+  from {
+    opacity: 0.55;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 .body {
   padding: 0.9rem 0.25rem 1rem;
   color: var(--paper-ink);
@@ -298,7 +366,9 @@
     /* Every row has the same columns, so photos line up from row to row. */
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
-    gap: 1.5rem;
+    /* Rows only stack when a card is open across one: room between them for
+       the tape standing above the cards under it. */
+    gap: 3rem 1.5rem;
     align-items: start;
     padding: 0.4rem 0 0.25rem;
   }
@@ -365,6 +435,21 @@
 
   .card[data-open] .body {
     max-width: 68ch;
+  }
+
+  /* While one is open, the others step back: shorter, figure and a larger
+     icon only, their labels left for when the reader comes back to them. */
+  .table[data-has-open] .card:not([data-open]) {
+    aspect-ratio: 1 / 0.8;
+  }
+
+  .table[data-has-open] .card:not([data-open]) .figureLabel {
+    display: none;
+  }
+
+  .table[data-has-open] .card:not([data-open]) .icon {
+    width: 2.75rem;
+    height: 2.75rem;
   }
 }
 
