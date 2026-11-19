@@ -64,79 +64,23 @@ export default function Carousel({ slides, projectName }: CarouselProps) {
   /* Info control only appears when `alt` is real copy — the generated
      fallback stays on the media itself, not surfaced here. */
   const description = slides[index].alt;
+  const onVideo = slides[index].type === 'video';
 
   return (
     /* data-own-loader: the rise in lib/motion.ts doesn't hold this at
-       opacity 0 for its images, or the spinner would load unseen. */
+       opacity 0 for its images, or the spinner would load unseen.
+       The "stack & tape" concept from /lab/carousel/: sheets peeking out
+       behind say there's more, the title rides a strip of tape. */
     <div className={styles.carousel} data-own-loader="">
-      <div
-        ref={stageRef}
-        className={styles.stage}
-        data-fit={fit ? '' : undefined}
-        style={fit ? ({ '--fit': fit } as React.CSSProperties) : undefined}
-      >
-        {slides.map((slide, i) => (
-          <div key={slide.src} className={styles.slide} data-active={i === index || undefined}>
-            {slide.type === 'video' ? (
-              <VideoSlide src={slide.src} label={describe(slide)} active={i === index} />
-            ) : (
-              <ImageSlide
-                src={slide.src}
-                srcDark={slide.srcDark}
-                alt={describe(slide)}
-                active={i === index}
-              />
-            )}
-          </div>
-        ))}
-
-        {description ? (
-          <>
-            {/* No aria-label: the visible word "Info" is the accessible name
-                (2.5.3). State lives in aria-expanded instead. */}
-            <button
-              type="button"
-              onClick={() => setShowInfo((open) => !open)}
-              aria-expanded={showInfo}
-              className={styles.infoButton}
-            >
-              Info
-            </button>
-            {/* Hidden from assistive tech: it's the same string the media's
-                alt already carries, so screen readers have heard it already. */}
-            <p aria-hidden="true" className={styles.info} data-open={showInfo || undefined}>
-              {description}
-            </p>
-          </>
-        ) : null}
-      </div>
-
-      <div className={styles.controls}>
-        <div role="group" aria-label="Carousel controls" className={styles.buttons}>
-          <button
-            type="button"
-            onClick={() => step(-1)}
-            aria-label="Previous slide"
-            className={styles.stepButton}
-          >
-            <span aria-hidden="true">←</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => step(1)}
-            aria-label="Next slide"
-            className={styles.stepButton}
-          >
-            <span aria-hidden="true">→</span>
-          </button>
-        </div>
-
+      <span aria-hidden="true" className={styles.sheet} />
+      <span aria-hidden="true" className={styles.sheet} />
+      <div className={styles.front}>
         {/* role="status" announces each step, since the label/counter change alone reaches no screen reader. */}
-        <div role="status" className={styles.status}>
+        <div role="status" className={styles.tape}>
           <span className={styles.slideLabel}>{slides[index].label}</span>
           <span className={styles.counter}>
             <span aria-hidden="true">
-              {index + 1} / {total}
+              {index + 1}/{total}
             </span>
             {/* The slash is read as punctuation, or skipped. Same fact, said. */}
             <span className="visuallyHidden">
@@ -144,6 +88,74 @@ export default function Carousel({ slides, projectName }: CarouselProps) {
             </span>
           </span>
         </div>
+
+        <div
+          ref={stageRef}
+          className={styles.stage}
+          data-fit={fit ? '' : undefined}
+          style={fit ? ({ '--fit': fit } as React.CSSProperties) : undefined}
+        >
+          {slides.map((slide, i) => (
+            <div key={slide.src} className={styles.slide} data-active={i === index || undefined}>
+              {slide.type === 'video' ? (
+                <VideoSlide src={slide.src} label={describe(slide)} active={i === index} />
+              ) : (
+                <ImageSlide
+                  src={slide.src}
+                  srcDark={slide.srcDark}
+                  alt={describe(slide)}
+                  active={i === index}
+                />
+              )}
+            </div>
+          ))}
+        </div>
+
+        <div role="group" aria-label="Carousel controls" className={styles.bar}>
+          <button
+            type="button"
+            onClick={() => step(-1)}
+            /* Holds the visible "Prev" (2.5.3), so a spoken "click Prev" finds it. */
+            aria-label="Prev slide"
+            className={styles.stepButton}
+          >
+            <span aria-hidden="true">← Prev</span>
+          </button>
+          {description ? (
+            /* No aria-label: the visible words are the accessible name
+               (2.5.3). State lives in aria-expanded instead. */
+            <button
+              type="button"
+              onClick={() => setShowInfo((open) => !open)}
+              aria-expanded={showInfo}
+              className={styles.noteButton}
+            >
+              {showInfo ? 'Unpin note' : 'Pin a note'}
+            </button>
+          ) : null}
+          <button
+            type="button"
+            onClick={() => step(1)}
+            aria-label="Next slide"
+            className={styles.stepButton}
+          >
+            <span aria-hidden="true">Next →</span>
+          </button>
+        </div>
+
+        {/* Hidden from assistive tech: it's the same string the media's alt
+            already carries, so screen readers have heard it already. Lifted
+            higher over a video so its control bar stays reachable. */}
+        {description ? (
+          <p
+            aria-hidden="true"
+            className={styles.note}
+            data-open={showInfo || undefined}
+            data-over-video={onVideo || undefined}
+          >
+            {description}
+          </p>
+        ) : null}
       </div>
     </div>
   );

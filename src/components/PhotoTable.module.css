@@ -103,6 +103,11 @@
   min-height: 0;
 }
 
+/* Pinned open for good: nothing to click. */
+.card[data-pinned] .face {
+  cursor: auto;
+}
+
 .face:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 4px;
@@ -234,6 +239,14 @@
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+}
+
+.shot[data-wide] {
+  column-span: all;
+}
+
+.shot[data-phone] {
+  max-width: 13rem;
 }
 
 .shot img {

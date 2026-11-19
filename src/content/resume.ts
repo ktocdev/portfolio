@@ -115,7 +115,7 @@ export const EXPERIENCE: Entry[] = [
           "Built the Video Onboarding Modal with a new performance- and accessibility-optimized video player for teachers' first back-to-school login, advising on compression for slow networks and adding engagement tracking for the analytics team; reused two years running.",
           'Monitored JavaScript errors in New Relic while on call for biweekly migrations, troubleshooting production issues across a multi-team platform; delivered feature-flag projects that rendered UI from backend flag data while keeping tracking metrics intact.',
           'Embedded with the AI team to build the frontend of a human-in-the-loop review dashboard; wrote the REST integration spec with the backend engineer (data shapes, PATCH vs. POST semantics, schema trees) so both sides could build in parallel.',
-          'Shipped MegaMenu to production in 3 days for a hard Back-to-School deadline and designed its mobile experience; it detects at runtime when to collapse into a drill-down list instead of relying on fixed breakpoints.',
+          'Shipped MegaMenu for a hard Back-to-School deadline and designed its mobile experience; it detects at runtime when to collapse into a drill-down list instead of relying on fixed breakpoints.',
           'Contributed to 12+ product teams, including Techbook, Search, Assessments, Atlas (in-house CMS), Admin Tools, and User Onboarding, working in two-week Agile sprints with product, design, backend, and QA.',
         ],
       },
