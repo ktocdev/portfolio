@@ -209,6 +209,10 @@ export default function PhotoTable({ stories, intros, note, hint }: PhotoTablePr
       ...card.querySelectorAll<HTMLElement>(`.${styles.print}, .${styles.body}`),
     ]);
     gsap.set(words, { autoAlpha: 0 });
+    /* Skeleton lines stand in for the words while the paper changes shape
+       (the ::after in the CSS). */
+    sized.forEach((card) => card.setAttribute('data-resizing', ''));
+    const unskeleton = () => sized.forEach((card) => card.removeAttribute('data-resizing'));
 
     const flip = Flip.from(state, {
       targets: gridded ? sized : [...sized, ...moved],
@@ -223,6 +227,7 @@ export default function PhotoTable({ stories, intros, note, hint }: PhotoTablePr
       delay: duration - 0.05,
       ease: 'power1.out',
       clearProps: 'opacity,visibility',
+      onStart: unskeleton,
     });
     const settle = gridded
       ? gsap.fromTo(
@@ -234,6 +239,7 @@ export default function PhotoTable({ stories, intros, note, hint }: PhotoTablePr
     return () => {
       flip.progress(1).kill();
       reveal.progress(1).kill();
+      unskeleton();
       settle?.progress(1).kill();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -291,6 +297,8 @@ export default function PhotoTable({ stories, intros, note, hint }: PhotoTablePr
             <ul
               role="list"
               className={styles.table}
+              /* The rest of the row steps back while one of its cards is open. */
+              data-has-open={row.some(({ index }) => index === open) || undefined}
               onPointerDown={(event) => {
                 /* A click on the bare table puts the open photo down. */
                 if (event.target === event.currentTarget && open !== null) toggle(open);
