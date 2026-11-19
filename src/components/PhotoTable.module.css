@@ -245,6 +245,10 @@
   column-span: all;
 }
 
+.shot[data-phone] {
+  max-width: 13rem;
+}
+
 .shot img {
   display: block;
   width: 100%;

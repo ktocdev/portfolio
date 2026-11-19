@@ -348,6 +348,7 @@ export default function PhotoTable({ stories, note, hint }: PhotoTableProps) {
                               key={shot.src}
                               className={styles.shot}
                               data-wide={shot.wide || undefined}
+                              data-phone={shot.phone || undefined}
                             >
                               {/* Full size in a new tab, for the small print. */}
                               <a href={shot.src} target="_blank" rel="noopener">

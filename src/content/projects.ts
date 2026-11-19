@@ -45,6 +45,9 @@ export type Shot = {
   /** In a story's shots: across all the columns, for a wide, short picture
    * that would be too small to read in one. */
   wide?: boolean;
+  /** In a story's shots: a phone screen, kept near phone size so it reads in
+   * proportion to the desktop shots rather than filling a column. */
+  phone?: boolean;
 };
 
 export type Story = {
@@ -309,6 +312,7 @@ export const PROJECTS: Project[] = [
                 width: 420,
                 height: 720,
                 caption: 'Collapsed into the drill-down list',
+                phone: true,
               },
             ],
           },
