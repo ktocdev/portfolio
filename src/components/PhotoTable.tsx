@@ -57,10 +57,10 @@ export default function PhotoTable({ stories, note, hint }: PhotoTableProps) {
   const wrap = useRef<HTMLDivElement>(null);
   const cards = useRef<(HTMLLIElement | null)[]>([]);
   const faces = useRef<(HTMLButtonElement | null)[]>([]);
-  const [open, setOpen] = useState<number | null>(() => {
-    const index = stories.findIndex((story) => story.open);
-    return index === -1 ? null : index;
-  });
+  /* The one photo picked up by a click. Pinned stories (`open` in the
+     content) aren't part of it: they lie open for good, with no control. */
+  const [open, setOpen] = useState<number | null>(null);
+  const pinned = (i: number) => !!stories[i]?.open;
   const [gridded, setGridded] = useState(false);
   /* The last photo touched stays on top, as a real one would. */
   const topZ = useRef(stories.length);
@@ -109,7 +109,7 @@ export default function PhotoTable({ stories, note, hint }: PhotoTableProps) {
 
   /** Lifts photo i toward the viewer. */
   function lift(i: number) {
-    if (!gridded || i === open || !motion()) return;
+    if (!gridded || i === open || pinned(i) || !motion()) return;
     const card = cards.current[i];
     if (!card) return;
     topZ.current += 1;
@@ -128,7 +128,7 @@ export default function PhotoTable({ stories, note, hint }: PhotoTableProps) {
 
   /** Back down flat in its cell. */
   function drop(i: number) {
-    if (!gridded || i === open || !motion()) return;
+    if (!gridded || i === open || pinned(i) || !motion()) return;
     const card = cards.current[i];
     if (!card) return;
     gsap.to(card, {
@@ -145,7 +145,7 @@ export default function PhotoTable({ stories, note, hint }: PhotoTableProps) {
 
   /** While held, the photo leans after the pointer, as if under a fingertip. */
   function lean(i: number, event: React.PointerEvent) {
-    if (!gridded || i === open || event.pointerType !== 'mouse' || !motion()) return;
+    if (!gridded || i === open || pinned(i) || event.pointerType !== 'mouse' || !motion()) return;
     const card = cards.current[i];
     if (!card) return;
     const box = card.getBoundingClientRect();
@@ -255,8 +255,21 @@ export default function PhotoTable({ stories, note, hint }: PhotoTableProps) {
               }}
             >
               {row.map(({ story, index: i }) => {
-                const isOpen = open === i;
+                const isPinned = pinned(i);
+                const isOpen = isPinned || open === i;
                 const bodyId = `${rowId}-story-${i}`;
+                /* The title on a strip of tape across the card's top edge;
+                   the figure and its label below. */
+                const print = (
+                  <span className={styles.print}>
+                    <span className={styles.title}>{story.title}</span>
+                    {story.icon ? <StoryIcon name={story.icon} className={styles.icon} /> : null}
+                    <span className={styles.stat}>
+                      <span className={styles.figure}>{story.figure}</span>
+                      <span className={styles.figureLabel}>{story.figureLabel}</span>
+                    </span>
+                  </span>
+                );
 
                 return (
                   <li
@@ -266,6 +279,7 @@ export default function PhotoTable({ stories, note, hint }: PhotoTableProps) {
                     }}
                     className={styles.card}
                     data-open={isOpen || undefined}
+                    data-pinned={isPinned || undefined}
                     data-featured={story.featured || undefined}
                     style={
                       {
@@ -277,29 +291,26 @@ export default function PhotoTable({ stories, note, hint }: PhotoTableProps) {
                     onPointerMove={(event) => lean(i, event)}
                     onPointerLeave={() => drop(i)}
                   >
-                    <button
-                      type="button"
-                      ref={(el) => {
-                        faces.current[i] = el;
-                      }}
-                      className={styles.face}
-                      aria-expanded={isOpen}
-                      aria-controls={bodyId}
-                      onClick={() => toggle(i)}
-                      onFocus={() => lift(i)}
-                      onBlur={() => drop(i)}
-                    >
-                      {/* The title on a strip of tape across the card's top
-                          edge; the figure and its label below. */}
-                      <span className={styles.print}>
-                        <span className={styles.title}>{story.title}</span>
-                        {story.icon ? <StoryIcon name={story.icon} className={styles.icon} /> : null}
-                        <span className={styles.stat}>
-                          <span className={styles.figure}>{story.figure}</span>
-                          <span className={styles.figureLabel}>{story.figureLabel}</span>
-                        </span>
-                      </span>
-                    </button>
+                    {/* A pinned photo has nothing to toggle, so its face is
+                        plain paper rather than a button that does nothing. */}
+                    {isPinned ? (
+                      <div className={styles.face}>{print}</div>
+                    ) : (
+                      <button
+                        type="button"
+                        ref={(el) => {
+                          faces.current[i] = el;
+                        }}
+                        className={styles.face}
+                        aria-expanded={isOpen}
+                        aria-controls={bodyId}
+                        onClick={() => toggle(i)}
+                        onFocus={() => lift(i)}
+                        onBlur={() => drop(i)}
+                      >
+                        {print}
+                      </button>
+                    )}
 
                     <div id={bodyId} className={styles.body} hidden={!isOpen}>
                       <ul className={styles.points}>
@@ -333,7 +344,11 @@ export default function PhotoTable({ stories, note, hint }: PhotoTableProps) {
                       {story.shots?.length ? (
                         <div className={styles.shots}>
                           {story.shots.map((shot) => (
-                            <figure key={shot.src} className={styles.shot}>
+                            <figure
+                              key={shot.src}
+                              className={styles.shot}
+                              data-wide={shot.wide || undefined}
+                            >
                               {/* Full size in a new tab, for the small print. */}
                               <a href={shot.src} target="_blank" rel="noopener">
                                 <img
@@ -350,18 +365,20 @@ export default function PhotoTable({ stories, note, hint }: PhotoTableProps) {
                           ))}
                         </div>
                       ) : null}
-                      <button
-                        type="button"
-                        className={styles.putBack}
-                        onClick={() => {
-                          toggle(i);
-                          /* This button is about to be hidden; focus goes back
-                             to the photo it closed. */
-                          faces.current[i]?.focus();
-                        }}
-                      >
-                        Put it back
-                      </button>
+                      {isPinned ? null : (
+                        <button
+                          type="button"
+                          className={styles.putBack}
+                          onClick={() => {
+                            toggle(i);
+                            /* This button is about to be hidden; focus goes
+                               back to the photo it closed. */
+                            faces.current[i]?.focus();
+                          }}
+                        >
+                          Put it back
+                        </button>
+                      )}
                     </div>
                   </li>
                 );

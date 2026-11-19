@@ -42,6 +42,9 @@ export type Shot = {
   width: number;
   height: number;
   caption?: string;
+  /** In a story's shots: across all the columns, for a wide, short picture
+   * that would be too small to read in one. */
+  wide?: boolean;
 };
 
 export type Story = {
@@ -58,7 +61,8 @@ export type Story = {
   points: StoryPoint[];
   /** Shown under the points once the photo is opened. */
   shots?: Shot[];
-  /** Starts opened, so its text and screenshots show without a click. */
+  /** Pinned open: its text and screenshots always show, with no control to
+   * put it back. */
   open?: boolean;
 };
 
@@ -239,22 +243,84 @@ export const PROJECTS: Project[] = [
             featured: true,
             title: 'Nebula Components',
             icon: 'components',
-            open: true,
-            figure: '3 days',
-            figureLabel: 'to build MegaMenu, and 3 more to match its redesign',
+            figure: '2 systems',
+            figureLabel: 'maintained at once: Nebula and nebula-nuxt',
             points: [
               {
                 text: 'Builder and maintainer of Nebula Components, predecessor to nebula-nuxt. Managed both design systems simultaneously.',
                 link: { label: 'Nebula docs', href: 'https://nebula.discoveryeducation.com/' },
               },
+            ],
+            shots: [
+              {
+                src: '/media/projects/nebula/admin-form.webp',
+                alt: 'An admin form built from Nebula components: role and department selects, permission checkboxes and account-setting toggles.',
+                width: 795,
+                height: 618,
+                caption: 'Form components: select, checkbox, toggle',
+              },
+              {
+                src: '/media/projects/nebula/accordion.webp',
+                alt: 'Nebula accordion menu with its Visual Language section open, and buttons that open and close sections.',
+                width: 930,
+                height: 663,
+                caption: 'Accordion menu',
+              },
+            ],
+          },
+          {
+            group: 'Nebula',
+            featured: true,
+            title: 'MegaMenu',
+            icon: 'components',
+            open: true,
+            figure: 'No breakpoints',
+            figureLabel: 'collapses by measuring its own space, not the screen width',
+            points: [
               {
                 text: 'Built MegaMenu for a Back-to-School product deliverable. Core technical feature: detects at runtime when to collapse into a linked drill-down list view, rather than relying on fixed breakpoints. Component adapts its own layout based on available space and content, rather than hiding items past a hardcoded width.',
                 link: { label: 'MegaMenu demo', href: 'https://nebula.discoveryeducation.com/mega-menu-sink' },
                 subs: [
                   'Designed the responsive collapsed view myself: a linked drill-down list, not an accordion, that lets users tap into a category and navigate back out.',
-                  'Initial build: 3 days. Product then underwent significant redesign; updated MegaMenu delivered in 3 more days, matching new design.',
                 ],
               },
+              {
+                text: "Stopped the tab bar shifting when a tab is selected. A bold selected label is wider, which pushes its neighbors sideways. NebulaButton renders its label into a data-text attribute, so a hidden bold copy can share the label's grid cell and reserve the bold width ahead of time. The fix is CSS only and SSR-safe, with no measuring in the browser.",
+              },
+              {
+                text: "Added a slot to replace any single panel's default categories, CTA and image layout with custom content, while every other panel keeps the standard layout.",
+              },
+              {
+                text: 'Panel links mark the current page with aria-current="page" and can open in a new tab.',
+              },
+            ],
+            shots: [
+              {
+                src: '/media/projects/nebula/mega-menu-desktop.webp',
+                alt: 'Nebula MegaMenu on desktop: the top navigation with one section open, a gradient image panel beside three grade-band columns of links.',
+                width: 1600,
+                height: 525,
+                caption: 'Desktop: one section open',
+                wide: true,
+              },
+              {
+                src: '/media/projects/nebula/mega-menu-mobile.webp',
+                alt: 'The same MegaMenu on a phone, collapsed into a drill-down list: the section list with one selected, and its links below.',
+                width: 420,
+                height: 720,
+                caption: 'Collapsed into the drill-down list',
+              },
+            ],
+          },
+          {
+            group: 'Nebula',
+            featured: true,
+            title: 'ContainerTable',
+            icon: 'components',
+            open: true,
+            figure: 'Container queries',
+            figureLabel: 'not media queries: the table fits its box, not the screen',
+            points: [
               {
                 text: 'Built NebulaContainerTable, an enhanced NebulaTable that uses container queries instead of media queries, so the table adapts to its own container size rather than the viewport — more flexible across layouts.',
                 link: { label: 'ContainerTable demo', href: 'https://nebula.discoveryeducation.com/container-table-sink' },
@@ -274,20 +340,6 @@ export const PROJECTS: Project[] = [
                 width: 798,
                 height: 663,
                 caption: 'ContainerTable scrolling within a 516px container',
-              },
-              {
-                src: '/media/projects/nebula/admin-form.webp',
-                alt: 'An admin form built from Nebula components: role and department selects, permission checkboxes and account-setting toggles.',
-                width: 795,
-                height: 618,
-                caption: 'Form components: select, checkbox, toggle',
-              },
-              {
-                src: '/media/projects/nebula/accordion.webp',
-                alt: 'Nebula accordion menu with its Visual Language section open, and buttons that open and close sections.',
-                width: 930,
-                height: 663,
-                caption: 'Accordion menu',
               },
             ],
           },
