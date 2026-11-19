@@ -163,41 +163,80 @@ export default function PhotoTable({ stories, intros, note, hint }: PhotoTablePr
     });
   }
 
-  /* Opening one reflows the cards after it in both layouts, so every card
-     takes part in the Flip. */
+  /* Where every card stood before a toggle, and which ones change size. */
+  const before = useRef(new Map<HTMLLIElement, DOMRect>());
+  const resizing = useRef<number[]>([]);
+
   function toggle(i: number) {
-    if (motion()) flipState.current = Flip.getState(allCards(), { props: '--lift' });
+    if (motion()) {
+      const list = allCards();
+      /* Hover lift and lean off first: captured in the start state, they ride
+         through the whole move and snap away at its end. */
+      gsap.killTweensOf(list);
+      gsap.set(list, { clearProps: 'transform,--lift' });
+      flipState.current = Flip.getState(list);
+      before.current = new Map(list.map((card) => [card, card.getBoundingClientRect()]));
+      resizing.current = open === null || open === i ? [i] : [i, open];
+    }
     setOpen(open === i ? null : i);
   }
 
+  /* The photo being opened or put back changes size; its words are hidden
+     while it does, so they don't rewrap on every frame, and fade in once it
+     has its new shape. In the grid the rest of the cards don't travel (a
+     card sliding from the end of the row to under the open one reads as
+     something flying in): any that moved fade in where they now stand. In
+     the stack they slide, a short way down, as the open one makes room. */
   useLayoutEffect(() => {
     const state = flipState.current;
     flipState.current = null;
     if (!state || !motion()) return;
-    /* GSAP cached each card's transform when the state was taken; cleared, it
-       reads the end of the move from the new CSS instead of the lift or tilt. */
-    gsap.set(allCards(), { clearProps: 'transform,--lift' });
+    const list = allCards();
+    gsap.set(list, { clearProps: 'transform,--lift' });
+
+    const sized = resizing.current
+      .map((index) => cards.current[index])
+      .filter((card): card is HTMLLIElement => !!card);
+    const others = list.filter((card) => !sized.includes(card));
+    const moved = others.filter((card) => {
+      const was = before.current.get(card);
+      const now = card.getBoundingClientRect();
+      return was && (Math.abs(was.top - now.top) > 2 || Math.abs(was.left - now.left) > 2);
+    });
+
+    const duration = gridded ? 0.6 : 0.5;
+    const words = sized.flatMap((card) => [
+      ...card.querySelectorAll<HTMLElement>(`.${styles.print}, .${styles.body}`),
+    ]);
+    gsap.set(words, { autoAlpha: 0 });
+
     const flip = Flip.from(state, {
-      duration: gridded ? 0.6 : 0.5,
+      targets: gridded ? sized : [...sized, ...moved],
+      duration,
       ease: gridded ? 'power3.inOut' : 'power2.inOut',
-      /* Width and height, not scale, so the caption is never squashed. */
+      /* Width and height, not scale, so nothing is squashed. */
       scale: false,
     });
+    const reveal = gsap.to(words, {
+      autoAlpha: 1,
+      duration: 0.3,
+      delay: duration - 0.05,
+      ease: 'power1.out',
+      clearProps: 'opacity,visibility',
+    });
+    const settle = gridded
+      ? gsap.fromTo(
+          moved,
+          { autoAlpha: 0 },
+          { autoAlpha: 1, duration: 0.3, delay: duration - 0.05, clearProps: 'opacity,visibility' },
+        )
+      : null;
     return () => {
       flip.progress(1).kill();
+      reveal.progress(1).kill();
+      settle?.progress(1).kill();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
-
-  /* The open photo's text fades up once it is in hand. */
-  useEffect(() => {
-    if (open === null || !motion()) return;
-    const body = cards.current[open]?.querySelector(`.${styles.body}`);
-    if (!body) return;
-    const tween = gsap.from(body, { autoAlpha: 0, y: 8, duration: 0.35, delay: 0.3, ease: 'power2.out' });
-    return () => {
-      tween.progress(1).kill();
-    };
   }, [open]);
 
   /* Escape puts the open photo back and returns focus to it. */
