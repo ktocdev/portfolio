@@ -13,6 +13,8 @@ gsap.registerPlugin(Flip);
 
 type PhotoTableProps = {
   stories: Story[];
+  /** A line under a group's heading, by group name. */
+  intros?: Record<string, string>;
   note?: string;
   /** Shows how to use the cards; the first table on a page carries it. */
   hint?: boolean;
@@ -53,7 +55,7 @@ function rows(stories: Story[]) {
  * the layout is only a presentation: keyboard and screen-reader users get the
  * same stories in source order.
  */
-export default function PhotoTable({ stories, note, hint }: PhotoTableProps) {
+export default function PhotoTable({ stories, intros, note, hint }: PhotoTableProps) {
   const wrap = useRef<HTMLDivElement>(null);
   const cards = useRef<(HTMLLIElement | null)[]>([]);
   const faces = useRef<(HTMLButtonElement | null)[]>([]);
@@ -245,6 +247,7 @@ export default function PhotoTable({ stories, note, hint }: PhotoTableProps) {
                 {group}
               </h4>
             ) : null}
+            {group && intros?.[group] ? <p className={styles.rowIntro}>{intros[group]}</p> : null}
 
             <ul
               role="list"

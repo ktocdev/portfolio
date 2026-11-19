@@ -481,7 +481,12 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
                   {section.facts?.length ? <FactsGrid facts={section.facts} /> : null}
                 </div>
               ) : null}
-              <PhotoTable stories={section.stories} note={section.note} hint={s === 0} />
+              <PhotoTable
+                stories={section.stories}
+                intros={section.groupIntros}
+                note={section.note}
+                hint={s === 0}
+              />
             </section>
           );
         })}

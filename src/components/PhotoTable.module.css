@@ -28,6 +28,16 @@
   border-bottom: 1px solid var(--border-subtle);
 }
 
+/* What the row's cards share, said once above them. */
+.rowIntro {
+  max-width: 68ch;
+  /* Clear of the tape that sticks up above the first card. */
+  margin-bottom: 0.9rem;
+  font-size: var(--type-body-md);
+  color: var(--text);
+  text-wrap: pretty;
+}
+
 .hint,
 .note {
   font-family: var(--font-mono);

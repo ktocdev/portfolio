@@ -106,6 +106,9 @@ export type CaseSection = {
   leadShot?: LeadShot;
   facts?: Fact[];
   stories: Story[];
+  /** A line under a group's heading, keyed by the stories' `group`: what the
+   * row's cards have in common, said once rather than on every card. */
+  groupIntros?: Record<string, string>;
   /** Small print under the cards. */
   note?: string;
 };
@@ -184,6 +187,10 @@ export const PROJECTS: Project[] = [
           { value: '12', label: 'product teams consuming the systems' },
           { value: '46', label: 'legacy components audited and planned for the nebula-nuxt migration' },
         ],
+        groupIntros: {
+          Nebula:
+            "I plan a component from the whole page out before I build it. Nebula's page shell can hold a sidebar that pushes content aside or a panel that opens over it, so the same screen width can leave very different room. MegaMenu and ContainerTable were both designed from the start to fit the space they're given, not fixed breakpoints.",
+        },
         stories: [
           {
             group: 'nebula-nuxt',
@@ -277,11 +284,11 @@ export const PROJECTS: Project[] = [
             title: 'MegaMenu',
             icon: 'components',
             open: true,
-            figure: 'No breakpoints',
-            figureLabel: 'collapses by measuring its own space, not the screen width',
+            figure: 'Zero shift',
+            figureLabel: 'tabs never move when one is selected: CSS only, SSR-safe',
             points: [
               {
-                text: 'Built MegaMenu for a Back-to-School product deliverable. Core technical feature: detects at runtime when to collapse into a linked drill-down list view, rather than relying on fixed breakpoints. Component adapts its own layout based on available space and content, rather than hiding items past a hardcoded width.',
+                text: 'Built MegaMenu for a Back-to-School product deliverable. It detects at runtime when to collapse into a linked drill-down list, based on the space and content it has.',
                 link: { label: 'MegaMenu demo', href: 'https://nebula.discoveryeducation.com/mega-menu-sink' },
               },
               {
@@ -322,11 +329,11 @@ export const PROJECTS: Project[] = [
             title: 'ContainerTable',
             icon: 'components',
             open: true,
-            figure: 'Container queries',
-            figureLabel: 'not media queries: the table fits its box, not the screen',
+            figure: 'Cards or scroll',
+            figureLabel: 'stacks in a narrow box, scrolls sideways in a wider one',
             points: [
               {
-                text: 'Built NebulaContainerTable, an enhanced NebulaTable that uses container queries instead of media queries, so the table adapts to its own container size rather than the viewport — more flexible across layouts.',
+                text: 'Built NebulaContainerTable, an enhanced NebulaTable that uses container queries, so it adapts to the size of the box it sits in.',
                 link: { label: 'ContainerTable demo', href: 'https://nebula.discoveryeducation.com/container-table-sink' },
               },
             ],
