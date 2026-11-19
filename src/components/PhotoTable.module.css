@@ -214,23 +214,43 @@
 /* Placeholder lines while a card grows or shrinks (PhotoTable.tsx sets
    data-resizing for the length of the move): a heading bar, then lines of
    text, so the paper never looks empty and the real words never rewrap. */
+.card[data-resizing]::before,
 .card[data-resizing]::after {
   --bar: color-mix(in srgb, var(--paper-ink) 9%, transparent);
   content: '';
   position: absolute;
-  inset: 2.75rem 1.4rem 1.2rem;
-  max-width: 62ch;
-  overflow: hidden;
   pointer-events: none;
-  background:
-    linear-gradient(var(--bar) 0 0) 0 0 / min(14rem, 45%) 1.5rem no-repeat,
-    repeating-linear-gradient(
-        to bottom,
-        var(--bar) 0 0.7rem,
-        transparent 0.7rem 1.55rem
-      )
-      0 2.6rem / 100% calc(100% - 2.6rem) no-repeat;
   animation: skeleton-pulse 0.9s ease-in-out infinite alternate;
+}
+
+/* The title's tape, blank: centred across the top edge, one line of the
+   title's size tall, with the same pinked ends. */
+.card[data-resizing]::before {
+  --notch: 0.3rem;
+  top: -0.85rem;
+  left: 50%;
+  translate: -50% 0;
+  width: min(12rem, 60%);
+  height: calc(var(--type-h3) * 1.15 + 0.68rem);
+  /* Opaque, as the real tape is, so it reads as one strip over the edge. */
+  background: color-mix(in srgb, var(--paper-ink) 9%, var(--paper));
+  clip-path: polygon(
+    0 0, 100% 0,
+    calc(100% - var(--notch)) 25%, 100% 50%, calc(100% - var(--notch)) 75%,
+    100% 100%, 0 100%,
+    var(--notch) 75%, 0 50%, var(--notch) 25%
+  );
+}
+
+/* Lines of text under it. */
+.card[data-resizing]::after {
+  inset: 3rem 1.4rem 1.2rem;
+  max-width: 62ch;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--bar) 0 0.7rem,
+    transparent 0.7rem 1.55rem
+  );
 }
 
 @keyframes skeleton-pulse {
