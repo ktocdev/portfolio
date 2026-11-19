@@ -17,13 +17,14 @@
 }
 
 /* The group's name over its row, as the case-study notes head their lists. */
+/* A third-level heading in the case study's outline (section, then group):
+   the display face at h3 size, ruled off from its cards. */
 .rowHead {
-  font-family: var(--font-mono);
+  font-family: var(--font-display);
   font-weight: 400;
-  font-size: var(--type-mono-sm);
-  letter-spacing: var(--tracking-mono-caps);
-  text-transform: uppercase;
-  color: var(--accent);
+  font-size: var(--type-h3);
+  line-height: 1.2;
+  color: var(--text);
   padding-bottom: 0.4rem;
   border-bottom: 1px solid var(--border-subtle);
 }
@@ -31,11 +32,16 @@
 /* What the row's cards share, said once above them. */
 .rowIntro {
   max-width: 68ch;
-  /* Clear of the tape that sticks up above the first card. */
-  margin-bottom: 0.9rem;
   font-size: var(--type-body-md);
   color: var(--text);
   text-wrap: pretty;
+}
+
+/* Under a heading or intro, the cards' tape sticks up above them: room for
+   it, so it never overlaps the words. */
+.rowHead + .table,
+.rowIntro + .table {
+  margin-top: 1.9rem;
 }
 
 .hint,

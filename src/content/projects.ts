@@ -103,6 +103,8 @@ export type LeadShot = { main: Shot; inset?: Shot; caption: string };
  */
 export type CaseSection = {
   title: string;
+  /** A lead paragraph under the section's heading. */
+  intro?: string;
   leadShot?: LeadShot;
   facts?: Fact[];
   stories: Story[];
@@ -119,6 +121,8 @@ export type Project = {
   tagline: string;
   meta: string;
   description: string;
+  /** A line under the title: the role, or what the work spans. */
+  role?: string;
   status?: string;
   paras?: string[];
   notes?: Note[];
@@ -131,8 +135,8 @@ export type Project = {
 export const PROJECTS: Project[] = [
   {
     slug: 'discovery-education-design-systems',
-    name: 'Discovery Education Design Systems',
-    tagline: 'Comet · Nebula · nebula-nuxt',
+    name: 'Discovery Education',
+    tagline: 'Design system · Product teams',
     meta: 'Vue · Nuxt · 2016–2026 · Case study',
     logo: {
       light: '/media/projects/de-logo-full-black-1.png',
@@ -141,19 +145,14 @@ export const PROJECTS: Project[] = [
       width: 330,
       height: 77,
     },
+    role: 'Senior Software Engineer · AI-Enabled Engineering',
     description:
-      "Three generations of one company's design system: founding team for Comet (2016), builder of its successor Nebula (2020), and sole architect of nebula-nuxt (2026), a themed component layer that lets twelve product teams replace legacy UI incrementally while migrating to Nuxt.",
-    /* Shown as a case-study note, ahead of the sections, not a lead paragraph. */
-    paras: [],
-    notes: [
-      {
-        kind: 'para',
-        text: "Three generations of one company's design system: founding team for Comet (2016), builder of its successor Nebula (2020), and sole architect of nebula-nuxt (2026), a themed component layer that lets twelve product teams replace legacy UI incrementally while migrating to Nuxt.",
-      },
-    ],
+      "Over eleven years at Discovery Education I built web experiences used by 45M students and 4.5M educators across 100 countries: architect and de facto technical lead of the company's design system, and a product engineer across 12+ teams, working with product, design, backend and QA, and bringing AI-assisted development to the teams I worked with.",
     sections: [
       {
         title: 'Design System',
+        intro:
+          "Three generations of one company's design system: founding team for Comet (2016), builder of its successor Nebula (2020), and sole architect of nebula-nuxt (2026). Nebula Components was the system most products ran on. nebula-nuxt is the next generation, which I proposed and built: a themed component layer that lets twelve product teams replace legacy UI incrementally while migrating to Nuxt.",
         leadShot: {
           main: {
             src: '/media/projects/nebula/mega-menu-desktop.webp',
@@ -253,28 +252,13 @@ export const PROJECTS: Project[] = [
             featured: true,
             title: 'Nebula Components',
             icon: 'components',
+            open: true,
             figure: '2 systems',
             figureLabel: 'maintained at once: Nebula and nebula-nuxt',
             points: [
               {
                 text: 'Builder and maintainer of Nebula Components, predecessor to nebula-nuxt. Managed both design systems simultaneously.',
                 link: { label: 'Nebula docs', href: 'https://nebula.discoveryeducation.com/' },
-              },
-            ],
-            shots: [
-              {
-                src: '/media/projects/nebula/admin-form.webp',
-                alt: 'An admin form built from Nebula components: role and department selects, permission checkboxes and account-setting toggles.',
-                width: 795,
-                height: 618,
-                caption: 'Form components: select, checkbox, toggle',
-              },
-              {
-                src: '/media/projects/nebula/accordion.webp',
-                alt: 'Nebula accordion menu with its Visual Language section open, and buttons that open and close sections.',
-                width: 930,
-                height: 663,
-                caption: 'Accordion menu',
               },
             ],
           },
@@ -351,6 +335,51 @@ export const PROJECTS: Project[] = [
                 width: 798,
                 height: 663,
                 caption: 'ContainerTable scrolling within a 516px container',
+              },
+            ],
+          },
+          /* Placeholders: the user is bringing the details for these two. */
+          {
+            group: 'Nebula',
+            title: 'Form Building',
+            icon: 'components',
+            open: true,
+            figure: 'Forms',
+            figureLabel: 'built from Nebula select, checkbox and toggle components',
+            points: [
+              {
+                text: 'An admin form built from Nebula components: role and department selects, permission checkboxes and account-setting toggles.',
+              },
+            ],
+            shots: [
+              {
+                src: '/media/projects/nebula/admin-form.webp',
+                alt: 'An admin form built from Nebula components: role and department selects, permission checkboxes and account-setting toggles.',
+                width: 795,
+                height: 618,
+                caption: 'Form components: select, checkbox, toggle',
+              },
+            ],
+          },
+          {
+            group: 'Nebula',
+            title: 'Accordion',
+            icon: 'components',
+            open: true,
+            figure: 'Accordion',
+            figureLabel: 'a new accordion menu with sections that open and close',
+            points: [
+              {
+                text: 'Built a new Nebula accordion menu, with buttons that open and close its sections.',
+              },
+            ],
+            shots: [
+              {
+                src: '/media/projects/nebula/accordion.webp',
+                alt: 'Nebula accordion menu with its Visual Language section open, and buttons that open and close sections.',
+                width: 930,
+                height: 663,
+                caption: 'Accordion menu',
               },
             ],
           },
