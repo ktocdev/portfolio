@@ -101,6 +101,9 @@ export type LeadShot = { main: Shot; inset?: Shot; caption: string };
  * A titled part of a case study: an optional screenshot and facts grid side
  * by side, then its stories as a table of cards.
  */
+/** A row's intro: a line of prose, optionally ending in a link. */
+export type GroupIntro = { text: string; link?: Link };
+
 export type CaseSection = {
   title: string;
   /** A lead paragraph under the section's heading. */
@@ -110,7 +113,7 @@ export type CaseSection = {
   stories: Story[];
   /** A line under a group's heading, keyed by the stories' `group`: what the
    * row's cards have in common, said once rather than on every card. */
-  groupIntros?: Record<string, string>;
+  groupIntros?: Record<string, GroupIntro>;
   /** Small print under the cards. */
   note?: string;
 };
@@ -185,10 +188,13 @@ export const PROJECTS: Project[] = [
           { value: '46', label: 'legacy components audited and planned for the nebula-nuxt migration' },
         ],
         groupIntros: {
-          'nebula-nuxt':
-            'The next generation, which I proposed and built: a themed component layer that lets twelve product teams replace legacy UI incrementally while migrating to Nuxt.',
-          Nebula:
-            "Nebula Components was the system most products ran on. Its page shell can hold a sidebar that pushes content aside or a panel that opens over it, so the same screen width can leave very different room. MegaMenu and ContainerTable were both designed from the start to fit the space they're given, not fixed breakpoints.",
+          'nebula-nuxt': {
+            text: 'The next generation, which I proposed and built: a themed component layer that lets twelve product teams replace legacy UI incrementally while migrating to Nuxt.',
+          },
+          Nebula: {
+            text: "Nebula Components was the system most products ran on. I built and maintained it, and kept it running alongside nebula-nuxt: two design systems at once. Its page shell can hold a sidebar that pushes content aside or a panel that opens over it, so the same screen width can leave very different room. MegaMenu and ContainerTable were both designed from the start to fit the space they're given, not fixed breakpoints.",
+            link: { label: 'Nebula docs', href: 'https://nebula.discoveryeducation.com/' },
+          },
         },
         stories: [
           {
@@ -244,21 +250,6 @@ export const PROJECTS: Project[] = [
               },
               {
                 text: 'Created a live Theme Editor in the nebula-nuxt doc site that switches between the default Nuxt UI theme, legacy Nebula, and another unique theme, with editing granular down to color scale, spacing, font, and border radii and other theme tokens; the theme persists across all component pages until changed or reset.',
-              },
-            ],
-          },
-          {
-            group: 'Nebula',
-            featured: true,
-            title: 'Nebula Components',
-            icon: 'components',
-            open: true,
-            figure: '2 systems',
-            figureLabel: 'maintained at once: Nebula and nebula-nuxt',
-            points: [
-              {
-                text: 'Builder and maintainer of Nebula Components, predecessor to nebula-nuxt. Managed both design systems simultaneously.',
-                link: { label: 'Nebula docs', href: 'https://nebula.discoveryeducation.com/' },
               },
             ],
           },

@@ -4,7 +4,7 @@ import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { Flip } from 'gsap/Flip';
 
-import type { Story } from '@/content/projects';
+import type { GroupIntro, Story } from '@/content/projects';
 import { prefersReducedMotion } from '@/lib/motion';
 import StoryIcon from './StoryIcon';
 import styles from './PhotoTable.module.css';
@@ -14,7 +14,7 @@ gsap.registerPlugin(Flip);
 type PhotoTableProps = {
   stories: Story[];
   /** A line under a group's heading, by group name. */
-  intros?: Record<string, string>;
+  intros?: Record<string, GroupIntro>;
   note?: string;
   /** Shows how to use the cards; the first table on a page carries it. */
   hint?: boolean;
@@ -247,7 +247,7 @@ export default function PhotoTable({ stories, intros, note, hint }: PhotoTablePr
                 {group}
               </h4>
             ) : null}
-            {group && intros?.[group] ? <p className={styles.rowIntro}>{intros[group]}</p> : null}
+            {group && intros?.[group] ? <RowIntro intro={intros[group]} /> : null}
 
             <ul
               role="list"
@@ -394,5 +394,22 @@ export default function PhotoTable({ stories, intros, note, hint }: PhotoTablePr
 
       {note ? <p className={styles.note}>{note}</p> : null}
     </div>
+  );
+}
+
+function RowIntro({ intro }: { intro: GroupIntro }) {
+  return (
+    <p className={styles.rowIntro}>
+      {intro.text}
+      {intro.link ? (
+        <>
+          {' '}
+          <a href={intro.link.href} target="_blank" rel="noopener" className={styles.link}>
+            {intro.link.label} <span aria-hidden="true">↗</span>
+            <span className="visuallyHidden"> (opens in a new tab)</span>
+          </a>
+        </>
+      ) : null}
+    </p>
   );
 }
