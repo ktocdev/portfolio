@@ -380,7 +380,7 @@ export default function PhotoTable({ stories, intros, note, hint }: PhotoTablePr
                             faces.current[i]?.focus();
                           }}
                         >
-                          Put it back
+                          Shrink box
                         </button>
                       )}
                     </div>
