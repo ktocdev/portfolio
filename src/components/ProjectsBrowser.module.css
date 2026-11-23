@@ -541,8 +541,13 @@
   gap: 0.75rem;
   margin-top: 0.5rem;
   padding: clamp(1rem, 2.5vw, 1.5rem) clamp(1rem, 3vw, 2rem);
+  /* A thick dashed edge whose gaps are paper rather than see-through: the
+     paper layer runs under the border, the shade stops at the padding. */
+  border: 4px dashed #a5a8f5;
   border-radius: 6px;
-  background: var(--surface);
+  background:
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    var(--paper) border-box;
 }
 
 /* On the shaded panel the rules need the stronger border to show, and sit
