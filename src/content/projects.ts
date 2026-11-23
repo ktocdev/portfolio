@@ -162,7 +162,7 @@ export const PROJECTS: Project[] = [
       {
         title: 'Design System',
         specs: [
-          { label: 'Frameworks', items: ['Vue 2 (Nebula)', 'Vue 3 and Nuxt (nebula-nuxt)', 'Nuxt UI', 'Nuxt Content', 'TypeScript'] },
+          { label: 'Frameworks', items: ['Vue 2, then Vue 3 (Nebula)', 'Nuxt (nebula-nuxt)', 'Nuxt UI', 'Nuxt Content', 'TypeScript'] },
           { label: 'Styling', items: ['Stylus', 'BEM', 'Tailwind CSS', 'Semantic design tokens', 'Container queries'] },
           { label: 'Build & docs', items: ['Vite', 'Storybook', 'Docker'] },
           { label: 'AI', items: ['Claude skills', 'Claude Design'] },
