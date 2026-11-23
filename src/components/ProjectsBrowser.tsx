@@ -24,7 +24,9 @@ const DISMISS_MS = 280;
    stack (the row's 250ms transition) before the stack leaves. */
 const PICKED_MS = 220;
 
+const LINKS_TITLE = 'Links';
 const SPECS_TITLE = 'Technical Specs';
+const ABOUT_TITLE = 'About';
 
 export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
   /* Selection is local UI state mirrored into the URL hash (/projects/#gps3),
@@ -77,19 +79,61 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
       </div>
     ) : null;
 
-  /* With several parts, or a story with specs under it, links down to each so
-     the later ones aren't lost. Scripted, not plain #fragments: the hash names
-     the selected project, and a fragment would switch it. */
+  const linksList = project.links.length ? (
+    <div className={styles.links}>
+      {project.links.map((link, i) => {
+        /* describedby, not link text: a badge in the link text would be
+           underlined and clickable, and screen readers strip links from
+           their surrounding context (e.g. tabbing, links list). */
+        const badgeId = link.badge ? `${project.slug}-link-${i}-badge` : undefined;
+
+        return (
+          <span key={link.href} className={styles.linkItem}>
+            <a
+              href={link.href}
+              target="_blank"
+              rel="noopener"
+              aria-describedby={badgeId}
+              className={styles.link}
+            >
+              {link.label} <span aria-hidden="true">↗</span>
+              <span className="visuallyHidden"> (opens in a new tab)</span>
+            </a>
+            {link.badge ? (
+              <span id={badgeId} className={styles.linkBadge}>
+                {link.badge}
+              </span>
+            ) : null}
+          </span>
+        );
+      })}
+    </div>
+  ) : null;
+
+  /* Projects with specs are laid out in titled parts (links, specs, about)
+     rather than links and story straight under the carousel. With several
+     parts, links down to each so the later ones aren't lost. Scripted, not
+     plain #fragments: the hash names the selected project, and a fragment
+     would switch it. */
+  const parted = Boolean(project.specs?.length);
+  const linksId = `${project.slug}-links`;
   const specsId = `${project.slug}-specs`;
+  const aboutId = `${project.slug}-about`;
   const jumpTargets = [
+    ...(parted
+      ? [
+          ...(project.links.length ? [{ id: linksId, title: LINKS_TITLE }] : []),
+          { id: specsId, title: SPECS_TITLE },
+          ...(prose ? [{ id: aboutId, title: ABOUT_TITLE }] : []),
+        ]
+      : []),
     ...(project.sections ?? []).map((section, s) => ({
       id: `${project.slug}-section-${s}`,
       title: section.title,
     })),
-    ...(project.specs?.length ? [{ id: specsId, title: SPECS_TITLE }] : []),
   ];
   const jump =
-    jumpTargets.length > 1 || project.specs?.length ? (
+    jumpTargets.length > 1 ? (
       <nav aria-label="On this page" className={styles.jump}>
         <span className={styles.jumpLabel}>On this page</span>
         {jumpTargets.map((target) => (
@@ -493,119 +537,84 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
 
         {project.status ? <p className={styles.status}>{project.status}</p> : null}
 
-        {project.links.length ? (
-          <div className={styles.links}>
-            {project.links.map((link, i) => {
-              /* describedby, not link text: a badge in the link text would be
-                 underlined and clickable, and screen readers strip links from
-                 their surrounding context (e.g. tabbing, links list). */
-              const badgeId = link.badge ? `${project.slug}-link-${i}-badge` : undefined;
-
-              return (
-                <span key={link.href} className={styles.linkItem}>
-                  <a
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener"
-                    aria-describedby={badgeId}
-                    className={styles.link}
-                  >
-                    {link.label} <span aria-hidden="true">↗</span>
-                    <span className="visuallyHidden"> (opens in a new tab)</span>
-                  </a>
-                  {link.badge ? (
-                    <span id={badgeId} className={styles.linkBadge}>
-                      {link.badge}
-                    </span>
-                  ) : null}
-                </span>
-              );
-            })}
-          </div>
-        ) : null}
-
-        {/* A long story comes before the parts it links to, so the links
-            lead it rather than waiting under it. */}
-        {project.paras?.length ? jump : null}
-        {prose}
-        {project.paras?.length ? null : jump}
+        {parted ? (
+          <>
+            {jump}
+            {linksList ? (
+              <Part key={linksId} id={linksId} title={LINKS_TITLE}>
+                {linksList}
+              </Part>
+            ) : null}
+            <Part key={specsId} id={specsId} title={SPECS_TITLE}>
+              <dl className={styles.specs}>
+                {project.specs?.map((group) => (
+                  <div key={group.label} className={styles.specGroup}>
+                    <dt className={styles.specLabel}>{group.label}</dt>
+                    <dd>
+                      <ul role="list" className={styles.specItems}>
+                        {group.items.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </Part>
+            {prose ? (
+              <Part key={aboutId} id={aboutId} title={ABOUT_TITLE}>
+                {prose}
+              </Part>
+            ) : null}
+          </>
+        ) : (
+          <>
+            {linksList}
+            {prose}
+            {jump}
+          </>
+        )}
 
         {/* A case study's parts, each under its own heading: its screenshot
             and facts side by side, then its cards. Each part's children rise
             in turn on entry (data-zones). */}
-        {project.sections?.map((section, s) => {
-          const headId = `${project.slug}-section-${s}`;
-          return (
-            <section
-              key={`${project.slug}-${section.title}`}
-              className={styles.caseSection}
-              aria-labelledby={headId}
-              data-zones=""
-            >
-              {/* Flips in like the title as it scrolls into view; words in
-                  their own boxes for the flip. */}
-              <h3
-                id={headId}
-                className={styles.sectionTitle}
-                tabIndex={-1}
-                data-flip-on-view=""
-              >
-                {section.title.split(' ').map((word, i) => (
-                  <Fragment key={`${word}-${i}`}>
-                    {i > 0 ? ' ' : null}
-                    <span className={styles.word}>{word}</span>
-                  </Fragment>
-                ))}
-              </h3>
-              {section.intro ? <p className={styles.sectionIntro}>{section.intro}</p> : null}
-              {section.leadShot || section.facts?.length ? (
-                <div className={styles.lead} data-zones="">
-                  {section.leadShot ? <LeadShotFigure shot={section.leadShot} /> : null}
-                  {section.facts?.length ? <FactsGrid facts={section.facts} /> : null}
-                </div>
-              ) : null}
-              <PhotoTable
-                stories={section.stories}
-                intros={section.groupIntros}
-                note={section.note}
-                hint={s === 0}
-              />
-            </section>
-          );
-        })}
-
-        {project.specs?.length ? (
-          <section
-            key={`${project.slug}-specs`}
-            className={styles.caseSection}
-            aria-labelledby={specsId}
-            data-zones=""
-          >
-            <h3 id={specsId} className={styles.sectionTitle} tabIndex={-1} data-flip-on-view="">
-              {SPECS_TITLE.split(' ').map((word, i) => (
-                <Fragment key={`${word}-${i}`}>
-                  {i > 0 ? ' ' : null}
-                  <span className={styles.word}>{word}</span>
-                </Fragment>
-              ))}
-            </h3>
-            <dl className={styles.specs}>
-              {project.specs.map((group) => (
-                <div key={group.label} className={styles.specGroup}>
-                  <dt className={styles.specLabel}>{group.label}</dt>
-                  <dd>
-                    <ul role="list" className={styles.specItems}>
-                      {group.items.map((item) => (
-                        <li key={item}>{item}</li>
-                      ))}
-                    </ul>
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </section>
-        ) : null}
+        {project.sections?.map((section, s) => (
+          <Part key={`${project.slug}-${section.title}`} id={`${project.slug}-section-${s}`} title={section.title}>
+            {section.intro ? <p className={styles.sectionIntro}>{section.intro}</p> : null}
+            {section.leadShot || section.facts?.length ? (
+              <div className={styles.lead} data-zones="">
+                {section.leadShot ? <LeadShotFigure shot={section.leadShot} /> : null}
+                {section.facts?.length ? <FactsGrid facts={section.facts} /> : null}
+              </div>
+            ) : null}
+            <PhotoTable
+              stories={section.stories}
+              intros={section.groupIntros}
+              note={section.note}
+              hint={s === 0}
+            />
+          </Part>
+        ))}
       </article>
+    </section>
+  );
+}
+
+/** One titled part of the page. Its heading flips in like the title as it
+ * scrolls into view (words in their own boxes for the flip), and is where a
+ * jump link lands. */
+function Part({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
+  return (
+    <section className={styles.caseSection} aria-labelledby={id} data-zones="">
+      <h3 id={id} className={styles.sectionTitle} tabIndex={-1} data-flip-on-view="">
+        {title.split(' ').map((word, i) => (
+          <Fragment key={`${word}-${i}`}>
+            {i > 0 ? ' ' : null}
+            <span className={styles.word}>{word}</span>
+          </Fragment>
+        ))}
+      </h3>
+      {children}
     </section>
   );
 }
