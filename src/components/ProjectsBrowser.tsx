@@ -24,6 +24,8 @@ const DISMISS_MS = 280;
    stack (the row's 250ms transition) before the stack leaves. */
 const PICKED_MS = 220;
 
+const SPECS_TITLE = 'Technical Specs';
+
 export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
   /* Selection is local UI state mirrored into the URL hash (/projects/#gps3),
      so a project can be linked to directly and back/forward restore it. The
@@ -73,6 +75,39 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
           </ul>
         ) : null}
       </div>
+    ) : null;
+
+  /* With several parts, or a story with specs under it, links down to each so
+     the later ones aren't lost. Scripted, not plain #fragments: the hash names
+     the selected project, and a fragment would switch it. */
+  const specsId = `${project.slug}-specs`;
+  const jumpTargets = [
+    ...(project.sections ?? []).map((section, s) => ({
+      id: `${project.slug}-section-${s}`,
+      title: section.title,
+    })),
+    ...(project.specs?.length ? [{ id: specsId, title: SPECS_TITLE }] : []),
+  ];
+  const jump =
+    jumpTargets.length > 1 || project.specs?.length ? (
+      <nav aria-label="On this page" className={styles.jump}>
+        <span className={styles.jumpLabel}>On this page</span>
+        {jumpTargets.map((target) => (
+          <a
+            key={target.id}
+            href={`#${project.slug}`}
+            className={styles.jumpLink}
+            onClick={(event) => {
+              event.preventDefault();
+              const heading = document.getElementById(target.id);
+              heading?.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+              heading?.focus({ preventScroll: true });
+            }}
+          >
+            {target.title} <span aria-hidden="true">↓</span>
+          </a>
+        ))}
+      </nav>
     ) : null;
 
   useEffect(() => {
@@ -489,31 +524,11 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
           </div>
         ) : null}
 
+        {/* A long story comes before the parts it links to, so the links
+            lead it rather than waiting under it. */}
+        {project.paras?.length ? jump : null}
         {prose}
-
-        {/* With several parts, links down to each, so the later ones aren't
-            lost under the first. Scripted, not plain #fragments: the hash
-            names the selected project, and a fragment would switch it. */}
-        {(project.sections?.length ?? 0) > 1 ? (
-          <nav aria-label="On this page" className={styles.jump}>
-            <span className={styles.jumpLabel}>On this page</span>
-            {project.sections?.map((section, s) => (
-              <a
-                key={section.title}
-                href={`#${project.slug}`}
-                className={styles.jumpLink}
-                onClick={(event) => {
-                  event.preventDefault();
-                  const target = document.getElementById(`${project.slug}-section-${s}`);
-                  target?.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
-                  target?.focus({ preventScroll: true });
-                }}
-              >
-                {section.title} <span aria-hidden="true">↓</span>
-              </a>
-            ))}
-          </nav>
-        ) : null}
+        {project.paras?.length ? null : jump}
 
         {/* A case study's parts, each under its own heading: its screenshot
             and facts side by side, then its cards. Each part's children rise
@@ -558,6 +573,38 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
             </section>
           );
         })}
+
+        {project.specs?.length ? (
+          <section
+            key={`${project.slug}-specs`}
+            className={styles.caseSection}
+            aria-labelledby={specsId}
+            data-zones=""
+          >
+            <h3 id={specsId} className={styles.sectionTitle} tabIndex={-1} data-flip-on-view="">
+              {SPECS_TITLE.split(' ').map((word, i) => (
+                <Fragment key={`${word}-${i}`}>
+                  {i > 0 ? ' ' : null}
+                  <span className={styles.word}>{word}</span>
+                </Fragment>
+              ))}
+            </h3>
+            <dl className={styles.specs}>
+              {project.specs.map((group) => (
+                <div key={group.label} className={styles.specGroup}>
+                  <dt className={styles.specLabel}>{group.label}</dt>
+                  <dd>
+                    <ul role="list" className={styles.specItems}>
+                      {group.items.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        ) : null}
       </article>
     </section>
   );

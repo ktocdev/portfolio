@@ -499,6 +499,46 @@
   text-wrap: pretty;
 }
 
+/* --- Technical specs ----------------------------------------------------- */
+/* Label column and items side by side; stacked on a phone. */
+.specs {
+  display: flex;
+  flex-direction: column;
+  max-width: 62ch;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.specGroup {
+  display: grid;
+  grid-template-columns: minmax(7.5rem, 10rem) 1fr;
+  gap: 0.25rem 1.25rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.specLabel {
+  padding-top: 0.2em;
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-sm);
+  letter-spacing: var(--tracking-mono-caps);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.specItems {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: var(--type-body-md);
+  line-height: 1.45;
+}
+
+@media (max-width: 34rem) {
+  .specGroup {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Focused by a jump link only to move the reading position; no ring. */
 .sectionTitle:focus {
   outline: none;

@@ -118,6 +118,9 @@ export type CaseSection = {
   note?: string;
 };
 
+/** One row of a project's Technical Specs: a layer of the build and what it's made with. */
+export type SpecGroup = { label: string; items: string[] };
+
 export type Project = {
   slug: string;
   name: string;
@@ -130,6 +133,8 @@ export type Project = {
   paras?: string[];
   notes?: Note[];
   sections?: CaseSection[];
+  /** The Technical Specs section at the foot of the page. */
+  specs?: SpecGroup[];
   links: Link[];
   slides?: Slide[];
   logo?: Logo;
@@ -535,6 +540,27 @@ export const PROJECTS: Project[] = [
       { label: 'Try the demo', href: '/main-character/demo/' },
       { label: 'GitHub', href: 'https://github.com/ktocdev/main-character' },
     ],
+    specs: [
+      { label: 'Backend', items: ['Python 3.12–3.14', 'FastAPI', 'Uvicorn', 'Streaming responses'] },
+      {
+        label: 'AI',
+        items: ['Claude API (Anthropic Python SDK)', 'Claude Opus 5.5 companion', 'Prompt caching'],
+      },
+      {
+        label: 'Retrieval',
+        items: [
+          'ChromaDB (local vector store)',
+          'fastembed with snowflake-arctic-embed-s, run locally',
+          'BM25 keyword search, merged with semantic search',
+        ],
+      },
+      {
+        label: 'Frontend',
+        items: ['HTML', 'CSS', 'Vanilla JavaScript', 'No build step or frontend dependencies'],
+      },
+      { label: 'Design', items: ['Figma', 'Custom plugin syncing design tokens and components'] },
+      { label: 'Testing', items: ['pytest'] },
+    ],
     slides: [
       {
         label: 'Write',
@@ -605,6 +631,25 @@ export const PROJECTS: Project[] = [
       { label: 'GitHub', href: 'https://github.com/ktocdev/gps3' },
       { label: 'Play', href: 'https://ktocdev.github.io/gps3/' },
       { label: 'Design System', href: 'https://ktocdev.github.io/gps2-design/' },
+    ],
+    specs: [
+      {
+        label: 'Frontend',
+        items: ['Vue 3 (Composition API)', 'TypeScript', 'Vue Router'],
+      },
+      { label: 'State', items: ['Pinia', 'pinia-plugin-persistedstate'] },
+      { label: '3D', items: ['THREE.js', 'Procedural meshes built from THREE.js geometry'] },
+      {
+        label: 'UI',
+        items: [
+          'CSS custom properties (design tokens)',
+          'Mobile-first, with logical properties',
+          'Floating UI',
+          'Iconify (Flowbite icons)',
+        ],
+      },
+      { label: 'Design', items: ['Claude Design', 'Standalone token-based design system'] },
+      { label: 'Build & hosting', items: ['Vite', 'vue-tsc', 'GitHub Pages'] },
     ],
     slides: [
       {
