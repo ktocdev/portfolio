@@ -120,7 +120,7 @@ export type CaseSection = {
   specs?: SpecGroup[];
 };
 
-/** One row of a project's Technical Specs: a layer of the build and what it's made with. */
+/** One row of a project's Tech Stack: a layer of the build and what it's made with. */
 export type SpecGroup = { label: string; items: string[] };
 
 export type Project = {
@@ -135,7 +135,7 @@ export type Project = {
   paras?: string[];
   notes?: Note[];
   sections?: CaseSection[];
-  /** The Technical Specs section at the foot of the page. */
+  /** The Tech Stack section at the foot of the page. */
   specs?: SpecGroup[];
   /** A label leading the links down to the page's parts, e.g. what the parts are. */
   jumpLabel?: string;

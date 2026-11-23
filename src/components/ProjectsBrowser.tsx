@@ -25,7 +25,7 @@ const DISMISS_MS = 280;
 const PICKED_MS = 220;
 
 const LINKS_TITLE = 'Links';
-const SPECS_TITLE = 'Technical Specs';
+const SPECS_TITLE = 'Tech Stack';
 const ABOUT_TITLE = 'About';
 
 export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {

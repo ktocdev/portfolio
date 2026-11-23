@@ -499,7 +499,7 @@
   text-wrap: pretty;
 }
 
-/* --- Technical specs ----------------------------------------------------- */
+/* --- Tech stack ---------------------------------------------------------- */
 /* Label column and items side by side; stacked on a phone. */
 .specs {
   display: flex;
