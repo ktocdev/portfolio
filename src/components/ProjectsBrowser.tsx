@@ -551,7 +551,7 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
               </div>
             </Part>
             {prose ? (
-              <Part key={aboutId} id={aboutId} title={ABOUT_TITLE}>
+              <Part key={aboutId} id={aboutId} title={ABOUT_TITLE} ruled={Boolean(linksList)}>
                 {prose}
               </Part>
             ) : null}
@@ -602,9 +602,24 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
 /** One titled part of the page. Its heading flips in like the title as it
  * scrolls into view (words in their own boxes for the flip), and is where a
  * jump link lands. */
-function Part({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
+function Part({
+  id,
+  title,
+  ruled,
+  children,
+}: {
+  id: string;
+  title: string;
+  /** Closes with a rule, setting the part after it apart. */
+  ruled?: boolean;
+  children: React.ReactNode;
+}) {
   return (
-    <section className={styles.caseSection} aria-labelledby={id} data-zones="">
+    <section
+      className={ruled ? `${styles.caseSection} ${styles.ruled}` : styles.caseSection}
+      aria-labelledby={id}
+      data-zones=""
+    >
       <h3 id={id} className={styles.sectionTitle} tabIndex={-1} data-flip-on-view="">
         {title.split(' ').map((word, i) => (
           <Fragment key={`${word}-${i}`}>

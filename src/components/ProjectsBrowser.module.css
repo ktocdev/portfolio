@@ -584,8 +584,10 @@
 }
 
 /* A part that ends in its specs closes with a rule, so the next part's
-   heading starts clearly fresh. The last part has no next one. */
-.caseSection:has(> .sectionSpecs):not(:last-of-type) {
+   heading starts clearly fresh. The last part has no next one. A part can
+   also ask for one (ruled), like the About before a project's Links. */
+.caseSection:has(> .sectionSpecs):not(:last-of-type),
+.ruled {
   padding-bottom: clamp(1.5rem, 4vh, 2.5rem);
   border-bottom: 1px solid var(--border);
 }
