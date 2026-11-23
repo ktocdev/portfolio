@@ -534,6 +534,42 @@
   flex-direction: column;
   gap: 0.75rem;
   margin-top: 0.5rem;
+  padding: clamp(1rem, 2.5vw, 1.5rem) clamp(1rem, 3vw, 2rem);
+  border-radius: 6px;
+  background: var(--surface);
+}
+
+/* On the shaded panel the rules need the stronger border to show, and sit
+   above each group rather than below, so the panel's own edge ends it. */
+.sectionSpecs .specs {
+  border-top: 0;
+}
+
+.sectionSpecs .specGroup {
+  border-top: 1px solid var(--border);
+  border-bottom: 0;
+}
+
+.sectionSpecs .specGroup:last-child {
+  padding-bottom: 0;
+}
+
+/* The panel spans the column, so wide screens set its groups in two
+   columns rather than leaving its right half empty. */
+@media (min-width: 60rem) {
+  .sectionSpecs .specs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 2.5rem;
+    max-width: none;
+  }
+}
+
+/* A part that ends in its specs closes with a rule, so the next part's
+   heading starts clearly fresh. */
+.caseSection:has(> .sectionSpecs) {
+  padding-bottom: clamp(1.5rem, 4vh, 2.5rem);
+  border-bottom: 1px solid var(--border);
 }
 
 .specsSubtitle {
