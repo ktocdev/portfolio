@@ -367,9 +367,9 @@ export const PROJECTS: Project[] = [
               },
               {
                 src: '/media/projects/nebula/details-nested.webp',
-                alt: 'Nested slim NebulaDetails rendered from one object: a course overview open to a unit, a lesson and an exercise, four levels deep, with buttons that open all, close all, or open a chosen level.',
-                width: 760,
-                height: 710,
+                alt: 'Nested slim NebulaDetails rendered from one object, open four levels deep: a course overview, a unit on HTML basics, a lesson on HTML tags, and an exercise with links to start it or view the solution.',
+                width: 852,
+                height: 1748,
                 caption: 'Nested slim details, rendered from an object prop',
               },
             ],
