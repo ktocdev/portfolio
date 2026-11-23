@@ -116,7 +116,12 @@ export type CaseSection = {
   groupIntros?: Record<string, GroupIntro>;
   /** Small print under the cards. */
   note?: string;
+  /** What this part of the work was built with, under the cards. */
+  specs?: SpecGroup[];
 };
+
+/** One row of a project's Technical Specs: a layer of the build and what it's made with. */
+export type SpecGroup = { label: string; items: string[] };
 
 export type Project = {
   slug: string;
@@ -130,6 +135,10 @@ export type Project = {
   paras?: string[];
   notes?: Note[];
   sections?: CaseSection[];
+  /** The Technical Specs section at the foot of the page. */
+  specs?: SpecGroup[];
+  /** A label leading the links down to the page's parts, e.g. what the parts are. */
+  jumpLabel?: string;
   links: Link[];
   slides?: Slide[];
   logo?: Logo;
@@ -149,11 +158,18 @@ export const PROJECTS: Project[] = [
       height: 77,
     },
     role: 'Senior Software Engineer · AI-Enabled Engineering',
+    jumpLabel: 'My roles at DE',
     description:
-      "Over eleven years at Discovery Education I built web experiences used by 45M students and 4.5M educators across 100 countries: architect and de facto technical lead of the company's design system, and a product engineer across 12+ teams, working with product, design, backend and QA, and bringing AI-assisted development to the teams I worked with.",
+      "Over eleven years at Discovery Education I built web experiences used by 45M students and 4.5M educators across 100 countries: architect and technical lead of the company's design system, and a product engineer across 12+ teams, working with product, design, backend and QA, and bringing AI-assisted development to the teams I worked with.",
     sections: [
       {
         title: 'Design System',
+        specs: [
+          { label: 'Frameworks', items: ['Vue 2, then Vue 3 (Nebula)', 'Nuxt (nebula-nuxt)', 'Nuxt UI', 'Nuxt Content', 'TypeScript'] },
+          { label: 'Styling', items: ['Stylus', 'BEM', 'Tailwind CSS', 'Semantic design tokens', 'Container queries'] },
+          { label: 'Build & docs', items: ['Vite', 'Storybook', 'Docker', 'GitHub Actions (CI)'] },
+          { label: 'AI', items: ['Claude skills', 'Claude Design'] },
+        ],
         leadShot: {
           main: {
             src: '/media/projects/nebula/mega-menu-desktop.webp',
@@ -399,6 +415,11 @@ export const PROJECTS: Project[] = [
       },
       {
         title: 'Product Team',
+        specs: [
+          { label: 'Frameworks', items: ['Vue 2', 'Vue 3', 'Nuxt', 'TypeScript'] },
+          { label: 'Integration', items: ['REST APIs', 'Feature flags', 'Engagement tracking'] },
+          { label: 'Operations', items: ['Python', 'New Relic'] },
+        ],
         stories: [
           {
             featured: true,
@@ -452,6 +473,10 @@ export const PROJECTS: Project[] = [
       },
       {
         title: 'Behind the scenes',
+        specs: [
+          { label: 'Testing & release', items: ['Vitest', 'Playwright', 'GitHub Actions', 'Versioned workspace packages'] },
+          { label: 'AI', items: ['Claude Code', 'Claude skills & slash commands', 'GitHub Copilot', 'Microsoft Copilot'] },
+        ],
         stories: [
           {
             title: 'Platform Ownership',
@@ -535,6 +560,27 @@ export const PROJECTS: Project[] = [
       { label: 'Try the demo', href: '/main-character/demo/' },
       { label: 'GitHub', href: 'https://github.com/ktocdev/main-character' },
     ],
+    specs: [
+      { label: 'Backend', items: ['Python 3.12–3.14', 'FastAPI', 'Uvicorn', 'Streaming responses'] },
+      {
+        label: 'AI',
+        items: ['Claude API (Anthropic Python SDK)', 'Claude Opus 5.5 companion', 'Prompt caching'],
+      },
+      {
+        label: 'Retrieval',
+        items: [
+          'ChromaDB (local vector store)',
+          'fastembed with snowflake-arctic-embed-s, run locally',
+          'BM25 keyword search, merged with semantic search',
+        ],
+      },
+      {
+        label: 'Frontend',
+        items: ['HTML', 'CSS', 'Vanilla JavaScript', 'No build step or frontend dependencies'],
+      },
+      { label: 'Design', items: ['Figma', 'Custom plugin syncing design tokens and components'] },
+      { label: 'Testing', items: ['pytest'] },
+    ],
     slides: [
       {
         label: 'Write',
@@ -605,6 +651,25 @@ export const PROJECTS: Project[] = [
       { label: 'GitHub', href: 'https://github.com/ktocdev/gps3' },
       { label: 'Play', href: 'https://ktocdev.github.io/gps3/' },
       { label: 'Design System', href: 'https://ktocdev.github.io/gps2-design/' },
+    ],
+    specs: [
+      {
+        label: 'Frontend',
+        items: ['Vue 3 (Composition API)', 'TypeScript', 'Vue Router'],
+      },
+      { label: 'State', items: ['Pinia', 'pinia-plugin-persistedstate'] },
+      { label: '3D', items: ['THREE.js', 'Procedural meshes built from THREE.js geometry'] },
+      {
+        label: 'UI',
+        items: [
+          'CSS custom properties (design tokens)',
+          'Mobile-first, with logical properties',
+          'Floating UI',
+          'Iconify (Flowbite icons)',
+        ],
+      },
+      { label: 'Design', items: ['Claude Design', 'Standalone token-based design system'] },
+      { label: 'Build & hosting', items: ['Vite', 'vue-tsc', 'GitHub Pages'] },
     ],
     slides: [
       {

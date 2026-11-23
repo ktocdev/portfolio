@@ -6,7 +6,7 @@ import gsap from 'gsap';
 import Carousel from './Carousel';
 import FactsGrid from './FactsGrid';
 import PhotoTable from './PhotoTable';
-import type { LeadShot, Note, Project } from '@/content/projects';
+import type { LeadShot, Note, Project, SpecGroup } from '@/content/projects';
 import { COPY } from '@/content/site';
 import { flipHeading } from '@/lib/flipHeading';
 import { PANE_ENTER, prefersReducedMotion, staggerZones, zonesOf } from '@/lib/motion';
@@ -23,6 +23,10 @@ const DISMISS_MS = 280;
 /* After a project is picked: long enough to see its card pull out of the
    stack (the row's 250ms transition) before the stack leaves. */
 const PICKED_MS = 220;
+
+const LINKS_TITLE = 'Links';
+const SPECS_TITLE = 'Technical Specs';
+const ABOUT_TITLE = 'About';
 
 export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
   /* Selection is local UI state mirrored into the URL hash (/projects/#gps3),
@@ -73,6 +77,85 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
           </ul>
         ) : null}
       </div>
+    ) : null;
+
+  const linksList = project.links.length ? (
+    <div className={styles.links}>
+      {project.links.map((link, i) => {
+        /* describedby, not link text: a badge in the link text would be
+           underlined and clickable, and screen readers strip links from
+           their surrounding context (e.g. tabbing, links list). */
+        const badgeId = link.badge ? `${project.slug}-link-${i}-badge` : undefined;
+
+        return (
+          <span key={link.href} className={styles.linkItem}>
+            <a
+              href={link.href}
+              target="_blank"
+              rel="noopener"
+              aria-describedby={badgeId}
+              className={styles.link}
+            >
+              {link.label} <span aria-hidden="true">↗</span>
+              <span className="visuallyHidden"> (opens in a new tab)</span>
+            </a>
+            {link.badge ? (
+              <span id={badgeId} className={styles.linkBadge}>
+                {link.badge}
+              </span>
+            ) : null}
+          </span>
+        );
+      })}
+    </div>
+  ) : null;
+
+  /* Projects with specs are laid out in titled parts (specs, about, links)
+     rather than links and story straight under the carousel. With several
+     parts, links down to each so the later ones aren't lost. Scripted, not
+     plain #fragments: the hash names the selected project, and a fragment
+     would switch it. */
+  const parted = Boolean(project.specs?.length);
+  const linksId = `${project.slug}-links`;
+  const specsId = `${project.slug}-specs`;
+  const aboutId = `${project.slug}-about`;
+  const jumpTargets = [
+    ...(parted
+      ? [
+          { id: specsId, title: SPECS_TITLE },
+          ...(prose ? [{ id: aboutId, title: ABOUT_TITLE }] : []),
+          ...(project.links.length ? [{ id: linksId, title: LINKS_TITLE }] : []),
+        ]
+      : []),
+    ...(project.sections ?? []).map((section, s) => ({
+      id: `${project.slug}-section-${s}`,
+      title: section.title,
+    })),
+  ];
+  const jump =
+    jumpTargets.length > 1 ? (
+      <nav aria-label={project.jumpLabel ?? 'On this page'} className={styles.jump}>
+        {project.jumpLabel ? (
+          <span aria-hidden="true" className={styles.jumpLabel}>
+            {project.jumpLabel}
+          </span>
+        ) : null}
+        {jumpTargets.map((target) => (
+          <a
+            key={target.id}
+            href={`#${project.slug}`}
+            className={styles.jumpLink}
+            onClick={(event) => {
+              event.preventDefault();
+              const heading = document.getElementById(target.id);
+              heading?.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+              heading?.focus({ preventScroll: true });
+            }}
+          >
+            {target.title} <span aria-hidden="true">↓</span>
+          </a>
+        ))}
+      </nav>
     ) : null;
 
   useEffect(() => {
@@ -458,108 +541,115 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
 
         {project.status ? <p className={styles.status}>{project.status}</p> : null}
 
-        {project.links.length ? (
-          <div className={styles.links}>
-            {project.links.map((link, i) => {
-              /* describedby, not link text: a badge in the link text would be
-                 underlined and clickable, and screen readers strip links from
-                 their surrounding context (e.g. tabbing, links list). */
-              const badgeId = link.badge ? `${project.slug}-link-${i}-badge` : undefined;
-
-              return (
-                <span key={link.href} className={styles.linkItem}>
-                  <a
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener"
-                    aria-describedby={badgeId}
-                    className={styles.link}
-                  >
-                    {link.label} <span aria-hidden="true">↗</span>
-                    <span className="visuallyHidden"> (opens in a new tab)</span>
-                  </a>
-                  {link.badge ? (
-                    <span id={badgeId} className={styles.linkBadge}>
-                      {link.badge}
-                    </span>
-                  ) : null}
-                </span>
-              );
-            })}
-          </div>
-        ) : null}
-
-        {prose}
-
-        {/* With several parts, links down to each, so the later ones aren't
-            lost under the first. Scripted, not plain #fragments: the hash
-            names the selected project, and a fragment would switch it. */}
-        {(project.sections?.length ?? 0) > 1 ? (
-          <nav aria-label="On this page" className={styles.jump}>
-            <span className={styles.jumpLabel}>On this page</span>
-            {project.sections?.map((section, s) => (
-              <a
-                key={section.title}
-                href={`#${project.slug}`}
-                className={styles.jumpLink}
-                onClick={(event) => {
-                  event.preventDefault();
-                  const target = document.getElementById(`${project.slug}-section-${s}`);
-                  target?.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
-                  target?.focus({ preventScroll: true });
-                }}
-              >
-                {section.title} <span aria-hidden="true">↓</span>
-              </a>
-            ))}
-          </nav>
-        ) : null}
+        {parted ? (
+          <>
+            {jump}
+            <Part key={specsId} id={specsId} title={SPECS_TITLE}>
+              {/* The same shaded panel as a case-study part's specs. */}
+              <div className={styles.sectionSpecs}>
+                <SpecList specs={project.specs ?? []} />
+              </div>
+            </Part>
+            {prose ? (
+              <Part key={aboutId} id={aboutId} title={ABOUT_TITLE} ruled={Boolean(linksList)}>
+                {prose}
+              </Part>
+            ) : null}
+            {linksList ? (
+              <Part key={linksId} id={linksId} title={LINKS_TITLE}>
+                {linksList}
+              </Part>
+            ) : null}
+          </>
+        ) : (
+          <>
+            {linksList}
+            {prose}
+            {jump}
+          </>
+        )}
 
         {/* A case study's parts, each under its own heading: its screenshot
             and facts side by side, then its cards. Each part's children rise
             in turn on entry (data-zones). */}
-        {project.sections?.map((section, s) => {
-          const headId = `${project.slug}-section-${s}`;
-          return (
-            <section
-              key={`${project.slug}-${section.title}`}
-              className={styles.caseSection}
-              aria-labelledby={headId}
-              data-zones=""
-            >
-              {/* Flips in like the title as it scrolls into view; words in
-                  their own boxes for the flip. */}
-              <h3
-                id={headId}
-                className={styles.sectionTitle}
-                tabIndex={-1}
-                data-flip-on-view=""
-              >
-                {section.title.split(' ').map((word, i) => (
-                  <Fragment key={`${word}-${i}`}>
-                    {i > 0 ? ' ' : null}
-                    <span className={styles.word}>{word}</span>
-                  </Fragment>
-                ))}
-              </h3>
-              {section.intro ? <p className={styles.sectionIntro}>{section.intro}</p> : null}
-              {section.leadShot || section.facts?.length ? (
-                <div className={styles.lead} data-zones="">
-                  {section.leadShot ? <LeadShotFigure shot={section.leadShot} /> : null}
-                  {section.facts?.length ? <FactsGrid facts={section.facts} /> : null}
-                </div>
-              ) : null}
-              <PhotoTable
-                stories={section.stories}
-                intros={section.groupIntros}
-                note={section.note}
-                hint={s === 0}
-              />
-            </section>
-          );
-        })}
+        {project.sections?.map((section, s) => (
+          <Part key={`${project.slug}-${section.title}`} id={`${project.slug}-section-${s}`} title={section.title}>
+            {section.intro ? <p className={styles.sectionIntro}>{section.intro}</p> : null}
+            {section.leadShot || section.facts?.length ? (
+              <div className={styles.lead} data-zones="">
+                {section.leadShot ? <LeadShotFigure shot={section.leadShot} /> : null}
+                {section.facts?.length ? <FactsGrid facts={section.facts} /> : null}
+              </div>
+            ) : null}
+            <PhotoTable
+              stories={section.stories}
+              intros={section.groupIntros}
+              note={section.note}
+            />
+            {section.specs?.length ? (
+              <div className={styles.sectionSpecs}>
+                <h4 className={styles.specsSubtitle}>{SPECS_TITLE}</h4>
+                <SpecList specs={section.specs} />
+              </div>
+            ) : null}
+          </Part>
+        ))}
       </article>
     </section>
+  );
+}
+
+/** One titled part of the page. Its heading flips in like the title as it
+ * scrolls into view (words in their own boxes for the flip), and is where a
+ * jump link lands. */
+function Part({
+  id,
+  title,
+  ruled,
+  children,
+}: {
+  id: string;
+  title: string;
+  /** Closes with a rule, setting the part after it apart. */
+  ruled?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <section
+      className={ruled ? `${styles.caseSection} ${styles.ruled}` : styles.caseSection}
+      aria-labelledby={id}
+      data-zones=""
+    >
+      <h3 id={id} className={styles.sectionTitle} tabIndex={-1} data-flip-on-view="">
+        {title.split(' ').map((word, i) => (
+          <Fragment key={`${word}-${i}`}>
+            {i > 0 ? ' ' : null}
+            <span className={styles.word}>{word}</span>
+          </Fragment>
+        ))}
+      </h3>
+      {children}
+    </section>
+  );
+}
+
+/** What the work was built with: one row per layer, its label beside its items. */
+function SpecList({ specs }: { specs: SpecGroup[] }) {
+  return (
+    <dl className={styles.specs}>
+      {specs.map((group) => (
+        <div key={group.label} className={styles.specGroup}>
+          <dt className={styles.specLabel}>{group.label}</dt>
+          <dd>
+            <ul role="list" className={styles.specItems}>
+              {group.items.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </dd>
+        </div>
+      ))}
+    </dl>
   );
 }
 

@@ -16,8 +16,6 @@ type PhotoTableProps = {
   /** A line under a group's heading, by group name. */
   intros?: Record<string, GroupIntro>;
   note?: string;
-  /** Shows how to use the cards; the first table on a page carries it. */
-  hint?: boolean;
 };
 
 /* Each photo's lean in the narrow stack, in degrees (the CSS takes a third of
@@ -61,7 +59,7 @@ function leading<T extends { index: number }>(row: T[], open: number | null) {
  * the layout is only a presentation: keyboard and screen-reader users get the
  * same stories in source order.
  */
-export default function PhotoTable({ stories, intros, note, hint }: PhotoTableProps) {
+export default function PhotoTable({ stories, intros, note }: PhotoTableProps) {
   const wrap = useRef<HTMLDivElement>(null);
   const cards = useRef<(HTMLLIElement | null)[]>([]);
   const faces = useRef<(HTMLButtonElement | null)[]>([]);
@@ -278,12 +276,6 @@ export default function PhotoTable({ stories, intros, note, hint }: PhotoTablePr
       className={styles.wrap}
       style={{ '--columns': columns } as React.CSSProperties}
     >
-      {hint ? (
-        <p className={styles.hint} aria-hidden="true">
-          {gridded ? 'Hover a card to lift it. Click to read it.' : 'Tap a card to read it.'}
-        </p>
-      ) : null}
-
       {grouped.map(([group, row], r) => {
         const headId = `${rowId}-${r}`;
 

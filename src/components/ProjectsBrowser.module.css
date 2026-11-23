@@ -499,6 +499,113 @@
   text-wrap: pretty;
 }
 
+/* --- Technical specs ----------------------------------------------------- */
+/* Label column and items side by side; stacked on a phone. */
+.specs {
+  display: flex;
+  flex-direction: column;
+  max-width: 62ch;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.specGroup {
+  display: grid;
+  grid-template-columns: minmax(7.5rem, 10rem) 1fr;
+  gap: 0.25rem 1.25rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.specLabel {
+  padding-top: 0.2em;
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-sm);
+  letter-spacing: var(--tracking-mono-caps);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.specItems {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: var(--type-body-md);
+  line-height: 1.45;
+}
+
+/* Inside a case-study part, under its cards: a smaller heading than the
+   part's own, so the specs read as belonging to it. */
+.sectionSpecs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  padding: clamp(1rem, 2.5vw, 1.5rem) clamp(1rem, 3vw, 2rem);
+  border-radius: 6px;
+  background: var(--surface);
+}
+
+/* On the shaded panel the rules need the stronger border to show, and sit
+   above each group rather than below, so the panel's own edge ends it. */
+.sectionSpecs .specs {
+  border-top: 0;
+}
+
+.sectionSpecs .specGroup {
+  border-top: 1px solid var(--border);
+  border-bottom: 0;
+}
+
+.sectionSpecs .specGroup:last-child {
+  padding-bottom: 0;
+}
+
+/* With no heading in the panel (it sits under the part's own), the first
+   row starts at the panel's edge, with no rule to separate it from. */
+.sectionSpecs > .specs:first-child > .specGroup:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+/* The panel spans the column, so wide screens set its groups in two
+   columns rather than leaving its right half empty. */
+@media (min-width: 60rem) {
+  .sectionSpecs .specs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 2.5rem;
+    max-width: none;
+  }
+
+  .sectionSpecs > .specs:first-child > .specGroup:nth-child(2) {
+    border-top: 0;
+    padding-top: 0;
+  }
+}
+
+/* A part that ends in its specs closes with a rule, so the next part's
+   heading starts clearly fresh. The last part has no next one. A part can
+   also ask for one (ruled), like the About before a project's Links. */
+.caseSection:has(> .sectionSpecs):not(:last-of-type),
+.ruled {
+  padding-bottom: clamp(1.5rem, 4vh, 2.5rem);
+  border-bottom: 1px solid var(--border);
+}
+
+.specsSubtitle {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--type-h3);
+  line-height: 1.2;
+  color: var(--text);
+}
+
+@media (max-width: 34rem) {
+  .specGroup {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Focused by a jump link only to move the reading position; no ring. */
 .sectionTitle:focus {
   outline: none;

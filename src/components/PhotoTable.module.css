@@ -44,7 +44,6 @@
   margin-top: 1.9rem;
 }
 
-.hint,
 .note {
   font-family: var(--font-mono);
   font-size: var(--type-mono-sm);
