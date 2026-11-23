@@ -560,6 +560,13 @@
   padding-bottom: 0;
 }
 
+/* With no heading in the panel (it sits under the part's own), the first
+   row starts at the panel's edge, with no rule to separate it from. */
+.sectionSpecs > .specs:first-child > .specGroup:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
 /* The panel spans the column, so wide screens set its groups in two
    columns rather than leaving its right half empty. */
 @media (min-width: 60rem) {
@@ -568,6 +575,11 @@
     grid-template-columns: 1fr 1fr;
     column-gap: 2.5rem;
     max-width: none;
+  }
+
+  .sectionSpecs > .specs:first-child > .specGroup:nth-child(2) {
+    border-top: 0;
+    padding-top: 0;
   }
 }
 

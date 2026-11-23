@@ -545,7 +545,10 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
           <>
             {jump}
             <Part key={specsId} id={specsId} title={SPECS_TITLE}>
-              <SpecList specs={project.specs ?? []} />
+              {/* The same shaded panel as a case-study part's specs. */}
+              <div className={styles.sectionSpecs}>
+                <SpecList specs={project.specs ?? []} />
+              </div>
             </Part>
             {prose ? (
               <Part key={aboutId} id={aboutId} title={ABOUT_TITLE}>
