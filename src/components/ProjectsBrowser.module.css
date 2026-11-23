@@ -527,6 +527,23 @@
   line-height: 1.45;
 }
 
+/* Inside a case-study part, under its cards: a smaller heading than the
+   part's own, so the specs read as belonging to it. */
+.sectionSpecs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.specsSubtitle {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--type-h3);
+  line-height: 1.2;
+  color: var(--text);
+}
+
 @media (max-width: 34rem) {
   .specGroup {
     grid-template-columns: 1fr;

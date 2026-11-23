@@ -116,6 +116,8 @@ export type CaseSection = {
   groupIntros?: Record<string, GroupIntro>;
   /** Small print under the cards. */
   note?: string;
+  /** What this part of the work was built with, under the cards. */
+  specs?: SpecGroup[];
 };
 
 /** One row of a project's Technical Specs: a layer of the build and what it's made with. */
@@ -159,6 +161,12 @@ export const PROJECTS: Project[] = [
     sections: [
       {
         title: 'Design System',
+        specs: [
+          { label: 'Frameworks', items: ['Vue 2 (Nebula)', 'Vue 3 and Nuxt (nebula-nuxt)', 'Nuxt UI', 'Nuxt Content', 'TypeScript'] },
+          { label: 'Styling', items: ['Stylus', 'BEM', 'Tailwind CSS', 'Semantic design tokens', 'Container queries'] },
+          { label: 'Build & docs', items: ['Vite', 'Storybook', 'Docker'] },
+          { label: 'AI', items: ['Claude skills', 'Claude Design'] },
+        ],
         leadShot: {
           main: {
             src: '/media/projects/nebula/mega-menu-desktop.webp',
@@ -404,6 +412,11 @@ export const PROJECTS: Project[] = [
       },
       {
         title: 'Product Team',
+        specs: [
+          { label: 'Frameworks', items: ['Vue 2', 'Vue 3', 'Nuxt', 'TypeScript'] },
+          { label: 'Integration', items: ['REST APIs', 'Feature flags', 'Engagement tracking'] },
+          { label: 'Operations', items: ['Python', 'New Relic'] },
+        ],
         stories: [
           {
             featured: true,
@@ -457,6 +470,10 @@ export const PROJECTS: Project[] = [
       },
       {
         title: 'Behind the scenes',
+        specs: [
+          { label: 'Testing & release', items: ['Vitest', 'Playwright', 'GitHub Actions', 'Versioned workspace packages'] },
+          { label: 'AI', items: ['Claude Code', 'Claude skills & slash commands', 'GitHub Copilot'] },
+        ],
         stories: [
           {
             title: 'Platform Ownership',

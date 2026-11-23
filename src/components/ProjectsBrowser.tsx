@@ -6,7 +6,7 @@ import gsap from 'gsap';
 import Carousel from './Carousel';
 import FactsGrid from './FactsGrid';
 import PhotoTable from './PhotoTable';
-import type { LeadShot, Note, Project } from '@/content/projects';
+import type { LeadShot, Note, Project, SpecGroup } from '@/content/projects';
 import { COPY } from '@/content/site';
 import { flipHeading } from '@/lib/flipHeading';
 import { PANE_ENTER, prefersReducedMotion, staggerZones, zonesOf } from '@/lib/motion';
@@ -540,20 +540,7 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
           <>
             {jump}
             <Part key={specsId} id={specsId} title={SPECS_TITLE}>
-              <dl className={styles.specs}>
-                {project.specs?.map((group) => (
-                  <div key={group.label} className={styles.specGroup}>
-                    <dt className={styles.specLabel}>{group.label}</dt>
-                    <dd>
-                      <ul role="list" className={styles.specItems}>
-                        {group.items.map((item) => (
-                          <li key={item}>{item}</li>
-                        ))}
-                      </ul>
-                    </dd>
-                  </div>
-                ))}
-              </dl>
+              <SpecList specs={project.specs ?? []} />
             </Part>
             {prose ? (
               <Part key={aboutId} id={aboutId} title={ABOUT_TITLE}>
@@ -590,8 +577,13 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
               stories={section.stories}
               intros={section.groupIntros}
               note={section.note}
-              hint={s === 0}
             />
+            {section.specs?.length ? (
+              <div className={styles.sectionSpecs}>
+                <h4 className={styles.specsSubtitle}>{SPECS_TITLE}</h4>
+                <SpecList specs={section.specs} />
+              </div>
+            ) : null}
           </Part>
         ))}
       </article>
@@ -615,6 +607,26 @@ function Part({ id, title, children }: { id: string; title: string; children: Re
       </h3>
       {children}
     </section>
+  );
+}
+
+/** What the work was built with: one row per layer, its label beside its items. */
+function SpecList({ specs }: { specs: SpecGroup[] }) {
+  return (
+    <dl className={styles.specs}>
+      {specs.map((group) => (
+        <div key={group.label} className={styles.specGroup}>
+          <dt className={styles.specLabel}>{group.label}</dt>
+          <dd>
+            <ul role="list" className={styles.specItems}>
+              {group.items.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </dd>
+        </div>
+      ))}
+    </dl>
   );
 }
 
