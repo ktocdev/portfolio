@@ -137,6 +137,8 @@ export type Project = {
   sections?: CaseSection[];
   /** The Technical Specs section at the foot of the page. */
   specs?: SpecGroup[];
+  /** A label leading the links down to the page's parts, e.g. what the parts are. */
+  jumpLabel?: string;
   links: Link[];
   slides?: Slide[];
   logo?: Logo;
@@ -156,6 +158,7 @@ export const PROJECTS: Project[] = [
       height: 77,
     },
     role: 'Senior Software Engineer · AI-Enabled Engineering',
+    jumpLabel: 'My roles at DE',
     description:
       "Over eleven years at Discovery Education I built web experiences used by 45M students and 4.5M educators across 100 countries: architect and technical lead of the company's design system, and a product engineer across 12+ teams, working with product, design, backend and QA, and bringing AI-assisted development to the teams I worked with.",
     sections: [

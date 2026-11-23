@@ -134,7 +134,12 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
   ];
   const jump =
     jumpTargets.length > 1 ? (
-      <nav aria-label="On this page" className={styles.jump}>
+      <nav aria-label={project.jumpLabel ?? 'On this page'} className={styles.jump}>
+        {project.jumpLabel ? (
+          <span aria-hidden="true" className={styles.jumpLabel}>
+            {project.jumpLabel}
+          </span>
+        ) : null}
         {jumpTargets.map((target) => (
           <a
             key={target.id}

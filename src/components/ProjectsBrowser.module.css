@@ -331,6 +331,12 @@
   font-size: var(--type-mono-sm);
 }
 
+.jumpLabel {
+  letter-spacing: var(--tracking-mono-caps);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
 .jumpLink {
   color: var(--accent);
   text-decoration: underline;
@@ -566,8 +572,8 @@
 }
 
 /* A part that ends in its specs closes with a rule, so the next part's
-   heading starts clearly fresh. */
-.caseSection:has(> .sectionSpecs) {
+   heading starts clearly fresh. The last part has no next one. */
+.caseSection:has(> .sectionSpecs):not(:last-of-type) {
   padding-bottom: clamp(1.5rem, 4vh, 2.5rem);
   border-bottom: 1px solid var(--border);
 }
