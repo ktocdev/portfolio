@@ -110,7 +110,7 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
     </div>
   ) : null;
 
-  /* Projects with specs are laid out in titled parts (links, specs, about)
+  /* Projects with specs are laid out in titled parts (specs, about, links)
      rather than links and story straight under the carousel. With several
      parts, links down to each so the later ones aren't lost. Scripted, not
      plain #fragments: the hash names the selected project, and a fragment
@@ -122,9 +122,9 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
   const jumpTargets = [
     ...(parted
       ? [
-          ...(project.links.length ? [{ id: linksId, title: LINKS_TITLE }] : []),
           { id: specsId, title: SPECS_TITLE },
           ...(prose ? [{ id: aboutId, title: ABOUT_TITLE }] : []),
+          ...(project.links.length ? [{ id: linksId, title: LINKS_TITLE }] : []),
         ]
       : []),
     ...(project.sections ?? []).map((section, s) => ({
@@ -135,7 +135,6 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
   const jump =
     jumpTargets.length > 1 ? (
       <nav aria-label="On this page" className={styles.jump}>
-        <span className={styles.jumpLabel}>On this page</span>
         {jumpTargets.map((target) => (
           <a
             key={target.id}
@@ -540,11 +539,6 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
         {parted ? (
           <>
             {jump}
-            {linksList ? (
-              <Part key={linksId} id={linksId} title={LINKS_TITLE}>
-                {linksList}
-              </Part>
-            ) : null}
             <Part key={specsId} id={specsId} title={SPECS_TITLE}>
               <dl className={styles.specs}>
                 {project.specs?.map((group) => (
@@ -564,6 +558,11 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
             {prose ? (
               <Part key={aboutId} id={aboutId} title={ABOUT_TITLE}>
                 {prose}
+              </Part>
+            ) : null}
+            {linksList ? (
+              <Part key={linksId} id={linksId} title={LINKS_TITLE}>
+                {linksList}
               </Part>
             ) : null}
           </>

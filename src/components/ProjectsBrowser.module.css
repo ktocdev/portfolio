@@ -331,12 +331,6 @@
   font-size: var(--type-mono-sm);
 }
 
-.jumpLabel {
-  letter-spacing: var(--tracking-mono-caps);
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
 .jumpLink {
   color: var(--accent);
   text-decoration: underline;
