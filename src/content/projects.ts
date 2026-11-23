@@ -343,25 +343,34 @@ export const PROJECTS: Project[] = [
               },
             ],
           },
-          /* Placeholder: the user is bringing the details for this one. */
           {
             group: 'Nebula',
-            title: 'Accordion',
+            title: 'Details',
             icon: 'components',
-            figure: 'Accordion',
-            figureLabel: 'a new accordion menu with sections that open and close',
+            figure: '<details>',
+            figureLabel: "built on the browser's native details element",
             points: [
               {
-                text: 'Built a new Nebula accordion menu, with buttons that open and close its sections.',
+                text: "Built NebulaDetails on the browser's native <details> element, themed to look like Nebula. It matches every style and feature of the original NebulaAccordion, which was built before <details> existed.",
+              },
+              {
+                text: 'NebulaDetails can also take an object as a prop and render it as a nested hierarchy of details.',
               },
             ],
             shots: [
               {
                 src: '/media/projects/nebula/accordion.webp',
-                alt: 'Nebula accordion menu with its Visual Language section open, and buttons that open and close sections.',
+                alt: 'An accordion menu built from NebulaDetails, with its Visual Language section open, and buttons that open and close sections.',
                 width: 930,
                 height: 663,
-                caption: 'Accordion menu',
+                caption: 'An accordion menu built from NebulaDetails',
+              },
+              {
+                src: '/media/projects/nebula/details-nested.webp',
+                alt: 'Nested slim NebulaDetails rendered from one object: a course overview open to a unit, a lesson and an exercise, four levels deep, with buttons that open all, close all, or open a chosen level.',
+                width: 760,
+                height: 710,
+                caption: 'Nested slim details, rendered from an object prop',
               },
             ],
           },
