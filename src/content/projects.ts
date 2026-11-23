@@ -164,7 +164,7 @@ export const PROJECTS: Project[] = [
         specs: [
           { label: 'Frameworks', items: ['Vue 2, then Vue 3 (Nebula)', 'Nuxt (nebula-nuxt)', 'Nuxt UI', 'Nuxt Content', 'TypeScript'] },
           { label: 'Styling', items: ['Stylus', 'BEM', 'Tailwind CSS', 'Semantic design tokens', 'Container queries'] },
-          { label: 'Build & docs', items: ['Vite', 'Storybook', 'Docker'] },
+          { label: 'Build & docs', items: ['Vite', 'Storybook', 'Docker', 'GitHub Actions (CI)'] },
           { label: 'AI', items: ['Claude skills', 'Claude Design'] },
         ],
         leadShot: {
@@ -472,7 +472,7 @@ export const PROJECTS: Project[] = [
         title: 'Behind the scenes',
         specs: [
           { label: 'Testing & release', items: ['Vitest', 'Playwright', 'GitHub Actions', 'Versioned workspace packages'] },
-          { label: 'AI', items: ['Claude Code', 'Claude skills & slash commands', 'GitHub Copilot'] },
+          { label: 'AI', items: ['Claude Code', 'Claude skills & slash commands', 'GitHub Copilot', 'Microsoft Copilot'] },
         ],
         stories: [
           {
