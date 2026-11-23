@@ -155,7 +155,7 @@ export const PROJECTS: Project[] = [
     },
     role: 'Senior Software Engineer · AI-Enabled Engineering',
     description:
-      "Over eleven years at Discovery Education I built web experiences used by 45M students and 4.5M educators across 100 countries: architect and de facto technical lead of the company's design system, and a product engineer across 12+ teams, working with product, design, backend and QA, and bringing AI-assisted development to the teams I worked with.",
+      "Over eleven years at Discovery Education I built web experiences used by 45M students and 4.5M educators across 100 countries: architect and technical lead of the company's design system, and a product engineer across 12+ teams, working with product, design, backend and QA, and bringing AI-assisted development to the teams I worked with.",
     sections: [
       {
         title: 'Design System',
