@@ -359,10 +359,10 @@ export const PROJECTS: Project[] = [
             ],
             shots: [
               {
-                src: '/media/projects/nebula/accordion.webp',
-                alt: 'An accordion menu built from NebulaDetails, with its Visual Language section open, and buttons that open and close sections.',
-                width: 930,
-                height: 663,
+                src: '/media/projects/nebula/details-accordion.webp',
+                alt: 'An accordion menu built from NebulaDetails, with its Visual Language and Navigation sections open and Components and Form Elements closed.',
+                width: 860,
+                height: 1046,
                 caption: 'An accordion menu built from NebulaDetails',
               },
               {
