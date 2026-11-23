@@ -343,28 +343,7 @@ export const PROJECTS: Project[] = [
               },
             ],
           },
-          /* Placeholders: the user is bringing the details for these two. */
-          {
-            group: 'Nebula',
-            title: 'Form Building',
-            icon: 'components',
-            figure: 'Forms',
-            figureLabel: 'built from Nebula select, checkbox and toggle components',
-            points: [
-              {
-                text: 'An admin form built from Nebula components: role and department selects, permission checkboxes and account-setting toggles.',
-              },
-            ],
-            shots: [
-              {
-                src: '/media/projects/nebula/admin-form.webp',
-                alt: 'An admin form built from Nebula components: role and department selects, permission checkboxes and account-setting toggles.',
-                width: 795,
-                height: 618,
-                caption: 'Form components: select, checkbox, toggle',
-              },
-            ],
-          },
+          /* Placeholder: the user is bringing the details for this one. */
           {
             group: 'Nebula',
             title: 'Accordion',
@@ -408,6 +387,40 @@ export const PROJECTS: Project[] = [
               },
               {
                 text: 'Wrote Claude Skill to audit and fix localization across the platform, refined against 9 company repos and used successfully in production.',
+              },
+            ],
+          },
+          {
+            group: 'AI tooling',
+            title: 'Form Building',
+            icon: 'sparkle',
+            figure: '800 lines',
+            figureLabel: 'one skill holding every Nebula form component and its rules',
+            points: [
+              {
+                text: 'Wrote a form-building Claude skill that produced valid Nebula forms from plain-language prompts, like this admin form with its required fields, helper text and error states.',
+              },
+              {
+                text: 'The skill documented every Nebula form component: its exact prop names and how to associate elements with each other. At the center was NebulaFieldGroup, the container that ties a label and helper text to its control, filled through slots or props and designed to be as flexible as possible to support every use case.',
+              },
+              {
+                text: 'Built it in the Opus 4.5–4.6 era, against the advice of the time to write small skills that build on each other through links in the .md. One large skill let the agent see every component and rule at once and build the form holistically, with minimal hallucinations, an approach a bit ahead of its time as models were still getting better at consuming large contexts.',
+              },
+            ],
+            shots: [
+              {
+                src: '/media/projects/nebula/admin-form-full.webp',
+                alt: 'The Admin Form built by the skill: full name, email and phone fields, role and department selects, read, write and delete permission checkboxes, active user and welcome email toggles, a notes field, and Reset and Save User buttons. Required fields carry a red asterisk, and phone and notes have helper text.',
+                width: 900,
+                height: 2058,
+                caption: 'Admin form from a plain-language prompt',
+              },
+              {
+                src: '/media/projects/nebula/admin-form-errors.webp',
+                alt: 'The same form after submitting it empty: an error banner reads "Please fix the errors below", and full name, email address and role are outlined in red, each with its own message, such as "Full name is required".',
+                width: 900,
+                height: 1319,
+                caption: 'Validation: banner and per-field errors',
               },
             ],
           },
