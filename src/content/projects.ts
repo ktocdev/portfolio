@@ -470,7 +470,10 @@ export const PROJECTS: Project[] = [
         specs: [
           { label: 'Frameworks', items: ['Vue 2', 'Vue 3', 'Nuxt', 'TypeScript'] },
           { label: 'Integration', items: ['REST APIs', 'Feature flags', 'Engagement tracking'] },
-          { label: 'Operations', items: ['Python'] },
+          { label: 'Testing & release', items: ['Vitest', 'Playwright', 'GitHub Actions', 'Versioned workspace packages'] },
+          { label: 'AI', items: ['Claude Code', 'Claude skills & slash commands', 'GitHub Copilot', 'Microsoft Copilot'] },
+          { label: 'Operations', items: ['Python', 'New Relic'] },
+          { label: 'Accessibility', items: ['WCAG 2.2', 'ARIA', 'NVDA', 'VoiceOver'] },
         ],
         stories: [
           {
@@ -510,17 +513,6 @@ export const PROJECTS: Project[] = [
               },
             ],
           },
-        ],
-      },
-      {
-        title: 'Behind the scenes',
-        specs: [
-          { label: 'Testing & release', items: ['Vitest', 'Playwright', 'GitHub Actions', 'Versioned workspace packages'] },
-          { label: 'AI', items: ['Claude Code', 'Claude skills & slash commands', 'GitHub Copilot', 'Microsoft Copilot'] },
-          { label: 'Monitoring', items: ['New Relic'] },
-          { label: 'Accessibility', items: ['WCAG 2.2', 'ARIA', 'NVDA', 'VoiceOver'] },
-        ],
-        stories: [
           {
             title: 'A11y Subject Matter Expert',
             icon: 'access',
