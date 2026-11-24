@@ -270,6 +270,21 @@ export const PROJECTS: Project[] = [
             ],
           },
           {
+            group: 'nebula-nuxt',
+            title: 'Platform Ownership',
+            icon: 'package',
+            figure: 'End to end',
+            figureLabel: 'APIs, tokens, packages, icons, CI, and tests',
+            points: [
+              {
+                text: 'Owned the platform end to end: component APIs, semantic design tokens and theming, shared workspace packages with versioned releases optimized for tree-shaking so apps shipped only the components they used, a separately published icon package, and GitHub Actions CI.',
+              },
+              {
+                text: 'Owned code quality for the library: reviewed PRs and caught issues before release, and backed changes with Vitest and Playwright so they shipped safely to every consumer.',
+              },
+            ],
+          },
+          {
             group: 'Nebula',
             featured: true,
             title: 'MegaMenu',
@@ -433,6 +448,21 @@ export const PROJECTS: Project[] = [
               },
             ],
           },
+          {
+            group: 'AI tooling',
+            title: 'Slash Commands & Adoption',
+            icon: 'terminal',
+            figure: '/plan',
+            figureLabel: 'slash commands that turn dev notes into living specs',
+            points: [
+              {
+                text: 'Built plan-create/plan-update slash commands for Claude Code: structured markdown plan docs (executive summary, phases, success criteria, known issues) generated conversationally, with approval-gated drafts and diff-style updates. Enforces consistent status markers and preserves historical context across iterations, turning ad hoc dev notes into a living, reviewable spec.',
+              },
+              {
+                text: "Co-hosted the company's AI Office Hours to help engineers adopt AI-assisted development.",
+              },
+            ],
+          },
         ],
       },
       {
@@ -470,17 +500,6 @@ export const PROJECTS: Project[] = [
             ],
           },
           {
-            title: 'Production Reliability',
-            icon: 'pulse',
-            figure: 'On call',
-            figureLabel: 'for biweekly migrations, watching New Relic',
-            points: [
-              {
-                text: 'Monitored JavaScript errors in New Relic while on call for biweekly migrations, troubleshooting production issues across a multi-team platform; delivered feature-flag projects that rendered UI from backend flag data while keeping tracking metrics intact.',
-              },
-            ],
-          },
-          {
             title: 'Product Teams',
             icon: 'team',
             figure: '12+',
@@ -501,30 +520,13 @@ export const PROJECTS: Project[] = [
         ],
         stories: [
           {
-            title: 'Platform Ownership',
-            icon: 'package',
-            figure: 'End to end',
-            figureLabel: 'APIs, tokens, packages, icons, CI, and tests',
+            title: 'Production Reliability',
+            icon: 'pulse',
+            figure: 'On call',
+            figureLabel: 'for biweekly migrations, watching New Relic',
             points: [
               {
-                text: 'Owned the platform end to end: component APIs, semantic design tokens and theming, shared workspace packages with versioned releases optimized for tree-shaking so apps shipped only the components they used, a separately published icon package, and GitHub Actions CI.',
-              },
-              {
-                text: 'Owned code quality for the library: reviewed PRs and caught issues before release, and backed changes with Vitest and Playwright so they shipped safely to every consumer.',
-              },
-            ],
-          },
-          {
-            title: 'Slash Commands & Adoption',
-            icon: 'terminal',
-            figure: '/plan',
-            figureLabel: 'slash commands that turn dev notes into living specs',
-            points: [
-              {
-                text: 'Built plan-create/plan-update slash commands for Claude Code: structured markdown plan docs (executive summary, phases, success criteria, known issues) generated conversationally, with approval-gated drafts and diff-style updates. Enforces consistent status markers and preserves historical context across iterations, turning ad hoc dev notes into a living, reviewable spec.',
-              },
-              {
-                text: "Co-hosted the company's AI Office Hours to help engineers adopt AI-assisted development.",
+                text: 'Monitored JavaScript errors in New Relic while on call for biweekly migrations, troubleshooting production issues across a multi-team platform; delivered feature-flag projects that rendered UI from backend flag data while keeping tracking metrics intact.',
               },
             ],
           },
