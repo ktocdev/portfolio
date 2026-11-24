@@ -518,8 +518,29 @@ export const PROJECTS: Project[] = [
           { label: 'Testing & release', items: ['Vitest', 'Playwright', 'GitHub Actions', 'Versioned workspace packages'] },
           { label: 'AI', items: ['Claude Code', 'Claude skills & slash commands', 'GitHub Copilot', 'Microsoft Copilot'] },
           { label: 'Monitoring', items: ['New Relic'] },
+          { label: 'Accessibility', items: ['WCAG 2.2', 'ARIA', 'NVDA', 'VoiceOver'] },
         ],
         stories: [
+          {
+            title: 'A11y Subject Matter Expert',
+            icon: 'access',
+            figure: 'WCAG 2.2',
+            figureLabel: 'audits, VPAT triage, and hands-on screen reader testing',
+            points: [
+              {
+                text: 'Served as accessibility subject matter expert, running audits and mentoring designers and engineers on WCAG, ARIA, keyboard, and focus requirements through design and code review.',
+              },
+              {
+                text: 'Partnered with product teams to help triage VPAT sprints for time-sensitive state adoptions.',
+              },
+              {
+                text: 'Acted as a cross-org resource, advising teams on accessibility best practices.',
+              },
+              {
+                text: 'Tested manually with NVDA, VoiceOver, high contrast mode, and prefers-reduced-motion.',
+              },
+            ],
+          },
           {
             title: 'Production Reliability',
             icon: 'pulse',
