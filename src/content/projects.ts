@@ -255,8 +255,8 @@ export const PROJECTS: Project[] = [
             group: 'nebula-nuxt',
             title: 'Doc Site Designer',
             icon: 'sliders',
-            figure: '3 themes',
-            figureLabel: 'in a live Theme Editor, editable down to each token',
+            figure: 'Live Theme Editor',
+            figureLabel: 'editable down to each token, with three preset themes',
             points: [
               {
                 text: 'Built the new playground doc site for nebula-nuxt with searchable documentation via Nuxt Content; designed and implemented the entire layout and UI, and added robust scaffold, theming, and localization documentation displayed through Nuxt Content.',
