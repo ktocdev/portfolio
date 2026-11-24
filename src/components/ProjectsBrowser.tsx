@@ -39,7 +39,9 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const detail = useRef<HTMLElement>(null);
   const title = useRef<HTMLHeadingElement>(null);
+  const root = useRef<HTMLElement>(null);
   const deck = useRef<HTMLButtonElement>(null);
+  const sun = useRef<HTMLDivElement>(null);
   const drawer = useRef<HTMLDivElement>(null);
   const scrim = useRef<HTMLDivElement>(null);
   const dismissTimer = useRef<number | undefined>(undefined);
@@ -222,9 +224,35 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
     };
   }, [project.slug]);
 
-  /* The drawer's cards are tossed in from the edge one after another, with
-     the toss's ease (tossPhoto.ts), and swept back out last-first. The scrim
-     and the drawer's label fade with them. Reduced motion skips straight to
+  /* The sun hangs from the header's rule at the top of the page and rises into
+     the screen's corner as the header scrolls away: --sun-top is the rule's
+     distance from the top of the view, never less than zero. */
+  useLayoutEffect(() => {
+    const section = root.current;
+    const header = document.querySelector('header');
+    if (!section || !header) return;
+    let frame = 0;
+    const place = () => {
+      frame = 0;
+      const top = Math.max(0, header.getBoundingClientRect().bottom);
+      section.style.setProperty('--sun-top', `${Math.round(top)}px`);
+    };
+    const queue = () => {
+      if (!frame) frame = requestAnimationFrame(place);
+    };
+    place();
+    window.addEventListener('scroll', queue, { passive: true });
+    window.addEventListener('resize', queue);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', queue);
+      window.removeEventListener('resize', queue);
+    };
+  }, []);
+
+  /* The sun's petals stretch into beams one after another, and the project
+     cards rise out of the corner along them; closing draws both back in,
+     last first. The scrim fades with them. Reduced motion skips straight to
      the CSS states. */
   useLayoutEffect(() => {
     /* Only a change animates. Comparing against the last state, not a
@@ -234,53 +262,61 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
     drawerWasOpen.current = drawerOpen;
     const panel = drawer.current;
     const shade = scrim.current;
-    if (!panel || !shade || prefersReducedMotion()) return;
+    const rays = sun.current;
+    if (!panel || !shade || !rays || prefersReducedMotion()) return;
     const cards = panel.querySelectorAll('[role="presentation"]');
-    const chrome = panel.querySelectorAll('[data-drawer-chrome]');
+    const beams = rays.querySelectorAll('[data-beam]');
 
     if (drawerOpen) {
       const timeline = gsap.timeline();
       timeline
-        .fromTo(shade, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3, ease: 'none' }, 0)
+        .fromTo(shade, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.35, ease: 'none' }, 0)
         .fromTo(
-          chrome,
-          { autoAlpha: 0, y: 10 },
-          { autoAlpha: 1, y: 0, duration: 0.38, ease: 'power2.out' },
-          0.05,
+          beams,
+          { scaleX: 0 },
+          { scaleX: 1, duration: 0.5, ease: 'power3.out', stagger: 0.06 },
+          0,
         )
         .fromTo(
           cards,
           /* Opacity, not autoAlpha: a card hidden by visibility can't take the
-             focus a keyboard opening hands it. */
-          { x: '-115%', rotation: -9, opacity: 0 },
-          { x: 0, rotation: 0, opacity: 1, duration: 0.6, ease: 'power3.out', stagger: 0.07 },
-          0.05,
+             focus a keyboard opening hands it. From up and to the left: out
+             of the sun. */
+          { x: -48, y: -48, scale: 0.55, opacity: 0 },
+          { x: 0, y: 0, scale: 1, opacity: 1, duration: 0.55, ease: 'power3.out', stagger: 0.06 },
+          0.12,
         );
       return () => {
         timeline.progress(1).kill();
       };
     }
 
-    /* data-open is already gone, which hides both in CSS; held visible
-       inline until the cards are off. */
+    /* data-open is already gone, which hides them in CSS; held visible
+       inline until the cards are in. */
     gsap.set([panel, shade], { visibility: 'visible' });
+    gsap.set(beams, { scaleX: 1 });
     const timeline = gsap.timeline({
-      onComplete: () => gsap.set([panel, shade, ...cards, ...chrome], { clearProps: 'all' }),
+      onComplete: () => gsap.set([panel, shade, ...cards, ...beams], { clearProps: 'all' }),
     });
     timeline
       .to(
         cards,
         {
-          x: '-115%',
-          rotation: -6,
+          x: -40,
+          y: -40,
+          scale: 0.6,
           opacity: 0,
-          duration: 0.32,
+          duration: 0.28,
           ease: 'power2.in',
           stagger: { each: 0.04, from: 'end' },
         },
         0,
       )
-      .to(chrome, { autoAlpha: 0, duration: 0.2 }, 0)
+      .to(
+        beams,
+        { scaleX: 0, duration: 0.3, ease: 'power2.in', stagger: { each: 0.04, from: 'end' } },
+        0.08,
+      )
       .to(shade, { autoAlpha: 0, duration: 0.3, ease: 'none' }, 0.1);
     return () => {
       timeline.progress(1).kill();
@@ -393,24 +429,37 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
   return (
     /* data-enter-stagger: the page's entrance flips the title while the
        detail's zones (data-zones, below) rise one after another. */
-    <section className={styles.projects} data-enter-stagger="">
-      {/* The edges of a few index cards peeking in from the screen's left
-          edge: the project list, put away. Hover pulls the stack out. */}
-      <button
-        ref={deck}
-        type="button"
-        className={styles.deck}
-        aria-expanded={drawerOpen}
-        aria-controls="project-drawer"
-        onPointerEnter={(event) => mouse(event) && summon()}
-        onPointerLeave={(event) => mouse(event) && dismissSoon()}
-        onClick={onDeckClick}
-      >
-        <span aria-hidden="true" className={styles.deckCard} />
-        <span aria-hidden="true" className={styles.deckCard} />
-        <span aria-hidden="true" className={styles.deckCard} />
-        <span className={styles.deckLabel}>Projects</span>
-      </button>
+    <section ref={root} className={styles.projects} data-enter-stagger="">
+      {/* A zinnia in the top-left corner, after the page loader: a quarter of
+          its octagon, labelled, with a petal for each project around it.
+          Hover and the petals stretch into beams that carry the projects out. */}
+      <div ref={sun} className={styles.sun} data-open={drawerOpen || undefined}>
+        <button
+          ref={deck}
+          type="button"
+          className={styles.sunTrigger}
+          aria-expanded={drawerOpen}
+          aria-controls="project-drawer"
+          onPointerEnter={(event) => mouse(event) && summon()}
+          onPointerLeave={(event) => mouse(event) && dismissSoon()}
+          onClick={onDeckClick}
+        >
+          <span aria-hidden="true" className={styles.sunFace} />
+          <span className={styles.sunLabel}>Projects</span>
+        </button>
+        {projects.map((item, i) => (
+          <span
+            key={item.slug}
+            aria-hidden="true"
+            className={styles.ray}
+            data-selected={i === selected || undefined}
+            style={{ '--t': fanAt(i, projects.length) } as React.CSSProperties}
+          >
+            <span className={styles.petal} />
+            <span data-beam="" className={styles.beam} />
+          </span>
+        ))}
+      </div>
 
       <div
         ref={scrim}
@@ -434,25 +483,29 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
           if (next && !drawer.current?.contains(next) && next !== deck.current) dismiss();
         }}
       >
-        <p data-drawer-chrome="" className={styles.drawerLabel}>
-          Projects
-        </p>
-        <p data-drawer-chrome="" className={styles.intro}>
+        {/* No room for it on screen among the beams; read with the list. */}
+        <p id="project-drawer-intro" className="visuallyHidden">
           {COPY.projects.intro}
         </p>
 
         {/* A tablist rather than a list of toggle buttons: exactly one project
             is open at a time, and aria-controls is what tells a screen reader
             that the panel is the thing each card opens. The li elements are
-            presentational so the tablist sees only its tabs. */}
+            presentational so the tablist sees only its tabs. Each card sits
+            at the end of its beam. */}
         <ol
           role="tablist"
           aria-label="Project list"
+          aria-describedby="project-drawer-intro"
           aria-orientation="vertical"
           className={styles.list}
         >
           {projects.map((item, i) => (
-            <li key={item.slug} role="presentation">
+            <li
+              key={item.slug}
+              role="presentation"
+              style={{ '--t': fanAt(i, projects.length) } as React.CSSProperties}
+            >
               <button
                 type="button"
                 role="tab"
@@ -597,6 +650,13 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
       </article>
     </section>
   );
+}
+
+/** Where a project sits in the sun's fan, from 0 (the first beam, nearest
+ * the top of the screen) to 1 (the last, nearest its left edge). The CSS
+ * turns it into the beam's angle and length. */
+function fanAt(index: number, count: number) {
+  return count > 1 ? index / (count - 1) : 0.5;
 }
 
 /** One titled part of the page. Its heading flips in like the title as it

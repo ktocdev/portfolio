@@ -39,142 +39,202 @@
   display: inline-block;
 }
 
-/* --- Deck: the drawer's handle ------------------------------------------- */
-/* Three index cards tucked behind the screen's left edge, fanned so their
-   ends show, with the label written up the front one. Hover or focus draws
-   them out a little, the same nudge as a card in the open drawer. Below
-   48rem the gutter is narrower than the deck, so it drops to the lower left
-   and floats over the column's edge as the page scrolls beneath it. */
-.deck {
-  appearance: none;
-  -webkit-appearance: none;
+/* --- Sun: the project list's handle -------------------------------------- */
+/* A quarter of the page loader's octagon in the top-left corner, labelled,
+   with a square petal for each project around its cut edge. It hangs from
+   the header's rule and rises into the corner as the page scrolls
+   (--sun-top, set by ProjectsBrowser.tsx). Open, each petal stretches into a
+   beam and the project's card sits at its end: the beams fan from just under
+   the top of the screen (--t 0) round to its left edge (--t 1), each longer
+   than the last, so the cards spiral out rather than crowd. */
+.projects {
+  --sun-r: 8.5rem;
+  --fan-a0: 8deg;
+  --fan-a1: 80deg;
+  --fan-r0: 13rem;
+  --fan-r1: 28rem;
+  --card-w: 17rem;
+}
+
+/* Where the gutter is narrower than the sun, the column starts below it. */
+@media (max-width: 77rem) {
+  .projects {
+    padding-top: calc(var(--sun-r) - var(--space-section-gap) + 0.75rem);
+  }
+}
+
+@media (max-width: 47.99rem) {
+  .projects {
+    --sun-r: 6.5rem;
+    --sun-label: var(--type-mono-xs);
+    --fan-a0: 40deg;
+    --fan-a1: 84deg;
+    --fan-r0: 10rem;
+    --fan-r1: 27rem;
+    --card-w: min(15rem, 100vw - 2rem);
+  }
+}
+
+.sun {
   position: fixed;
   left: 0;
-  top: 50%;
-  translate: 0 -50%;
-  z-index: 15;
-  width: 2.5rem;
-  height: 11rem;
+  top: var(--sun-top, 0px);
+  z-index: 21;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+/* The cut-away corner is not part of the button. */
+.sunTrigger {
+  appearance: none;
+  -webkit-appearance: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--sun-r);
+  height: var(--sun-r);
   margin: 0;
   padding: 0;
   border: 0;
   background: none;
   font: inherit;
-  color: var(--accent);
+  color: var(--text);
   cursor: pointer;
+  pointer-events: auto;
+  clip-path: polygon(0 0, 100% 0, 100% 41.42%, 41.42% 100%, 0 100%);
 }
 
-.deckCard {
+/* The octagon's quarter: centred on the corner, so its right and bottom
+   edges and the cut between them show (cut at 1/√2, as in the loader). */
+.sunFace {
   position: absolute;
   inset: 0;
-  background: var(--paper);
-  border: 1px solid var(--border-subtle);
-  border-left: 0;
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-  box-shadow:
-    1px 1px 2px var(--paper-shadow),
-    2px 8px 18px -4px var(--paper-shadow-soft);
-  transform-origin: 0 50%;
+  background:
+    radial-gradient(circle at 0 0, var(--accent-selected) 0 55%, transparent 56%),
+    color-mix(in srgb, var(--accent-selected) 70%, var(--bg));
+  clip-path: polygon(0 0, 100% 0, 100% 41.42%, 41.42% 100%, 0 100%);
+  transform-origin: 0 0;
   transition: transform var(--dur-relaxed) var(--ease);
 }
 
-.deckCard:nth-child(1) {
-  transform: translateX(-0.95rem) rotate(-5deg);
-}
-
-.deckCard:nth-child(2) {
-  transform: translateX(-0.5rem) rotate(3.5deg);
-}
-
-/* The front card carries the index card's margin rule. */
-.deckCard:nth-child(3) {
-  background:
-    linear-gradient(var(--accent-selected), var(--accent-selected)) calc(100% - 0.55rem) 0 / 1px
-      100% no-repeat,
-    var(--paper);
-}
-
-.deck:hover .deckCard:nth-child(1),
-.deck:focus-visible .deckCard:nth-child(1) {
-  transform: translateX(-0.3rem) rotate(-8deg);
-}
-
-.deck:hover .deckCard:nth-child(2),
-.deck:focus-visible .deckCard:nth-child(2) {
-  transform: translateX(0.05rem) rotate(5deg);
-}
-
-.deck:hover .deckCard:nth-child(3),
-.deck:focus-visible .deckCard:nth-child(3) {
-  transform: translateX(0.45rem);
-}
-
-.deck:focus-visible {
-  outline: none;
-}
-
-.deck:focus-visible .deckCard:nth-child(3) {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-/* Written up the card, read bottom to top like a spine. */
-.deckLabel {
+.sunLabel {
   position: absolute;
-  inset: 0 0.55rem 0 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6rem;
-  writing-mode: vertical-rl;
-  rotate: 180deg;
+  left: 0.9rem;
+  top: 28%;
   font-family: var(--font-mono);
-  font-size: var(--type-mono-xs);
+  font-size: var(--sun-label, var(--type-mono-sm));
   letter-spacing: var(--tracking-mono-caps);
   text-transform: uppercase;
   white-space: nowrap;
-  transition: translate var(--dur-relaxed) var(--ease);
 }
 
-.deck:hover .deckLabel,
-.deck:focus-visible .deckLabel {
-  translate: 0.45rem 0;
+.sunTrigger:hover .sunFace,
+.sunTrigger:focus-visible .sunFace,
+.sun[data-open] .sunFace {
+  transform: scale(1.08);
 }
 
-@media (max-width: 47.99rem) {
-  .deck {
-    top: auto;
-    bottom: calc(1.25rem + var(--consent-inset, 0px));
-    translate: none;
-    height: 9.5rem;
-  }
+.sunTrigger:focus-visible {
+  outline: none;
 }
 
-/* --- Drawer -------------------------------------------------------------- */
-/* Shown by data-open; on the way out, GSAP holds both
-   visible inline until the cards have gone (see ProjectsBrowser.tsx). */
+.sunTrigger:focus-visible .sunFace {
+  background: var(--accent);
+}
+
+.sunTrigger:focus-visible .sunLabel {
+  color: var(--on-accent);
+}
+
+/* A line from the corner, turned to this project's angle. Its petal sits
+   just clear of the octagon; its beam runs from there to the card. */
+.ray {
+  --a: calc(var(--fan-a0) + var(--t) * (var(--fan-a1) - var(--fan-a0)));
+  --len: calc(var(--fan-r0) + var(--t) * (var(--fan-r1) - var(--fan-r0)));
+  --petal-at: calc(var(--sun-r) + 0.7rem);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--len);
+  height: 0;
+  rotate: var(--a);
+  transform-origin: 0 0;
+}
+
+.petal {
+  position: absolute;
+  left: var(--petal-at);
+  top: -0.3rem;
+  width: 0.6rem;
+  height: 0.6rem;
+  background: var(--accent);
+  opacity: 0.55;
+  transition: opacity var(--dur-relaxed) var(--ease);
+}
+
+.ray[data-selected] .petal,
+.sun[data-open] .petal {
+  opacity: 1;
+}
+
+/* A wedge of light, widening as it goes, bright at the petal and fading
+   toward the card. */
+.beam {
+  position: absolute;
+  left: var(--petal-at);
+  right: 0;
+  top: -0.9rem;
+  height: 1.8rem;
+  clip-path: polygon(0 40%, 100% 0, 100% 100%, 0 60%);
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--accent) 60%, transparent),
+    color-mix(in srgb, var(--accent) 8%, transparent)
+  );
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+}
+
+.ray[data-selected] .beam {
+  background: linear-gradient(
+    to right,
+    var(--accent),
+    color-mix(in srgb, var(--accent) 20%, transparent)
+  );
+}
+
+.sun[data-open] .beam {
+  transform: scaleX(1);
+}
+
+/* --- Drawer: the cards at the ends of the beams --------------------------- */
+/* Shown by data-open; on the way out, GSAP holds both visible inline until
+   the cards are in (see ProjectsBrowser.tsx). The scrim glows from the sun. */
 .scrim {
   position: fixed;
   inset: 0;
   z-index: 19;
-  background: color-mix(in srgb, var(--bg) 72%, transparent);
+  background:
+    radial-gradient(
+      circle at 0 var(--sun-top, 0px),
+      color-mix(in srgb, var(--accent) 22%, transparent),
+      transparent 36rem
+    ),
+    color-mix(in srgb, var(--bg) 78%, transparent);
   backdrop-filter: blur(2px);
   visibility: hidden;
 }
 
+/* The quarter the fan opens into, so the pointer can cross the dark between
+   the sun and a card without the drawer closing. */
 .drawer {
   position: fixed;
   left: 0;
-  top: 0;
-  bottom: 0;
+  top: var(--sun-top, 0px);
   z-index: 20;
-  width: min(26rem, 90vw);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: var(--space-stack);
-  padding: var(--space-page-y) 0.5rem var(--space-page-y) var(--space-page-x);
-  overflow-y: auto;
+  width: min(100vw, 36rem);
+  height: min(calc(100dvh - var(--sun-top, 0px)), calc(var(--fan-r1) + 4rem));
   visibility: hidden;
 }
 
@@ -183,45 +243,28 @@
   visibility: visible;
 }
 
-.drawerLabel {
-  font-family: var(--font-mono);
-  font-size: var(--type-mono-sm);
-  letter-spacing: var(--tracking-mono-caps);
-  text-transform: uppercase;
-  color: var(--accent);
-}
-
-.intro {
-  max-width: 34ch;
-  font-size: var(--type-body-sm);
-  color: var(--muted);
-  text-wrap: pretty;
-  margin-top: calc(var(--space-stack) * -0.6);
-}
-
-/* A loose stack of index cards, each leaning a little its own way. The
-   selected one is pulled out of the stack, squared up and lifted;
-   hovering one nudges it partway. A margin rule down the left side marks it
-   as an index card. */
 .list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  /* Room for the selected card's pull and the tilted corners. */
-  padding: 0.25rem 1.25rem 0.5rem 0.25rem;
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
 }
 
+/* Each card's near end at its beam's tip, kept on screen. */
 .list > li {
-  --tilt: -0.7deg;
-  position: relative;
-}
-
-.list > li:nth-child(3n + 2) {
-  --tilt: 0.6deg;
-}
-
-.list > li:nth-child(3n) {
-  --tilt: -0.35deg;
+  --a: calc(var(--fan-a0) + var(--t) * (var(--fan-a1) - var(--fan-a0)));
+  --len: calc(var(--fan-r0) + var(--t) * (var(--fan-r1) - var(--fan-r0)));
+  position: absolute;
+  left: min(calc(cos(var(--a)) * var(--len)), 100% - var(--card-w) - 1rem);
+  /* The first beam runs nearly flat: room above its card's middle. */
+  top: max(calc(sin(var(--a)) * var(--len)), 3rem);
+  width: var(--card-w);
+  /* Zero height and centred, so the card's middle sits on the point with no
+     transform (GSAP owns the li's transform while it animates). */
+  height: 0;
+  display: flex;
+  align-items: center;
+  transform-origin: 0 50%;
 }
 
 .row {
@@ -235,7 +278,7 @@
   cursor: pointer;
   width: 100%;
   display: block;
-  padding: clamp(0.7rem, 1.4vh, 1rem) 1rem clamp(0.7rem, 1.4vh, 1rem) 2.1rem;
+  padding: 0.75rem 1rem 0.75rem 2.1rem;
   border-radius: var(--radius-sm);
   background:
     /* The red margin rule of an index card, here in the accent. */
@@ -244,14 +287,13 @@
   box-shadow:
     0 1px 1px var(--paper-shadow),
     0 3px 8px -4px var(--paper-shadow-soft);
-  transform: rotate(var(--tilt));
   transition:
     transform var(--dur-relaxed) var(--ease),
     box-shadow var(--dur-relaxed) var(--ease);
 }
 
 .row:hover {
-  transform: translateX(0.35rem) rotate(calc(var(--tilt) / 2));
+  transform: translateX(0.35rem);
 }
 
 .row:focus-visible {
@@ -260,7 +302,6 @@
 }
 
 .row[data-selected] {
-  transform: translateX(0.9rem);
   box-shadow:
     1px 2px 3px var(--paper-shadow),
     4px 12px 22px -6px var(--paper-shadow-soft);
@@ -271,7 +312,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .row {
+  .row,
+  .sunFace,
+  .petal {
     transition: none;
   }
 }
@@ -303,7 +346,7 @@
   /* The title's size is measured against this column. */
   container-type: inline-size;
   /* Keeps every z-index inside (the photo table's lifted prints climb with
-     each hover) below the fixed deck and drawer. */
+     each hover) below the fixed sun and drawer. */
   isolation: isolate;
   display: flex;
   flex-direction: column;
