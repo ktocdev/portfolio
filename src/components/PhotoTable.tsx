@@ -26,8 +26,10 @@ const TILTS = [-6, 3, 7, 4, -3, -5, -2, 5];
    photos lie on a grid; below it they stack. */
 const GRID_MIN_PX = 34 * 16;
 
-/* Fewest columns a wide table lays out, however short its rows. */
-const MIN_COLUMNS = 4;
+/* A wide table always lays out four columns, however short or long its rows:
+   fewer and cards grow from section to section, more and their tape titles
+   wrap into towers. A longer row wraps onto a second line. */
+const COLUMNS = 4;
 
 /** Stories in rows by their group, in order of first appearance, each keeping
  * its index in `stories`. Stories without a group share one unheaded row. */
@@ -266,15 +268,11 @@ export default function PhotoTable({ stories, intros, note }: PhotoTableProps) {
   const grouped = rows(stories);
   /* Several tables share the page, so ids are scoped to this one. */
   const rowId = `stories-${useId().replace(/:/g, '')}`;
-  /* The longest row sets the column count, so every row shares its grid; at
-     least four, so cards keep one size from section to section. */
-  const columns = Math.max(MIN_COLUMNS, ...grouped.map(([, row]) => row.length));
-
   return (
     <div
       ref={wrap}
       className={styles.wrap}
-      style={{ '--columns': columns } as React.CSSProperties}
+      style={{ '--columns': COLUMNS } as React.CSSProperties}
     >
       {grouped.map(([group, row], r) => {
         const headId = `${rowId}-${r}`;

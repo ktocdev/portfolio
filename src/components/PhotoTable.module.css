@@ -452,8 +452,8 @@
   }
 }
 
-/* Wide enough for the longest row on one line: as many columns as it has
-   photos (PhotoTable.tsx sets --columns), spread across the full width. */
+/* Wide enough for four photos on a line (PhotoTable.tsx sets --columns),
+   spread across the full width; a longer row wraps. */
 @container photos (min-width: 44rem) {
   .table {
     grid-template-columns: repeat(var(--columns, 4), minmax(0, 1fr));
