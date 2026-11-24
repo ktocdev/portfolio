@@ -255,7 +255,7 @@ export const PROJECTS: Project[] = [
             group: 'nebula-nuxt',
             title: 'Doc Site Designer',
             icon: 'sliders',
-            figure: 'Live Theme Editor',
+            figure: 'Live theme editor',
             figureLabel: 'editable down to each token, with three preset themes',
             points: [
               {
