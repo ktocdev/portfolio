@@ -470,7 +470,7 @@ export const PROJECTS: Project[] = [
         specs: [
           { label: 'Frameworks', items: ['Vue 2', 'Vue 3', 'Nuxt', 'TypeScript'] },
           { label: 'Integration', items: ['REST APIs', 'Feature flags', 'Engagement tracking'] },
-          { label: 'Operations', items: ['Python', 'New Relic'] },
+          { label: 'Operations', items: ['Python'] },
         ],
         stories: [
           {
@@ -517,6 +517,7 @@ export const PROJECTS: Project[] = [
         specs: [
           { label: 'Testing & release', items: ['Vitest', 'Playwright', 'GitHub Actions', 'Versioned workspace packages'] },
           { label: 'AI', items: ['Claude Code', 'Claude skills & slash commands', 'GitHub Copilot', 'Microsoft Copilot'] },
+          { label: 'Monitoring', items: ['New Relic'] },
         ],
         stories: [
           {
