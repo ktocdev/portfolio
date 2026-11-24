@@ -296,7 +296,12 @@ export default function ProjectsBrowser({ projects }: ProjectsBrowserProps) {
     gsap.set([panel, shade], { visibility: 'visible' });
     gsap.set(beams, { scaleX: 1 });
     const timeline = gsap.timeline({
-      onComplete: () => gsap.set([panel, shade, ...cards, ...beams], { clearProps: 'all' }),
+      /* Only what GSAP set: 'all' would wipe the whole style attribute,
+         and with it each card's --t, its place in the fan. */
+      onComplete: () => {
+        gsap.set([panel, shade], { clearProps: 'visibility,opacity' });
+        gsap.set([...cards, ...beams], { clearProps: 'transform,opacity' });
+      },
     });
     timeline
       .to(
