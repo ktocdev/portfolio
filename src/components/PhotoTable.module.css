@@ -189,6 +189,25 @@
   );
 }
 
+/* Hovered, the card takes the Tech Stack panel's lavender dashed edge, laid
+   over its paper inside the edge so the card keeps its size. The tape stays
+   on top of it, as it sits on top of the paper. */
+@media (hover: hover) {
+  .card:not([data-resizing]):hover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 4px dashed #a5a8f5;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  .title {
+    position: relative;
+    z-index: 1;
+  }
+}
+
 .card[data-featured] .title {
   /* The drawer's selected-card tint, which holds its contrast in both themes. */
   --tape: var(--accent-selected);
