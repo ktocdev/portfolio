@@ -214,7 +214,11 @@
   }
 }
 
-.title {
+/* Raised as a whole, not just its tape: while the words fade back in after a
+   resize, the print's opacity makes it its own stacking layer, which would
+   trap a z-index on the tape inside it and let the edge draw over the tape
+   until the fade ends. */
+.print {
   position: relative;
   z-index: 1;
 }
