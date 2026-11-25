@@ -376,23 +376,121 @@
   color: var(--muted);
 }
 
+/* Put back: a strip of tape like the title's, outlined in the open card's
+   lavender rather than filled, laid on a little crooked. Hovered, it peels
+   up off the paper: lifts, casts a shadow, leans further, with a small
+   overshoot, and its chevrons close in on the words. */
 .putBack {
+  --notch: 0.4rem;
+  --edge: 4px;
+  --tilt: -1.5deg;
+  --rise: 0px;
+  --grow: 1;
   appearance: none;
   -webkit-appearance: none;
-  margin: 1rem 0 0;
-  padding: 0.4rem 0.75rem;
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 2.25rem 0 0.25rem 0.25rem;
+  padding: 0.55rem 1.4rem 0.6rem;
   background: none;
-  border: 1px solid var(--border-control);
-  border-radius: var(--radius-sm);
+  border: 0;
   font-family: var(--font-mono);
   font-size: var(--type-mono-sm);
   color: var(--paper-ink);
   cursor: pointer;
+  transform: translateY(var(--rise)) rotate(var(--tilt)) scale(var(--grow));
+  /* The shadow is a filter, so it follows the tape's pinked ends. */
+  filter: drop-shadow(0 0 0 transparent);
+  transition:
+    transform 0.35s cubic-bezier(0.34, 1.7, 0.64, 1),
+    filter 0.25s ease-out;
 }
 
-.putBack:hover {
-  border-color: var(--accent);
+/* The tape's outline, and the paper showing through it. */
+.putBackEdge,
+.putBackFill {
+  position: absolute;
+  z-index: -1;
+  clip-path: polygon(
+    0 0, 100% 0,
+    calc(100% - var(--notch)) 25%, 100% 50%, calc(100% - var(--notch)) 75%,
+    100% 100%, 0 100%,
+    var(--notch) 75%, 0 50%, var(--notch) 25%
+  );
+}
+
+.putBackEdge {
+  inset: 0;
+  background: #a5a8f5;
+}
+
+.putBackFill {
+  inset: var(--edge);
+  background: var(--paper);
+}
+
+.putBackIn {
+  width: 0.95em;
+  height: 0.95em;
+  flex: none;
   color: var(--accent);
+  transition: translate 0.35s cubic-bezier(0.34, 1.7, 0.64, 1);
+}
+
+.putBackInEnd {
+  scale: -1 1;
+}
+
+@media (hover: hover) {
+  .putBack:hover {
+    --rise: -4px;
+    --tilt: -3.5deg;
+    --grow: 1.05;
+    filter: drop-shadow(0 7px 7px var(--paper-shadow))
+      drop-shadow(0 2px 2px var(--paper-shadow-soft));
+  }
+
+  .putBack:hover .putBackIn {
+    translate: 0.2em 0;
+  }
+
+  .putBack:hover .putBackInEnd {
+    translate: -0.2em 0;
+  }
+}
+
+/* Pressed, it's stuck back down. */
+.putBack:active {
+  --rise: 0px;
+  --grow: 0.97;
+  filter: drop-shadow(0 1px 1px var(--paper-shadow-soft));
+  transition-duration: 0.1s;
+}
+
+.putBack:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .putBack,
+  .putBackIn {
+    transition: none;
+  }
+
+  .putBack:hover {
+    --rise: 0px;
+    --tilt: -1.5deg;
+    --grow: 1;
+  }
+
+  .putBack:hover .putBackIn,
+  .putBack:hover .putBackInEnd {
+    translate: none;
+  }
 }
 
 /* --- Grid (wide) ---------------------------------------------------------- */

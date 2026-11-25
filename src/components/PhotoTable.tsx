@@ -426,7 +426,15 @@ export default function PhotoTable({ stories, intros, note }: PhotoTableProps) {
                             faces.current[i]?.focus();
                           }}
                         >
-                          Shrink box
+                          {/* A strip of tape outlined rather than filled:
+                              the edge shape with a paper-coloured one inset
+                              over it. Chevrons point in at the words, the
+                              box about to close around them. */}
+                          <span className={styles.putBackEdge} aria-hidden="true" />
+                          <span className={styles.putBackFill} aria-hidden="true" />
+                          <Chevron className={styles.putBackIn} />
+                          <span className={styles.putBackLabel}>Shrink box</span>
+                          <Chevron className={`${styles.putBackIn} ${styles.putBackInEnd}`} />
                         </button>
                       )}
                     </div>
@@ -457,5 +465,24 @@ function RowIntro({ intro }: { intro: GroupIntro }) {
         </>
       ) : null}
     </p>
+  );
+}
+
+/** A chevron pointing right, in the site's line-icon stroke; the closing one
+ * is mirrored by CSS. Decorative: the button's words say what it does. */
+function Chevron({ className }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2.25}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M9 6l6 6-6 6" />
+    </svg>
   );
 }
