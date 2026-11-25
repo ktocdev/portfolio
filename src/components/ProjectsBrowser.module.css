@@ -430,6 +430,11 @@
   width: auto;
   height: 1.3em;
   vertical-align: -0.5em;
+  /* The globe sits inside the D's curve, and the D's left edge is 33px into
+     the 77px-tall artwork (where EDUCATION's E starts too): pull the image
+     left by that much so the D lines up with the text below, the globe
+     hanging out into the margin. */
+  margin-inline-start: calc(-1.3em * 33 / 77);
 }
 
 .logo [data-theme-art='dark'] {
