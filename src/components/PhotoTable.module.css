@@ -464,8 +464,11 @@
     font-size: var(--type-mono-sm);
   }
 
+  /* Back up through the print's top padding, so the tape stands half off the
+     edge as on a closed card, where the resize skeleton's tape stood. */
   .card[data-open] .title {
     font-size: var(--type-h3);
+    margin-top: calc(-0.85rem - 0.6rem);
   }
 
   .card[data-open] .body {
