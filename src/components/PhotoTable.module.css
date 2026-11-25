@@ -189,9 +189,20 @@
   );
 }
 
-/* Hovered, the card takes the Tech Stack panel's lavender dashed edge, laid
-   over its paper inside the edge so the card keeps its size. The tape stays
-   on top of it, as it sits on top of the paper. */
+/* Hovered or open, the card takes the Tech Stack panel's lavender dashed
+   edge, laid over its paper inside the edge so the card keeps its size. An
+   open card keeps it on any device; a closed one shows it only under a
+   pointer that hovers, so a tap never leaves it stuck. The tape stays on top
+   of it, as it sits on top of the paper. */
+.card[data-open]:not([data-resizing])::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 4px dashed #a5a8f5;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
 @media (hover: hover) {
   .card:not([data-resizing]):hover::after {
     content: '';
@@ -201,11 +212,11 @@
     border-radius: inherit;
     pointer-events: none;
   }
+}
 
-  .title {
-    position: relative;
-    z-index: 1;
-  }
+.title {
+  position: relative;
+  z-index: 1;
 }
 
 .card[data-featured] .title {
