@@ -25,6 +25,8 @@
   font-size: var(--type-h3);
   line-height: 1.2;
   color: var(--text);
+  /* Breathing room from the row of cards above it. */
+  margin-top: clamp(1rem, 3vh, 2rem);
   padding-bottom: 0.4rem;
   border-bottom: 1px solid var(--border-subtle);
 }
@@ -187,6 +189,40 @@
   );
 }
 
+/* Hovered or open, the card takes the Tech Stack panel's lavender dashed
+   edge, laid over its paper inside the edge so the card keeps its size. An
+   open card keeps it on any device; a closed one shows it only under a
+   pointer that hovers, so a tap never leaves it stuck. The tape stays on top
+   of it, as it sits on top of the paper. */
+.card[data-open]:not([data-resizing])::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 4px dashed #a5a8f5;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .card:not([data-resizing]):hover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 4px dashed #a5a8f5;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+}
+
+/* Raised as a whole, not just its tape: while the words fade back in after a
+   resize, the print's opacity makes it its own stacking layer, which would
+   trap a z-index on the tape inside it and let the edge draw over the tape
+   until the fade ends. */
+.print {
+  position: relative;
+  z-index: 1;
+}
+
 .card[data-featured] .title {
   /* The drawer's selected-card tint, which holds its contrast in both themes. */
   --tape: var(--accent-selected);
@@ -340,23 +376,121 @@
   color: var(--muted);
 }
 
+/* Put back: a strip of tape like the title's, outlined in the open card's
+   lavender rather than filled, laid on a little crooked. Hovered, it peels
+   up off the paper: lifts, casts a shadow, leans further, with a small
+   overshoot, and its chevrons close in on the words. */
 .putBack {
+  --notch: 0.4rem;
+  --edge: 4px;
+  --tilt: -1.5deg;
+  --rise: 0px;
+  --grow: 1;
   appearance: none;
   -webkit-appearance: none;
-  margin: 1rem 0 0;
-  padding: 0.4rem 0.75rem;
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 2.25rem 0 0.25rem 0.25rem;
+  padding: 0.55rem 1.4rem 0.6rem;
   background: none;
-  border: 1px solid var(--border-control);
-  border-radius: var(--radius-sm);
+  border: 0;
   font-family: var(--font-mono);
   font-size: var(--type-mono-sm);
   color: var(--paper-ink);
   cursor: pointer;
+  transform: translateY(var(--rise)) rotate(var(--tilt)) scale(var(--grow));
+  /* The shadow is a filter, so it follows the tape's pinked ends. */
+  filter: drop-shadow(0 0 0 transparent);
+  transition:
+    transform 0.35s cubic-bezier(0.34, 1.7, 0.64, 1),
+    filter 0.25s ease-out;
 }
 
-.putBack:hover {
-  border-color: var(--accent);
+/* The tape's outline, and the paper showing through it. */
+.putBackEdge,
+.putBackFill {
+  position: absolute;
+  z-index: -1;
+  clip-path: polygon(
+    0 0, 100% 0,
+    calc(100% - var(--notch)) 25%, 100% 50%, calc(100% - var(--notch)) 75%,
+    100% 100%, 0 100%,
+    var(--notch) 75%, 0 50%, var(--notch) 25%
+  );
+}
+
+.putBackEdge {
+  inset: 0;
+  background: #a5a8f5;
+}
+
+.putBackFill {
+  inset: var(--edge);
+  background: var(--paper);
+}
+
+.putBackIn {
+  width: 0.95em;
+  height: 0.95em;
+  flex: none;
   color: var(--accent);
+  transition: translate 0.35s cubic-bezier(0.34, 1.7, 0.64, 1);
+}
+
+.putBackInEnd {
+  scale: -1 1;
+}
+
+@media (hover: hover) {
+  .putBack:hover {
+    --rise: -4px;
+    --tilt: -3.5deg;
+    --grow: 1.05;
+    filter: drop-shadow(0 7px 7px var(--paper-shadow))
+      drop-shadow(0 2px 2px var(--paper-shadow-soft));
+  }
+
+  .putBack:hover .putBackIn {
+    translate: 0.2em 0;
+  }
+
+  .putBack:hover .putBackInEnd {
+    translate: -0.2em 0;
+  }
+}
+
+/* Pressed, it's stuck back down. */
+.putBack:active {
+  --rise: 0px;
+  --grow: 0.97;
+  filter: drop-shadow(0 1px 1px var(--paper-shadow-soft));
+  transition-duration: 0.1s;
+}
+
+.putBack:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .putBack,
+  .putBackIn {
+    transition: none;
+  }
+
+  .putBack:hover {
+    --rise: 0px;
+    --tilt: -1.5deg;
+    --grow: 1;
+  }
+
+  .putBack:hover .putBackIn,
+  .putBack:hover .putBackInEnd {
+    translate: none;
+  }
 }
 
 /* --- Grid (wide) ---------------------------------------------------------- */
@@ -428,8 +562,11 @@
     font-size: var(--type-mono-sm);
   }
 
+  /* Back up through the print's top padding, so the tape stands half off the
+     edge as on a closed card, where the resize skeleton's tape stood. */
   .card[data-open] .title {
     font-size: var(--type-h3);
+    margin-top: calc(-0.85rem - 0.6rem);
   }
 
   .card[data-open] .body {
@@ -452,8 +589,8 @@
   }
 }
 
-/* Wide enough for the longest row on one line: as many columns as it has
-   photos (PhotoTable.tsx sets --columns), spread across the full width. */
+/* Wide enough for four photos on a line (PhotoTable.tsx sets --columns),
+   spread across the full width; a longer row wraps. */
 @container photos (min-width: 44rem) {
   .table {
     grid-template-columns: repeat(var(--columns, 4), minmax(0, 1fr));

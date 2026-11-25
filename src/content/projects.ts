@@ -120,7 +120,7 @@ export type CaseSection = {
   specs?: SpecGroup[];
 };
 
-/** One row of a project's Technical Specs: a layer of the build and what it's made with. */
+/** One row of a project's Tech Stack: a layer of the build and what it's made with. */
 export type SpecGroup = { label: string; items: string[] };
 
 export type Project = {
@@ -135,7 +135,7 @@ export type Project = {
   paras?: string[];
   notes?: Note[];
   sections?: CaseSection[];
-  /** The Technical Specs section at the foot of the page. */
+  /** The Tech Stack section at the foot of the page. */
   specs?: SpecGroup[];
   /** A label leading the links down to the page's parts, e.g. what the parts are. */
   jumpLabel?: string;
@@ -255,8 +255,8 @@ export const PROJECTS: Project[] = [
             group: 'nebula-nuxt',
             title: 'Doc Site Designer',
             icon: 'sliders',
-            figure: '3 themes',
-            figureLabel: 'in a live Theme Editor, editable down to each token',
+            figure: 'Live theme editor',
+            figureLabel: 'editable down to each token, with three preset themes',
             points: [
               {
                 text: 'Built the new playground doc site for nebula-nuxt with searchable documentation via Nuxt Content; designed and implemented the entire layout and UI, and added robust scaffold, theming, and localization documentation displayed through Nuxt Content.',
@@ -266,6 +266,21 @@ export const PROJECTS: Project[] = [
               },
               {
                 text: 'Created a live Theme Editor in the nebula-nuxt doc site that switches between the default Nuxt UI theme, legacy Nebula, and another unique theme, with editing granular down to color scale, spacing, font, and border radii and other theme tokens; the theme persists across all component pages until changed or reset.',
+              },
+            ],
+          },
+          {
+            group: 'nebula-nuxt',
+            title: 'Platform Ownership',
+            icon: 'package',
+            figure: 'End to end',
+            figureLabel: 'APIs, tokens, packages, icons, CI, and tests',
+            points: [
+              {
+                text: 'Owned the platform end to end: component APIs, semantic design tokens and theming, shared workspace packages with versioned releases optimized for tree-shaking so apps shipped only the components they used, a separately published icon package, and GitHub Actions CI.',
+              },
+              {
+                text: 'Owned code quality for the library: reviewed PRs and caught issues before release, and backed changes with Vitest and Playwright so they shipped safely to every consumer.',
               },
             ],
           },
@@ -343,46 +358,34 @@ export const PROJECTS: Project[] = [
               },
             ],
           },
-          /* Placeholders: the user is bringing the details for these two. */
           {
             group: 'Nebula',
-            title: 'Form Building',
+            title: 'Details',
             icon: 'components',
-            figure: 'Forms',
-            figureLabel: 'built from Nebula select, checkbox and toggle components',
+            figure: '<details>',
+            figureLabel: "built on the browser's native details element",
             points: [
               {
-                text: 'An admin form built from Nebula components: role and department selects, permission checkboxes and account-setting toggles.',
+                text: "Built NebulaDetails on the browser's native <details> element, themed to look like Nebula. It matches every style and feature of the original NebulaAccordion, which was built before <details> existed.",
+              },
+              {
+                text: 'NebulaDetails can also take an object as a prop and render it as a nested hierarchy of details.',
               },
             ],
             shots: [
               {
-                src: '/media/projects/nebula/admin-form.webp',
-                alt: 'An admin form built from Nebula components: role and department selects, permission checkboxes and account-setting toggles.',
-                width: 795,
-                height: 618,
-                caption: 'Form components: select, checkbox, toggle',
+                src: '/media/projects/nebula/details-accordion.webp',
+                alt: 'An accordion menu built from NebulaDetails, with its Visual Language and Navigation sections open and Components and Form Elements closed.',
+                width: 860,
+                height: 1046,
+                caption: 'An accordion menu built from NebulaDetails',
               },
-            ],
-          },
-          {
-            group: 'Nebula',
-            title: 'Accordion',
-            icon: 'components',
-            figure: 'Accordion',
-            figureLabel: 'a new accordion menu with sections that open and close',
-            points: [
               {
-                text: 'Built a new Nebula accordion menu, with buttons that open and close its sections.',
-              },
-            ],
-            shots: [
-              {
-                src: '/media/projects/nebula/accordion.webp',
-                alt: 'Nebula accordion menu with its Visual Language section open, and buttons that open and close sections.',
-                width: 930,
-                height: 663,
-                caption: 'Accordion menu',
+                src: '/media/projects/nebula/details-nested.webp',
+                alt: 'Nested slim NebulaDetails rendered from one object, open four levels deep: a course overview, a unit on HTML basics, a lesson on HTML tags, and an exercise with links to start it or view the solution.',
+                width: 852,
+                height: 1748,
+                caption: 'Nested slim details, rendered from an object prop',
               },
             ],
           },
@@ -411,6 +414,55 @@ export const PROJECTS: Project[] = [
               },
             ],
           },
+          {
+            group: 'AI tooling',
+            title: 'Form Building',
+            icon: 'sparkle',
+            figure: '800 lines',
+            figureLabel: 'one skill holding every Nebula form component and its rules',
+            points: [
+              {
+                text: 'Wrote a form-building Claude skill that produced valid Nebula forms from plain-language prompts, like this admin form with its required fields, helper text and error states.',
+              },
+              {
+                text: 'The skill documented every Nebula form component: its exact prop names and how to associate elements with each other. At the center was NebulaFieldGroup, the container that ties a label and helper text to its control, filled through slots or props and designed to be as flexible as possible to support every use case.',
+              },
+              {
+                text: 'Built it in the Opus 4.5–4.6 era, against the advice of the time to write small skills that build on each other through links in the .md. One large skill let the agent see every component and rule at once and build the form holistically, with minimal hallucinations, an approach a bit ahead of its time as models were still getting better at consuming large contexts.',
+              },
+            ],
+            shots: [
+              {
+                src: '/media/projects/nebula/admin-form-full.webp',
+                alt: 'The Admin Form built by the skill: full name, email and phone fields, role and department selects, read, write and delete permission checkboxes, active user and welcome email toggles, a notes field, and Reset and Save User buttons. Required fields carry a red asterisk, and phone and notes have helper text.',
+                width: 900,
+                height: 2058,
+                caption: 'Admin form from a plain-language prompt',
+              },
+              {
+                src: '/media/projects/nebula/admin-form-errors.webp',
+                alt: 'The same form after submitting it empty: an error banner reads "Please fix the errors below", and full name, email address and role are outlined in red, each with its own message, such as "Full name is required".',
+                width: 900,
+                height: 1319,
+                caption: 'Validation: banner and per-field errors',
+              },
+            ],
+          },
+          {
+            group: 'AI tooling',
+            title: 'Slash Commands & Adoption',
+            icon: 'terminal',
+            figure: '/plan',
+            figureLabel: 'slash commands that turn dev notes into living specs',
+            points: [
+              {
+                text: 'Built plan-create/plan-update slash commands for Claude Code: structured markdown plan docs (executive summary, phases, success criteria, known issues) generated conversationally, with approval-gated drafts and diff-style updates. Enforces consistent status markers and preserves historical context across iterations, turning ad hoc dev notes into a living, reviewable spec.',
+              },
+              {
+                text: "Co-hosted the company's AI Office Hours to help engineers adopt AI-assisted development.",
+              },
+            ],
+          },
         ],
       },
       {
@@ -418,7 +470,10 @@ export const PROJECTS: Project[] = [
         specs: [
           { label: 'Frameworks', items: ['Vue 2', 'Vue 3', 'Nuxt', 'TypeScript'] },
           { label: 'Integration', items: ['REST APIs', 'Feature flags', 'Engagement tracking'] },
+          { label: 'Testing & release', items: ['Vitest', 'Playwright', 'GitHub Actions', 'Versioned workspace packages'] },
+          { label: 'AI', items: ['Claude Code', 'Claude skills & slash commands', 'GitHub Copilot', 'Microsoft Copilot'] },
           { label: 'Operations', items: ['Python', 'New Relic'] },
+          { label: 'Accessibility', items: ['WCAG 2.2', 'ARIA', 'NVDA', 'VoiceOver'] },
         ],
         stories: [
           {
@@ -448,17 +503,6 @@ export const PROJECTS: Project[] = [
             ],
           },
           {
-            title: 'Production Reliability',
-            icon: 'pulse',
-            figure: 'On call',
-            figureLabel: 'for biweekly migrations, watching New Relic',
-            points: [
-              {
-                text: 'Monitored JavaScript errors in New Relic while on call for biweekly migrations, troubleshooting production issues across a multi-team platform; delivered feature-flag projects that rendered UI from backend flag data while keeping tracking metrics intact.',
-              },
-            ],
-          },
-          {
             title: 'Product Teams',
             icon: 'team',
             figure: '12+',
@@ -469,40 +513,34 @@ export const PROJECTS: Project[] = [
               },
             ],
           },
-        ],
-      },
-      {
-        title: 'Behind the scenes',
-        specs: [
-          { label: 'Testing & release', items: ['Vitest', 'Playwright', 'GitHub Actions', 'Versioned workspace packages'] },
-          { label: 'AI', items: ['Claude Code', 'Claude skills & slash commands', 'GitHub Copilot', 'Microsoft Copilot'] },
-        ],
-        stories: [
           {
-            title: 'Platform Ownership',
-            icon: 'package',
-            figure: 'End to end',
-            figureLabel: 'APIs, tokens, packages, icons, CI, and tests',
+            title: 'A11y Subject Matter Expert',
+            icon: 'access',
+            figure: 'WCAG 2.2',
+            figureLabel: 'audits, VPAT triage, and hands-on screen reader testing',
             points: [
               {
-                text: 'Owned the platform end to end: component APIs, semantic design tokens and theming, shared workspace packages with versioned releases optimized for tree-shaking so apps shipped only the components they used, a separately published icon package, and GitHub Actions CI.',
+                text: 'Served as accessibility subject matter expert, running audits and mentoring designers and engineers on WCAG, ARIA, keyboard, and focus requirements through design and code review.',
               },
               {
-                text: 'Owned code quality for the library: reviewed PRs and caught issues before release, and backed changes with Vitest and Playwright so they shipped safely to every consumer.',
+                text: 'Partnered with product teams to help triage VPAT sprints for time-sensitive state adoptions.',
+              },
+              {
+                text: 'Acted as a cross-org resource, advising teams on accessibility best practices.',
+              },
+              {
+                text: 'Tested manually with NVDA, VoiceOver, high contrast mode, and prefers-reduced-motion.',
               },
             ],
           },
           {
-            title: 'Slash Commands & Adoption',
-            icon: 'terminal',
-            figure: '/plan',
-            figureLabel: 'slash commands that turn dev notes into living specs',
+            title: 'Production Reliability',
+            icon: 'pulse',
+            figure: 'On call',
+            figureLabel: 'for biweekly migrations, watching New Relic',
             points: [
               {
-                text: 'Built plan-create/plan-update slash commands for Claude Code: structured markdown plan docs (executive summary, phases, success criteria, known issues) generated conversationally, with approval-gated drafts and diff-style updates. Enforces consistent status markers and preserves historical context across iterations, turning ad hoc dev notes into a living, reviewable spec.',
-              },
-              {
-                text: "Co-hosted the company's AI Office Hours to help engineers adopt AI-assisted development.",
+                text: 'Monitored JavaScript errors in New Relic while on call for biweekly migrations, troubleshooting production issues across a multi-team platform; delivered feature-flag projects that rendered UI from backend flag data while keeping tracking metrics intact.',
               },
             ],
           },

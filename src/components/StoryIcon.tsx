@@ -78,6 +78,14 @@ const PATHS = {
       <path d="M4 7.5l8 4.5 8-4.5M12 12v9" />
     </>
   ),
+  /* A figure with arms out in a circle: accessibility. */
+  access: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="7.5" r="1.25" />
+      <path d="M7.5 10.5l4.5 1 4.5-1M12 11.5v3M9.5 18l2.5-3.5 2.5 3.5" />
+    </>
+  ),
   /* A terminal prompt: the slash commands. */
   terminal: (
     <>
