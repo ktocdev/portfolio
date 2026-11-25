@@ -25,6 +25,8 @@
   font-size: var(--type-h3);
   line-height: 1.2;
   color: var(--text);
+  /* Breathing room from the row of cards above it. */
+  margin-top: clamp(1rem, 3vh, 2rem);
   padding-bottom: 0.4rem;
   border-bottom: 1px solid var(--border-subtle);
 }

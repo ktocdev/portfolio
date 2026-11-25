@@ -526,7 +526,7 @@
   display: flex;
   flex-direction: column;
   gap: clamp(1rem, 2.4vh, 1.75rem);
-  margin-top: clamp(1rem, 3vh, 2.25rem);
+  margin-top: clamp(2rem, 5vh, 3.5rem);
 }
 
 .sectionTitle {
@@ -587,7 +587,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  margin-top: 0.5rem;
+  margin-top: clamp(1rem, 3vh, 2rem);
   padding: clamp(1rem, 2.5vw, 1.5rem) clamp(1rem, 3vw, 2rem);
   /* A thick dashed edge whose gaps are paper rather than see-through: the
      paper layer runs under the border, the shade stops at the padding. */
